@@ -4,12 +4,12 @@ import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
 
 // 🔐 Configurația ta Firebase (copiată din Firebase Console)
 const firebaseConfig = {
-  apiKey: "AIzaSyBnU_ho4Ak1cre7p8bdOtFzc9RK3ch1RBE",
-  authDomain: "vvshop-c1dd3.firebaseapp.com",
-  projectId: "vvshop-c1dd3",
-  storageBucket: "vvshop-c1dd3.firebasestorage.app",
-  messagingSenderId: "230348847074",
-  appId: "1:230348847074:web:1ab5e74efdd4671fd06bbb",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // 🧱 Inițializează aplicația Firebase

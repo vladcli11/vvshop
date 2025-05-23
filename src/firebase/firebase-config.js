@@ -1,8 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-// 🔐 Configurația ta Firebase (copiată din Firebase Console)
+// Configurația Firebase
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -12,15 +14,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// 🧱 Inițializează aplicația Firebase
 const app = initializeApp(firebaseConfig);
 
-// 🔐 Activează doar autentificarea (nu avem nevoie de analytics acum)
-export const auth = getAuth(app);
-
 const ai = getAI(app, { backend: new GoogleAIBackend() });
-
-// Exportă modelul generativ (ex: Gemini 2.0 Flash)
 export const geminiModel = getGenerativeModel(ai, {
   model: "gemini-2.0-flash",
 });
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);

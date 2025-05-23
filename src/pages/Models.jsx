@@ -1,12 +1,20 @@
 import { useParams } from "react-router-dom";
-import { accessoriesByModel } from "../data/accessories";
+import { useEffect, useState } from "react";
+import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
+// 🔸 Importuri pentru iconițe
 import { ShoppingCart } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export default function Models() {
   const { slug } = useParams();
-  const accesorii = accessoriesByModel[slug] || [];
+  const [accesorii, setAccesorii] = useState([]);
+
+  useEffect(() => {
+    fetchAccessoriesByModel(slug).then(setAccesorii);
+  }, [slug]);
 
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
@@ -32,9 +40,12 @@ export default function Models() {
               key={item.id}
               className="border p-2 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-200 w-full"
             >
-              <img
+              <LazyLoadImage
                 src={item.imagine}
                 alt={item.nume}
+                effect="blur" // 🔄 activează fade-in cu blur
+                width={128}
+                height={128}
                 className="w-32 h-32 object-contain mb-1"
               />
               <h2 className="font-bold text-center text-black text-xl">

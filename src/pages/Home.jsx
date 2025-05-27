@@ -14,7 +14,7 @@ export default function Home() {
       <main className="flex-grow px-3 pb-10 flex flex-col items-center">
         {/* 🔸 Separator */}
 
-        <div className="flex items-center my-2 w-full max-w-6xl">
+        <div className="flex items-center my-2 w-full">
           <div className="flex-grow border-t border-gray-400" />
           <span className="px-4 pb-3 text-gray-600 text-sm uppercase tracking-wider">
             Alege Brandul

@@ -3,6 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getPerformance } from "firebase/performance";
 
 // Configurația Firebase
 const firebaseConfig = {
@@ -17,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const ai = getAI(app, { backend: new GoogleAIBackend() });
+const perf = getPerformance(app);
 export const geminiModel = getGenerativeModel(ai, {
   model: "gemini-2.0-flash",
 });

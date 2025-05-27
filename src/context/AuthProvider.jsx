@@ -16,17 +16,9 @@ export default function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  if (loading) {
-    return (
-      <div className="text-center mt-20 text-gray-600 text-lg">
-        Se încarcă...
-      </div>
-    );
-  }
-
   return (
     <AuthContext.Provider value={{ currentUser }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 }

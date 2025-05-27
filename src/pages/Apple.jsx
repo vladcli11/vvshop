@@ -44,7 +44,6 @@ const modele = [
 ];
 console.log("✅ Apple.jsx s-a montat");
 export default function Apple() {
-  console.log("✅ Apple.jsx s-a montat");
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />

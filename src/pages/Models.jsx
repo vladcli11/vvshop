@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
-// 🔸 Importuri pentru iconițe
 import { ShoppingCart } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -18,7 +17,6 @@ export default function Models() {
         const img = new Image();
         img.src = item.imagine;
       });
-
       setAccesorii(items);
     });
   }, [slug]);
@@ -44,7 +42,7 @@ export default function Models() {
           {accesorii.map((item) => (
             <div
               key={item.id}
-              className="border p-2 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-200 w-full"
+              className="border p-2 rounded-xl flex flex-col justify-between items-center hover:shadow-xl transition-transform duration-200 w-full h-full"
             >
               <LazyLoadImage
                 src={item.imagine}
@@ -61,7 +59,7 @@ export default function Models() {
                 {item.pret.toFixed(2)} lei
               </p>
               {/* 🔹 DE FOLOSIT IN TOATE PAGINILE BUTONUL ASTA!! */}
-              <button className="mt-2 bg-green-500 text-white text-sm px-3 py-1 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-3 w-full">
+              <button className="mt-2 bg-green-500 text-white text-sm px-2 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-3 w-full">
                 <ShoppingCart className="w-5 h-7" />
                 Adaugă în coș
               </button>

@@ -7,16 +7,15 @@ import Footer from "../components/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* 🔝 Header fix */}
+    <div className="flex flex-col min-h-screen bg-white px-6">
+      {/*  Header fix */}
       <Header />
-      {/* 🔽 Conținut principal */}
+      {/*  Conținut principal */}
       <main className="flex-grow px-3 pb-10 flex flex-col items-center">
-        {/* 🔸 Separator */}
-
+        {/*  Separator */}
         <div className="flex items-center my-2 w-full">
           <div className="flex-grow border-t border-gray-400" />
-          <span className="px-4 pb-3 text-gray-600 text-sm uppercase tracking-wider">
+          <span className="px-4 text-gray-600 text-sm uppercase tracking-wider">
             Alege Brandul
           </span>
           <div className="flex-grow border-t border-gray-400" />
@@ -65,7 +64,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* 🔻 Footer */}
+      {/*  Footer */}
       <Footer />
     </div>
   );

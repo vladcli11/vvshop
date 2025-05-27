@@ -21,14 +21,14 @@ export default function Header() {
       {/* Buton Coș */}
       <Link
         to="/cos"
-        className="absolute top-2 right-20 bg-white text-gray-700 p-4 rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition z-10"
+        className="absolute top-3 right-20 bg-white text-gray-700 p-4 rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition z-10"
         aria-label="Coș de cumpărături"
       >
         <ShoppingCart className="w-6 h-6" />
       </Link>
       <button
         onClick={() => setShowModal(true)}
-        className="absolute top-2 right-1 bg-white text-gray-700 p-4 rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition z-10"
+        className="absolute top-3 right-1 bg-white text-gray-700 p-4 rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition z-10"
         aria-label="Autentificare / Cont"
       >
         <User className="w-6 h-6" />

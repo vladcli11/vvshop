@@ -18,7 +18,11 @@ function AuthModal({ isOpen, onClose }) {
           ✖
         </button>
 
-        {authMode === "login" ? <LoginForm /> : <RegisterForm />}
+        {authMode === "login" ? (
+          <LoginForm onClose={onClose} />
+        ) : (
+          <RegisterForm onClose={onClose} />
+        )}
 
         <div className="mt-4 text-center text-sm">
           {authMode === "login" ? (

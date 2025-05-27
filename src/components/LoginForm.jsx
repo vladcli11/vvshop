@@ -1,20 +1,30 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
+import { useNavigate } from "react-router-dom";
 
-export default function LoginForm() {
+export default function LoginForm({ onClose }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); // șterge eroarea anterioară
+
+    console.log("➡️ Trimit login:", email, password);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Poți seta redirect sau închide modalul aici
+      console.log("✅ Logare reușită");
+      navigate("/home"); // redirecționează utilizatorul după logare
+      if (typeof onClose === "function") {
+        onClose();
+      }
     } catch (err) {
+      console.error("❌ Firebase error:", err.code, err.message);
+
       if (err.code === "auth/user-not-found") {
         setError("Acest email nu este înregistrat.");
       } else if (err.code === "auth/wrong-password") {
@@ -22,7 +32,7 @@ export default function LoginForm() {
       } else if (err.code === "auth/invalid-email") {
         setError("Email invalid.");
       } else {
-        setError("Eroare la autentificare. Încearcă din nou.");
+        setError("Eroare la autentificare: " + err.message);
       }
     }
   };
@@ -34,6 +44,8 @@ export default function LoginForm() {
     >
       <input
         type="email"
+        id="email"
+        name="email"
         placeholder="Email"
         className="border border-gray-300 text-black px-3 py-2 rounded"
         value={email}
@@ -42,6 +54,8 @@ export default function LoginForm() {
       />
       <input
         type="password"
+        id="password"
+        name="password"
         placeholder="Parolă"
         className="border border-gray-300 text-black px-3 py-2 rounded"
         value={password}

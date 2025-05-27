@@ -5,8 +5,28 @@ import Samsung from "./pages/Samsung";
 import Model from "./pages/Models";
 import AuthPage from "./pages/AuthPage";
 import Register_Form from "./components/RegisterForm";
+import { useEffect } from "react";
+import { fetchAccessoriesByModel } from "./utils/fetchAccessoriesByModel";
 
 function App() {
+  // ✅ Preloading imagini din Firebase
+  useEffect(() => {
+    async function preloadImages() {
+      try {
+        const items = await fetchAccessoriesByModel("all"); // vezi nota de mai jos
+        items.forEach((item) => {
+          const img = new Image();
+          img.src = item.imagine;
+        });
+        console.log("Imagini preîncărcate:", items.length);
+      } catch (err) {
+        console.error("Eroare preload imagini:", err);
+      }
+    }
+
+    preloadImages();
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/home" />} />

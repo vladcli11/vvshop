@@ -13,9 +13,15 @@ export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
 
   useEffect(() => {
-    fetchAccessoriesByModel(slug).then(setAccesorii);
-  }, [slug]);
+    fetchAccessoriesByModel(slug).then((items) => {
+      items.forEach((item) => {
+        const img = new Image();
+        img.src = item.imagine;
+      });
 
+      setAccesorii(items);
+    });
+  }, [slug]);
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />

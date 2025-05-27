@@ -2,10 +2,13 @@ import { Link } from "react-router-dom";
 import { ShoppingCart, Home, User } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useState } from "react";
-import AuthModal from "./Auth_Modal";
+import AuthModal from "./AuthModal";
+import useCart from "../context/useCart";
 
 export default function Header() {
   const [ShowModal, setShowModal] = useState(false);
+
+  const { cartItems } = useCart();
 
   return (
     <div className="relative h-[64px] mb-4 w-full max-w-6xl mx-auto">
@@ -25,6 +28,12 @@ export default function Header() {
         aria-label="Coș de cumpărături"
       >
         <ShoppingCart className="w-6 h-6" />
+
+        {cartItems.length > 0 && (
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+            {cartItems.length}
+          </span>
+        )}
       </Link>
       <button
         onClick={() => setShowModal(true)}

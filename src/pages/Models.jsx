@@ -6,11 +6,12 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import useCart from "../context/useCart";
 
 export default function Models() {
   const { slug } = useParams();
   const [accesorii, setAccesorii] = useState([]);
-
+  const { addToCart } = useCart();
   useEffect(() => {
     fetchAccessoriesByModel(slug).then((items) => {
       items.forEach((item) => {
@@ -59,7 +60,10 @@ export default function Models() {
                 {item.pret.toFixed(2)} lei
               </p>
               {/* 🔹 DE FOLOSIT IN TOATE PAGINILE BUTONUL ASTA!! */}
-              <button className="mt-2 bg-green-500 text-white text-sm px-2 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-3 w-full">
+              <button
+                onClick={() => addToCart(item)}
+                className="mt-2 bg-green-500 text-white text-sm px-2 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-3 w-full"
+              >
                 <ShoppingCart className="w-5 h-7" />
                 Adaugă în coș
               </button>

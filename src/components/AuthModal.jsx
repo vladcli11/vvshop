@@ -2,8 +2,8 @@ import { useState } from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
-function AuthModal({ isOpen, onClose }) {
-  const [authMode, setAuthMode] = useState("login");
+function AuthModal({ isOpen, onClose, initialMode = "login" }) {
+  const [authMode, setAuthMode] = useState(initialMode);
 
   if (!isOpen) return null;
 

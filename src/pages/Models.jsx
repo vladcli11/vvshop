@@ -6,11 +6,12 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import useCart from "../context/useCart";
 
 export default function Models() {
   const { slug } = useParams();
   const [accesorii, setAccesorii] = useState([]);
-
+  const { addToCart } = useCart();
   useEffect(() => {
     fetchAccessoriesByModel(slug).then((items) => {
       items.forEach((item) => {
@@ -24,12 +25,12 @@ export default function Models() {
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
       {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-5">
-        <div className="flex-grow border-t border-gray-400"></div>
-        <span className="px-4 text-gray-600 text-sm uppercase tracking-wider">
+      <div className="flex items-center my-6 -mx-6">
+        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
+        <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
           Accesorii {slug.replace(/-/g, " ")}
         </span>
-        <div className="flex-grow border-t border-gray-300"></div>
+        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
       </div>
 
       {/* 🔹 Conținut principal - EDITAT DESTUL DE MULT, AR TREBUI FOLOSIT SI PENTRU RESTUL PAGINILOR */}
@@ -59,7 +60,10 @@ export default function Models() {
                 {item.pret.toFixed(2)} lei
               </p>
               {/* 🔹 DE FOLOSIT IN TOATE PAGINILE BUTONUL ASTA!! */}
-              <button className="mt-2 bg-green-500 text-white text-sm px-2 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-3 w-full">
+              <button
+                onClick={() => addToCart(item)}
+                className="mt-2 bg-green-500 text-white text-sm px-2 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-3 w-full"
+              >
                 <ShoppingCart className="w-5 h-7" />
                 Adaugă în coș
               </button>

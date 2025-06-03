@@ -1,0 +1,10 @@
+{
+  "typeAcquisition": {
+    "include": ["node"]
+  },
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS"
+  },
+  "include": ["./**/*"]
+}

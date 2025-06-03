@@ -2,8 +2,8 @@ import { useState } from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
-function AuthModal({ isOpen, onClose }) {
-  const [authMode, setAuthMode] = useState("login");
+function AuthModal({ isOpen, onClose, initialMode = "login", redirectTo }) {
+  const [authMode, setAuthMode] = useState(initialMode);
 
   if (!isOpen) return null;
 
@@ -19,9 +19,9 @@ function AuthModal({ isOpen, onClose }) {
         </button>
 
         {authMode === "login" ? (
-          <LoginForm onClose={onClose} />
+          <LoginForm onClose={onClose} redirectTo={redirectTo} />
         ) : (
-          <RegisterForm onClose={onClose} />
+          <RegisterForm onClose={onClose} redirectTo={redirectTo} />
         )}
 
         <div className="mt-4 text-center text-sm">

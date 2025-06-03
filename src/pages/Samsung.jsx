@@ -38,15 +38,15 @@ import ZFOLD5 from "../assets/ZFOLD5.png";
 import ZFOLD6 from "../assets/ZFOLD6.png";
 
 // A series
-import A01 from "../assets/A01.png";
-import A02 from "../assets/A02.png";
-import A03 from "../assets/A03.png";
-import A04 from "../assets/A04.png";
-import A05 from "../assets/A05.png";
-import A11 from "../assets/A11.png";
-import A12 from "../assets/A12.png";
-import A13 from "../assets/A13.png";
-import A14 from "../assets/A14.png";
+import A01 from "../assets/A01.webp";
+import A02 from "../assets/A02.webp";
+import A03 from "../assets/A03.webp";
+import A04 from "../assets/A04.webp";
+import A05 from "../assets/A05.webp";
+import A11 from "../assets/A11.webp";
+import A12 from "../assets/A12.webp";
+import A13 from "../assets/A13.webp";
+import A14 from "../assets/A14.webp";
 import A15 from "../assets/A15.png";
 import A21 from "../assets/A21.png";
 import A22 from "../assets/A22.png";
@@ -238,26 +238,26 @@ export default function Samsung() {
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
       {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-5">
-        <div className="flex-grow border-t border-gray-400"></div>
-        <span className="px-4 text-gray-600 text-sm uppercase tracking-wider">
+      <div className="flex items-center my-6 -mx-6">
+        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
+        <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
           Alege modelul
         </span>
-        <div className="flex-grow border-t border-gray-300"></div>
+        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 w-full max-w-6xl mx-auto justify-items-center">
         {modele.map((model) => (
           <Link
             key={model.slug}
             to={`/samsung/${model.slug}`}
-            className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300"
+            className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300 md: w-40 h-54"
           >
             <img
               src={model.imagine}
               alt={model.nume}
               className="w-32 h-32 object-contain"
             />
-            <span className="mt-2 font-semibold text-black text-center">
+            <span className="mt-2 font-semibold text-black text-center line-clamp-2 w-full">
               {model.nume}
             </span>
           </Link>

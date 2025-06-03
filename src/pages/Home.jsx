@@ -13,16 +13,18 @@ export default function Home() {
       {/*  Conținut principal */}
       <main className="flex-grow px-3 pb-10 flex flex-col items-center">
         {/*  Separator */}
-        <div className="flex items-center my-2 w-full">
-          <div className="flex-grow border-t border-gray-400" />
-          <span className="px-4 text-gray-600 text-sm uppercase tracking-wider">
-            Alege Brandul
-          </span>
-          <div className="flex-grow border-t border-gray-400" />
+        <div className=" relative w-full my-5">
+          <div className="absolute inset-0 -mx-6 flex items-center">
+            <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
+            <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
+              Alege brandul
+            </span>
+            <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
+          </div>
         </div>
 
         {/* 🔹 Grilă branduri */}
-        <div className="grid grid-cols-1 gap-3 w-full max-w-sm">
+        <div className="pt-6 grid grid-cols-1 gap-3 w-full max-w-sm">
           <Link
             to="/apple"
             className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300"

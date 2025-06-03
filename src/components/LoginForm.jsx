@@ -2,12 +2,27 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
-export default function LoginForm({ onClose }) {
+export default function LoginForm({ onClose, redirectTo = "/home" }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const loginWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      console.log("✅ Google login reușit:", result.user);
+
+      if (typeof onClose === "function") {
+        onClose();
+      }
+    } catch (err) {
+      console.error("❌ Eroare la autentificare Google:", err);
+      setError("Autentificarea cu Google a eșuat. Încearcă din nou.");
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,8 +32,10 @@ export default function LoginForm({ onClose }) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log("✅ Logare reușită");
-      navigate("/home"); // redirecționează utilizatorul după logare
+      if (redirectTo) {
+        navigate(redirectTo);
+      }
+
       if (typeof onClose === "function") {
         onClose();
       }
@@ -68,6 +85,20 @@ export default function LoginForm({ onClose }) {
         className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
       >
         Conectează-te
+      </button>
+      <div className="text-center mt-2 text-sm text-gray-500">sau</div>
+
+      <button
+        type="button"
+        onClick={loginWithGoogle}
+        className="bg-red-700 hover:bg-red-800 text-white flex items-center justify-center gap-3 w-full px-4 py-2 rounded mt-3"
+      >
+        <img
+          src="	https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
+          alt="Google logo"
+          className="w-5 h-5"
+        />
+        <span className="text-sm font-medium">Intra in cont cu Google</span>
       </button>
     </form>
   );

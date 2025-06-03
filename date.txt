@@ -54,3 +54,5 @@ Analiza documentelor: extracție de informații din documente PDF sau imagini.
 ====================================================================================================================
 cont git : vladclinciu45@yahoo.com
     pass : Bmwenjoyer14
+
+Stripe: Rinocer1414!

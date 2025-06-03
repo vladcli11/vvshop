@@ -48,19 +48,19 @@ export default function Apple() {
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
       {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-5">
-        <div className="flex-grow border-t border-gray-400"></div>
-        <span className="px-4 text-gray-600 text-sm uppercase tracking-wider">
+      <div className="flex items-center my-6 -mx-6">
+        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
+        <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
           Alege modelul
         </span>
-        <div className="flex-grow border-t border-gray-300"></div>
+        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 w-full max-w-6xl mx-auto justify-items-center">
         {modele.map((model) => (
           <Link
             key={model.slug}
             to={`/apple/${model.slug}`}
-            className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300"
+            className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300 md: w-40 h-54"
           >
             <img
               src={model.imagine}

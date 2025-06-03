@@ -1,0 +1,5 @@
+node_modules/
+*.local
+functions/index.js
+package-lock.json
+package.json

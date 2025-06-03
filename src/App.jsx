@@ -7,9 +7,13 @@ import AuthPage from "./pages/AuthPage";
 import Register_Form from "./components/RegisterForm";
 import { useEffect } from "react";
 import { fetchAccessoriesByModel } from "./utils/fetchAccessoriesByModel";
+import PrivateRoute from "./components/PrivateRoute";
+import Checkout from "./pages/Checkout";
+import Huawei from "./pages/Huawei";
+import Delivery from "./pages/Delivery";
 
 function App() {
-  // ✅ Preloading imagini din Firebase
+  //  Preloading imagini din Firebase
   useEffect(() => {
     async function preloadImages() {
       try {
@@ -36,7 +40,11 @@ function App() {
       <Route path="/samsung" element={<Samsung />} />
       <Route path="/apple/:slug" element={<Model />} />
       <Route path="/samsung/:slug" element={<Model />} />
-      <Route path="register" element={<AuthPage />} />
+      <Route path="/cos" element={<Checkout />} />
+      <Route path="/register" element={<AuthPage />} />
+      <Route path="/huawei" element={<Huawei />} />
+      <Route path="/huawei/:slug" element={<Model />} />
+      <Route path="/cos/livrare" element={<Delivery />} />
     </Routes>
   );
 }

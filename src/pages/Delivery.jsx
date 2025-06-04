@@ -21,10 +21,13 @@ export default function Delivery() {
     telefon: "",
     email: "",
     plata: "ramburs",
+    codPromo: "",
   });
   const [showThankYou, setShowThankYou] = useState(false);
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCart();
+  const [discount, setDiscount] = useState(0);
+  const [promoStatus, setPromoStatus] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,8 +37,6 @@ export default function Delivery() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { nume, prenume, adresa, judet, localitate, telefon, email } = form;
-    console.log("➡️ FORMĂ TRIMISĂ:", form);
-    console.log("🛒 CART ITEMS:", cartItems);
 
     if (
       ![nume, prenume, adresa, judet, localitate, telefon, email].every(
@@ -56,8 +57,10 @@ export default function Delivery() {
       return;
     }
 
+    const totalFinal =
+      cartItems.reduce((s, i) => s + i.pret, 0) * (1 - discount / 100);
+
     if (form.plata === "card") {
-      console.log("💳 Plata cu cardul selectată. Inițiez Stripe...");
       const stripe = await stripePromise;
       const lineItems = cartItems.map((item) => ({
         nume: item.nume,
@@ -71,22 +74,16 @@ export default function Delivery() {
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items: lineItems }),
+            body: JSON.stringify({
+              items: lineItems,
+              promoCodeText: form.codPromo,
+            }),
           }
-        );
-        console.log(
-          "📤 Trimitem spre Stripe:",
-          JSON.stringify({ items: lineItems }, null, 2)
         );
 
         const data = await response.json();
-        console.log("📦 Răspuns Stripe:", data);
 
-        if (!data.id) {
-          throw new Error(
-            "Stripe nu a returnat un sessionId. Verifică funcția createCheckoutSession."
-          );
-        }
+        if (!data.id) throw new Error("Stripe nu a returnat un sessionId.");
 
         await stripe.redirectToCheckout({ sessionId: data.id });
       } catch (err) {
@@ -98,6 +95,8 @@ export default function Delivery() {
         await addDoc(collection(db, "comenzi"), {
           ...form,
           produse: cartItems,
+          discount,
+          totalFinal,
           data: serverTimestamp(),
         });
         setShowThankYou(true);
@@ -109,9 +108,12 @@ export default function Delivery() {
     }
   };
 
+  const subtotal = cartItems.reduce((s, i) => s + i.pret, 0);
+
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
+
       <div className="relative w-full my-5 pb-6">
         <div className="absolute inset-0 -mx-6 flex items-center">
           <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
@@ -183,6 +185,72 @@ export default function Delivery() {
           className="border border-gray-300 px-4 py-2 rounded"
         />
 
+        <div className="flex gap-2 items-center">
+          <input
+            type="text"
+            name="codPromo"
+            placeholder="Cod promoțional"
+            value={form.codPromo}
+            onChange={handleChange}
+            className="border border-gray-300 px-4 py-2 rounded w-full"
+          />
+          <button
+            type="button"
+            onClick={async () => {
+              setPromoStatus("loading");
+              const res = await fetch(
+                "https://us-central1-vvshop-srl.cloudfunctions.net/validatePromoCode",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ code: form.codPromo }),
+                }
+              );
+              const data = await res.json();
+              if (res.ok && data.discount) {
+                setDiscount(data.discount);
+                setPromoStatus("success");
+              } else {
+                setDiscount(0);
+                setPromoStatus("error");
+              }
+            }}
+            className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
+          >
+            Verifică
+          </button>
+        </div>
+
+        {promoStatus === "success" && (
+          <p className="text-green-600 text-sm mt-1">
+            ✅ Cod aplicat: {discount}% reducere
+          </p>
+        )}
+        {promoStatus === "error" && (
+          <p className="text-red-600 text-sm mt-1">
+            ❌ Cod invalid sau expirat
+          </p>
+        )}
+
+        <div className="bg-gray-50 border border-gray-300 p-4 rounded mt-4 text-sm text-gray-700 font-medium space-y-1">
+          {discount > 0 && (
+            <>
+              <p className="text-green-700">
+                🎁 Reducere aplicată: {discount}%
+              </p>
+              <p className="text-green-800 font-bold">
+                💰 Total cu reducere:{" "}
+                {(subtotal * (1 - discount / 100)).toFixed(2)} lei
+              </p>
+            </>
+          )}
+          {discount === 0 && (
+            <p className="font-bold">
+              💳 Total de plată: {subtotal.toFixed(2)} lei
+            </p>
+          )}
+        </div>
+
         <div>
           <p className="font-semibold text-black">Metodă de plată:</p>
           <label className="flex items-center gap-2 mt-2">
@@ -192,7 +260,7 @@ export default function Delivery() {
               value="ramburs"
               checked={form.plata === "ramburs"}
               onChange={handleChange}
-            />
+            />{" "}
             Plata la livrare (ramburs)
           </label>
           <label className="flex items-center gap-2 mt-2">
@@ -202,7 +270,7 @@ export default function Delivery() {
               value="card"
               checked={form.plata === "card"}
               onChange={handleChange}
-            />
+            />{" "}
             Plată cu cardul (Stripe)
           </label>
         </div>
@@ -216,6 +284,7 @@ export default function Delivery() {
       </form>
 
       <Footer />
+
       {showThankYou && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center relative w-full max-w-sm">
@@ -245,4 +314,3 @@ export default function Delivery() {
     </div>
   );
 }
-// This code defines a Delivery page component that allows users to enter their delivery information and choose a payment method.

@@ -7,13 +7,12 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export default function Checkout() {
-  const { cartItems } = useCart();
+  const { cartItems, updateQuantity } = useCart();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleContinue = () => {
-    console.log("currentUser:", currentUser);
     if (!currentUser) {
       setShowAuthModal(true);
     } else {
@@ -26,7 +25,11 @@ export default function Checkout() {
       setShowAuthModal(false);
     }
   }, [currentUser, showAuthModal]);
-  const total = cartItems.reduce((sum, item) => sum + item.pret, 0);
+
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.pret * (item.quantity || 1),
+    0
+  );
 
   if (cartItems.length === 0) {
     return (
@@ -42,7 +45,7 @@ export default function Checkout() {
       <div className="flex items-center my-6 -mx-6">
         <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
         <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
-          Produse in cos
+          Produse in coș
         </span>
         <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
       </div>
@@ -62,6 +65,36 @@ export default function Checkout() {
               <div>
                 <p className="font-bold text-base">{item.nume}</p>
                 <p className="text-green-600">{item.pret.toFixed(2)} lei</p>
+
+                <div className="mt-2 flex items-center gap-3">
+                  <span className="text-sm">Cantitate:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="w-8 h-8 flex items-center justify-center rounded border border-gray-300 text-xl hover:bg-gray-100"
+                      onClick={() =>
+                        updateQuantity(
+                          item.id,
+                          Math.max(1, (item.quantity || 1) - 1)
+                        )
+                      }
+                    >
+                      −
+                    </button>
+                    <span className="w-8 text-center">
+                      {item.quantity || 1}
+                    </span>
+                    <button
+                      type="button"
+                      className="w-8 h-8 flex items-center justify-center rounded border border-gray-300 text-xl hover:bg-gray-100"
+                      onClick={() =>
+                        updateQuantity(item.id, (item.quantity || 1) + 1)
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </li>

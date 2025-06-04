@@ -1,7 +1,11 @@
 const functions = require("firebase-functions");
-const { createCheckoutSession } = require("./CreateCheckoutSession");
-
+const {
+  createCheckoutSession,
+  validatePromoCode,
+} = require("./CreateCheckoutSession");
 // exportul funcției ca endpoint Firebase
 exports.createCheckoutSession = functions.https.onRequest(
   createCheckoutSession
 );
+
+exports.validatePromoCode = functions.https.onRequest(validatePromoCode);

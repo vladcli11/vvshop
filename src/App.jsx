@@ -11,6 +11,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import Checkout from "./pages/Checkout";
 import Huawei from "./pages/Huawei";
 import Delivery from "./pages/Delivery";
+import Succes from "./pages/Succes";
+import Anulare from "./pages/Anulare";
 
 function App() {
   //  Preloading imagini din Firebase
@@ -45,6 +47,8 @@ function App() {
       <Route path="/huawei" element={<Huawei />} />
       <Route path="/huawei/:slug" element={<Model />} />
       <Route path="/cos/livrare" element={<Delivery />} />
+      <Route path="/succes" element={<Succes />} />
+      <Route path="/anulare" element={<Anulare />} />
     </Routes>
   );
 }

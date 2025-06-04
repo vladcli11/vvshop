@@ -1,14 +1,14 @@
 /* eslint-env node */
 module.exports = {
   env: {
-    node: true, // ✅ spune lui ESLint că ești într-un mediu Node.js
+    node: true, 
     es2021: true,
-    commonjs: true, // ✅ permite variabile globale CommonJS precum 'module'
+    commonjs: true, 
   },
   extends: "eslint:recommended",
   parserOptions: {
     ecmaVersion: 12,
-    sourceType: "script", // ✅ folosește CommonJS (cu require/module.exports)
+    sourceType: "script", 
   },
   rules: {},
 };

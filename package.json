@@ -24,7 +24,7 @@
     "react-dom": "^19.0.0",
     "react-lazy-load-image-component": "^1.6.3",
     "react-router-dom": "^7.5.0",
-    "stripe": "^18.2.0",
+    "stripe": "^18.0.0",
     "tailwind": "^2.3.1"
   },
   "devDependencies": {

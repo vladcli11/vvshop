@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const stripe = require("stripe")(functions.config().stripe.secret);
+const admin = require("firebase-admin");
 
 // 🎯 FUNCȚIE 1 — CHECKOUT
 exports.createCheckoutSession = async (req, res) => {
@@ -100,3 +101,49 @@ exports.validatePromoCode = async (req, res) => {
     res.status(500).json({ error: "Eroare server." });
   }
 };
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+const db = admin.firestore();
+
+exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  const endpointSecret = functions.config().stripe.webhook;
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+  } catch (err) {
+    console.error("❌ Eroare semnătură Stripe:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    const sessionId = session.id;
+
+    try {
+      const snapshot = await db
+        .collection("comenzi")
+        .where("stripeSessionId", "==", sessionId)
+        .limit(1)
+        .get();
+
+      if (!snapshot.empty) {
+        const docRef = snapshot.docs[0].ref;
+        await docRef.update({ status: "platita" });
+        console.log("🟢 Comandă actualizată ca platită:", docRef.id);
+      } else {
+        console.warn("⚠️ Nicio comandă găsită cu acest sessionId:", sessionId);
+      }
+
+      return res.status(200).send("OK");
+    } catch (error) {
+      console.error("❌ Eroare Firestore:", error.message);
+      return res.status(500).send("Eroare server");
+    }
+  }
+
+  res.status(200).send("Event ignorat");
+});

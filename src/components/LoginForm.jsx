@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/firebase-config";
+import { auth, db } from "../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function LoginForm({ onClose, redirectTo = "/home" }) {
   const [email, setEmail] = useState("");
@@ -13,7 +14,21 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      console.log("✅ Google login reușit:", result.user);
+      const user = result.user;
+      console.log("✅ Google login reușit:", user);
+
+      // 🔍 Verifică dacă există document Firestore pentru user
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+
+      if (!snap.exists()) {
+        // Creează documentul cu rol implicit
+        await setDoc(userRef, {
+          email: user.email,
+          role: user.email === "scvvshopsrl@gmail.com" ? "owner" : "user",
+        });
+        console.log("🟢 Document Firestore creat pentru user:", user.email);
+      }
 
       if (typeof onClose === "function") {
         onClose();

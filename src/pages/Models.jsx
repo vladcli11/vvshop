@@ -7,6 +7,8 @@ import Footer from "../components/Footer";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import useCart from "../context/useCart";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 export default function Models() {
   const { slug } = useParams();
@@ -25,7 +27,7 @@ export default function Models() {
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
       {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-6 -mx-6">
+      <div className="flex items-center my-4 -mx-6">
         <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
         <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
           Accesorii {slug.replace(/-/g, " ")}
@@ -39,20 +41,32 @@ export default function Models() {
           Momentan nu există accesorii disponibile.
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-fit max-w-6xl mx-auto justify-items-center">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-6xl mx-auto justify-items-center">
           {accesorii.map((item) => (
             <div
               key={item.id}
               className="border p-2 rounded-xl flex flex-col justify-between items-center hover:shadow-xl transition-transform duration-200 w-full h-full"
             >
-              <LazyLoadImage
-                src={item.imagine}
-                alt={item.nume}
-                effect="blur" // 🔄 activează fade-in cu blur
-                width={128}
-                height={128}
-                className="w-32 h-32 object-contain mb-1"
-              />
+              <div className="w-full flex justify-center mb-2">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={1}
+                  pagination={{ clickable: true }}
+                  style={{ width: "130px", maxWidth: "100%" }}
+                >
+                  {item.imagine?.map((url, index) => (
+                    <SwiperSlide key={index}>
+                      <LazyLoadImage
+                        src={url}
+                        alt={`${item.nume} imagine ${index + 1}`}
+                        effect="blur"
+                        className="w-full h-32 object-contain"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+
               <h2 className="font-bold text-center text-black text-xl">
                 {item.nume}
               </h2>

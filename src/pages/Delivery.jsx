@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
@@ -6,6 +6,7 @@ import { db } from "../firebase/firebase-config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
+import useAuth from "../context/useAuth";
 
 const stripePromise = loadStripe(
   "pk_test_51RUNogHJkUS6tZsDVmMisYsq1JYSmbGzoHVXtUwBJhn82ED1qAHQxqAJ2pj40OGzcIfzz5dqtDST7AezHfHmpdRI00eoo4Am7T"
@@ -28,6 +29,16 @@ export default function Delivery() {
   const { cartItems, clearCart } = useCart();
   const [discount, setDiscount] = useState(0);
   const [promoStatus, setPromoStatus] = useState("");
+  const { currentUser } = useAuth();
+  // 🟢 Preluam datele utilizatorului curent daca este autentificat
+  useEffect(() => {
+    if (currentUser?.email && form.email === "") {
+      setForm((prev) => ({
+        ...prev,
+        email: currentUser.email,
+      }));
+    }
+  }, [currentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,6 +96,20 @@ export default function Delivery() {
 
         if (!data.id) throw new Error("Stripe nu a returnat un sessionId.");
 
+        // 🟢 Salvăm comanda în Firestore cu status de așteptare
+        await addDoc(collection(db, "comenzi"), {
+          ...form,
+          produse: cartItems,
+          discount,
+          totalFinal,
+          status: "asteptare_plata",
+          stripeSessionId: data.id,
+          data: serverTimestamp(),
+          uid: currentUser?.uid || null,
+          accountEmail: currentUser?.email || null,
+        });
+
+        // 🟣 Trimite către Stripe
         await stripe.redirectToCheckout({ sessionId: data.id });
       } catch (err) {
         console.error("❌ Eroare Stripe:", err);
@@ -98,6 +123,8 @@ export default function Delivery() {
           discount,
           totalFinal,
           data: serverTimestamp(),
+          uid: currentUser?.uid || null,
+          accountEmail: currentUser?.email || null,
         });
         setShowThankYou(true);
         clearCart();

@@ -11,7 +11,7 @@ export default function Home() {
       {/*  Header fix */}
       <Header />
       {/*  Conținut principal */}
-      <main className="flex-grow px-3 pb-10 flex flex-col items-center">
+      <main className="flex-grow pb-4 flex flex-col items-center">
         {/*  Separator */}
         <div className=" relative w-full my-5">
           <div className="absolute inset-0 -mx-6 flex items-center">

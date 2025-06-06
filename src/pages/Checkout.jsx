@@ -33,7 +33,24 @@ export default function Checkout() {
 
   if (cartItems.length === 0) {
     return (
-      <h2 className="text-center text-gray-500 mt-10">Coșul este gol 🛒</h2>
+      <div className="min-h-screen bg-white px-6">
+        <Header />
+        <div className=" relative w-full my-6">
+          <div className="absolute inset-0 -mx-6 flex items-center">
+            <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
+            <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
+              Coșul este gol 🛒
+            </span>
+            <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
+          </div>
+        </div>
+        <div className="text-center text-gray-500 mt-20">
+          <p className="mt-8 text-xl text-gray-700">
+            Adaugă produse în coș pentru a continua cumpărăturile.
+          </p>
+        </div>
+        <Footer />
+      </div>
     );
   }
 

@@ -13,6 +13,12 @@ import Huawei from "./pages/Huawei";
 import Delivery from "./pages/Delivery";
 import Succes from "./pages/Succes";
 import Anulare from "./pages/Anulare";
+import Contact from "./pages/Contact";
+import Termeni from "./pages/Termeni";
+import Confidentialitate from "./pages/Confidentialitate";
+import LivrareRetur from "./pages/LivrareRetur";
+import UserOrders from "./pages/UserOrders";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   //  Preloading imagini din Firebase
@@ -47,8 +53,21 @@ function App() {
       <Route path="/huawei" element={<Huawei />} />
       <Route path="/huawei/:slug" element={<Model />} />
       <Route path="/cos/livrare" element={<Delivery />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/succes" element={<Succes />} />
       <Route path="/anulare" element={<Anulare />} />
+      <Route path="/termeni" element={<Termeni />} />
+      <Route path="/confidentialitate" element={<Confidentialitate />} />
+      <Route path="/livrare-retur" element={<LivrareRetur />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route
+        path="/contul-meu"
+        element={
+          <PrivateRoute>
+            <UserOrders />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 }

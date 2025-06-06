@@ -1,14 +1,14 @@
 /* eslint-env node */
 module.exports = {
   env: {
-    node: true, 
+    node: true,
     es2021: true,
-    commonjs: true, 
+    commonjs: true,
   },
   extends: "eslint:recommended",
   parserOptions: {
     ecmaVersion: 12,
-    sourceType: "script", 
+    sourceType: "script",
   },
   rules: {},
 };

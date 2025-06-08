@@ -8,6 +8,7 @@ import Register_Form from "./components/RegisterForm";
 import { useEffect } from "react";
 import { fetchAccessoriesByModel } from "./utils/fetchAccessoriesByModel";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminRoute from "./components/AdminRoute";
 import Checkout from "./pages/Checkout";
 import Huawei from "./pages/Huawei";
 import Delivery from "./pages/Delivery";
@@ -59,7 +60,14 @@ function App() {
       <Route path="/termeni" element={<Termeni />} />
       <Route path="/confidentialitate" element={<Confidentialitate />} />
       <Route path="/livrare-retur" element={<LivrareRetur />} />
-      <Route path="/admin" element={<AdminDashboard />} />
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
+      />
       <Route
         path="/contul-meu"
         element={

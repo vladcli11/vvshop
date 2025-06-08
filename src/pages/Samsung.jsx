@@ -237,6 +237,7 @@ export default function Samsung() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
+
       {/* 🔸 Separator vizual */}
       <div className="flex items-center my-4 -mx-6">
         <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />

@@ -29,7 +29,7 @@ export default function Header() {
   }, []);
 
   return (
-    <div className="relative h-[64px] mb-2 w-full max-w-6xl mx-auto">
+    <div className="relative w-full max-w-4xl mx-auto px-6 h-[64px] mb-2">
       {/* Bara de navigare */}
       <Link
         to="/"

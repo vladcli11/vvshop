@@ -35,6 +35,7 @@ export default function Checkout() {
     return (
       <div className="min-h-screen bg-white px-6">
         <Header />
+
         <div className=" relative w-full my-6">
           <div className="absolute inset-0 -mx-6 flex items-center">
             <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
@@ -56,7 +57,9 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
-      <Header />
+      <div className="max-w-6xl mx-auto">
+        <Header />
+      </div>
 
       {/* Separator */}
       <div className="flex items-center my-6 -mx-6">

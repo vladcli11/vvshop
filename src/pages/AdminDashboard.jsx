@@ -1,12 +1,10 @@
 // pages/AdminDashboard.jsx
+import { collection, doc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
-import useUserRole from "../context/useUserRole";
-import { updateDoc, doc } from "firebase/firestore";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
-import StatusBadge from "../components/StatusBadge";
+import Header from "../components/Header";
+import useUserRole from "../context/useUserRole";
+import { db } from "../firebase/firebase-config";
 
 export default function AdminDashboard() {
   const { role, loading } = useUserRole();
@@ -37,31 +35,32 @@ export default function AdminDashboard() {
     if (role === "owner") fetchOrders();
   }, [role]);
 
-  if (loading) return <p className="text-center mt-10">Se încarcă...</p>;
+  if (loading) return <p className="mt-10 text-center">Se încarcă...</p>;
 
   if (role !== "owner") {
     return (
-      <div className="text-center text-red-600 mt-10 text-lg">
+      <div className="mt-10 text-lg text-center text-red-600">
         ❌ Acces interzis. Această pagină este doar pentru administrator.
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white px-6 pb-6">
+    <div className="min-h-screen px-6 pb-6 bg-white">
       <Header />
-      <h1 className="text-2xl font-bold text-center my-6">
+
+      <h1 className="my-6 text-2xl font-bold text-center">
         📦 Comenzi înregistrate
       </h1>
 
-      <div className="grid gap-4 max-w-4xl mx-auto">
+      <div className="grid max-w-4xl gap-4 mx-auto">
         {orders.length === 0 ? (
           <p className="text-center text-gray-500">Nicio comandă deocamdată.</p>
         ) : (
           orders.map((order) => (
             <div
               key={order.id}
-              className="border p-4 rounded shadow-sm bg-gray-50 space-y-2"
+              className="p-4 space-y-2 border rounded shadow-sm bg-gray-50"
             >
               <div className="flex justify-between text-sm text-gray-600">
                 <span>ID: {order.id}</span>
@@ -85,7 +84,7 @@ export default function AdminDashboard() {
                     onChange={(e) =>
                       handleStatusChange(order.id, e.target.value)
                     }
-                    className="ml-2 border border-gray-300 rounded px-2 py-1 text-sm"
+                    className="px-2 py-1 ml-2 text-sm border border-gray-300 rounded"
                   >
                     <option value="plasata">plasata</option>
                     <option value="asteptare_plata">asteptare_plata</option>
@@ -102,7 +101,7 @@ export default function AdminDashboard() {
                   </li>
                 ))}
               </ul>
-              <p className="font-bold text-green-700 mt-2">
+              <p className="mt-2 font-bold text-green-700">
                 Total: {order.totalFinal?.toFixed(2)} lei
               </p>
             </div>

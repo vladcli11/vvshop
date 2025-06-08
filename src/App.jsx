@@ -19,6 +19,7 @@ import Confidentialitate from "./pages/Confidentialitate";
 import LivrareRetur from "./pages/LivrareRetur";
 import UserOrders from "./pages/UserOrders";
 import AdminDashboard from "./pages/AdminDashboard";
+import ProductPage from "./pages/ProductPage";
 
 function App() {
   //  Preloading imagini din Firebase
@@ -57,6 +58,7 @@ function App() {
       <Route path="/succes" element={<Succes />} />
       <Route path="/anulare" element={<Anulare />} />
       <Route path="/termeni" element={<Termeni />} />
+      <Route path="/produs/:slug" element={<ProductPage />} />
       <Route path="/confidentialitate" element={<Confidentialitate />} />
       <Route path="/livrare-retur" element={<LivrareRetur />} />
       <Route path="/admin" element={<AdminDashboard />} />

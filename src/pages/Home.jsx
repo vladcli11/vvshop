@@ -7,14 +7,13 @@ import Footer from "../components/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-white px-6">
-      {/*  Header fix */}
+    <div className="min-h-screen bg-white px-6 pb-6 ">
       <Header />
-      {/*  Conținut principal */}
-      <main className="flex-grow pb-4 flex flex-col items-center">
-        {/*  Separator */}
-        <div className=" relative w-full my-5">
-          <div className="absolute inset-0 -mx-6 flex items-center">
+
+      <main className="pb-10 flex flex-col items-center">
+        {/* 🔸 Separator full-width */}
+        <div className="w-screen px-6 my-2">
+          <div className="flex items-center">
             <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
             <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
               Alege brandul
@@ -24,7 +23,7 @@ export default function Home() {
         </div>
 
         {/* 🔹 Grilă branduri */}
-        <div className="pt-6 grid grid-cols-1 gap-3 w-full max-w-sm">
+        <div className="pt-4 grid grid-cols-1 gap-3 w-full max-w-sm px-6">
           <Link
             to="/apple"
             className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300"
@@ -36,6 +35,7 @@ export default function Home() {
             />
             <span className="mt-2 font-semibold text-black text-xl">Apple</span>
           </Link>
+
           <Link
             to="/samsung"
             className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300"
@@ -66,7 +66,6 @@ export default function Home() {
         </div>
       </main>
 
-      {/*  Footer */}
       <Footer />
     </div>
   );

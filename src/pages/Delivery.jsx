@@ -69,14 +69,15 @@ export default function Delivery() {
     }
 
     const totalFinal =
-      cartItems.reduce((s, i) => s + i.pret, 0) * (1 - discount / 100);
+      cartItems.reduce((s, i) => s + i.pret * (i.quantity || 1), 0) *
+      (1 - discount / 100);
 
     if (form.plata === "card") {
       const stripe = await stripePromise;
       const lineItems = cartItems.map((item) => ({
         nume: item.nume,
         pret: item.pret,
-        quantity: 1,
+        quantity: item.quantity || 1,
       }));
 
       try {
@@ -135,13 +136,16 @@ export default function Delivery() {
     }
   };
 
-  const subtotal = cartItems.reduce((s, i) => s + i.pret, 0);
+  const subtotal = cartItems.reduce(
+    (s, i) => s + i.pret * (i.quantity || 1),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
 
-      <div className="relative w-full my-5 pb-6">
+      <div className="relative w-full my-4 pb-6">
         <div className="absolute inset-0 -mx-6 flex items-center">
           <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
           <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">

@@ -6,6 +6,7 @@ export default function Anulare() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
+
       <div className="text-center mt-20">
         <h1 className="text-2xl font-bold text-red-600">
           ❌ Plata a fost anulată

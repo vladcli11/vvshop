@@ -4,10 +4,10 @@ import { db } from "../firebase/firebase-config";
 export async function fetchAccessoriesByModel(slug) {
   if (slug === "all") {
     const snapshot = await getDocs(collection(db, "products"));
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return sortByTipAndName(items);
   }
 
-  // Două query-uri: unul pentru array, unul pentru string
   const qArray = query(
     collection(db, "products"),
     where("models", "array-contains", slug)
@@ -23,7 +23,6 @@ export async function fetchAccessoriesByModel(slug) {
     getDocs(qString),
   ]);
 
-  // Combinare + eliminare duplicate (dacă există)
   const seen = new Set();
   const merged = [...snapArray.docs, ...snapString.docs].filter((doc) => {
     if (seen.has(doc.id)) return false;
@@ -31,5 +30,19 @@ export async function fetchAccessoriesByModel(slug) {
     return true;
   });
 
-  return merged.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const items = merged.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return sortByTipAndName(items);
+}
+
+// 🔁 Funcție separată, reutilizabilă și clară
+function sortByTipAndName(items) {
+  return items.sort((a, b) => {
+    const isFolieA = a.tip === "folie";
+    const isFolieB = b.tip === "folie";
+
+    if (isFolieA && !isFolieB) return -1;
+    if (!isFolieA && isFolieB) return 1;
+
+    return (a.nume || "").localeCompare(b.nume || "");
+  });
 }

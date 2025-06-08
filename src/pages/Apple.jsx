@@ -9,6 +9,7 @@ import iphone14pro from "../assets/iphone14pro.png";
 import iphone13promax from "../assets/iphone13promax.png";
 import iphone13pro from "../assets/iphone13pro.png";
 import iphone13 from "../assets/iphone13.png";
+import iphone14 from "../assets/iphone14.webp";
 import iphone12 from "../assets/iphone12.png";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -34,6 +35,11 @@ const modele = [
   },
   { nume: "iPhone 14 Pro", slug: "iphone-14-pro", imagine: iphone14pro },
   {
+    nume: "iPhone 14",
+    slug: "iphone-14",
+    imagine: iphone14,
+  },
+  {
     nume: "iPhone 13 Pro Max",
     slug: "iphone-13-pro-max",
     imagine: iphone13promax,
@@ -47,6 +53,7 @@ export default function Apple() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6 ">
       <Header />
+
       {/* 🔸 Separator vizual */}
       <div className="flex items-center my-4 -mx-6">
         <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
@@ -56,7 +63,7 @@ export default function Apple() {
         <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 w-full max-w-6xl mx-auto justify-items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 w-full max-w-4xl mx-auto justify-items-center">
         {modele.map((model) => (
           <Link
             key={model.slug}

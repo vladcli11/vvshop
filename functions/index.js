@@ -4,7 +4,8 @@ const {
   validatePromoCode,
   stripeWebhook,
 } = require("./CreateCheckoutSession");
-// exportul funcției ca endpoint Firebase
+
+// exportul funcțiilor Stripe ca endpoint-uri Firebase
 exports.createCheckoutSession = functions.https.onRequest(
   createCheckoutSession
 );

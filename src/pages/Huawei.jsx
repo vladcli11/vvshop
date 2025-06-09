@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import P70Ultra from "../assets/P70-ultra.webp";
-import P70Pro from "../assets/P70-Pro.webp";
+import P70Pro from "../assets/P70-pro.webp";
 import P70 from "../assets/P70.webp";
 import P60Pro from "../assets/Huawei-P60-Pro.webp";
 import P50ProPocket from "../assets/Huawei-P50-Pocketavif.webp";

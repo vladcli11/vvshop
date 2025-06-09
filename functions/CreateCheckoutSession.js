@@ -57,8 +57,8 @@ exports.createCheckoutSession = async (req, res) => {
       line_items,
       discounts,
       locale: "auto",
-      success_url: "http://192.168.13.66:5173/succes",
-      cancel_url: "http://192.168.13.66:5173/anulare",
+      success_url: "https://vv-shop.ro/succes",
+      cancel_url: "https://vv-shop.ro/anulare",
     });
 
     console.log("🟢 Sesiune Stripe creată:", session.id);

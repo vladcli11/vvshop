@@ -5,9 +5,15 @@ const {
   stripeWebhook,
 } = require("./CreateCheckoutSession");
 
-// exportul funcțiilor Stripe ca endpoint-uri Firebase
-exports.createCheckoutSession = functions.https.onRequest(
-  createCheckoutSession
-);
-exports.validatePromoCode = functions.https.onRequest(validatePromoCode);
-exports.stripeWebhook = functions.https.onRequest(stripeWebhook);
+// Mutăm funcțiile în europa-west4
+exports.createCheckoutSession = functions
+  .region("europe-west1")
+  .https.onRequest(createCheckoutSession);
+
+exports.validatePromoCode = functions
+  .region("europe-west1")
+  .https.onRequest(validatePromoCode);
+
+exports.stripeWebhook = functions
+  .region("europe-west1")
+  .https.onRequest(stripeWebhook);

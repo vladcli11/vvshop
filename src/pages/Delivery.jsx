@@ -82,7 +82,7 @@ export default function Delivery() {
 
       try {
         const response = await fetch(
-          "https://us-central1-vvshop-srl.cloudfunctions.net/createCheckoutSession",
+          "https://europe-west1-vvshop-srl.cloudfunctions.net/createCheckoutSession",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -142,13 +142,13 @@ export default function Delivery() {
   );
 
   return (
-    <div className="min-h-screen bg-white px-6 pb-6">
+    <div className="min-h-screen px-6 pb-6 bg-white">
       <Header />
 
-      <div className="relative w-full my-4 pb-6">
-        <div className="absolute inset-0 -mx-6 flex items-center">
+      <div className="relative w-full pb-6 my-4">
+        <div className="absolute inset-0 flex items-center -mx-6">
           <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-          <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
+          <span className="px-2 text-base tracking-wider text-gray-600 uppercase whitespace-nowrap">
             Date de livrare
           </span>
           <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
@@ -157,7 +157,7 @@ export default function Delivery() {
 
       <form
         onSubmit={handleSubmit}
-        className="max-w-md mx-auto mt-6 flex flex-col gap-4"
+        className="flex flex-col max-w-md gap-4 mx-auto mt-6"
       >
         <input
           type="text"
@@ -165,7 +165,7 @@ export default function Delivery() {
           placeholder="Nume"
           value={form.nume}
           onChange={handleChange}
-          className="border border-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 border border-gray-300 rounded"
         />
         <input
           type="text"
@@ -173,7 +173,7 @@ export default function Delivery() {
           placeholder="Prenume"
           value={form.prenume}
           onChange={handleChange}
-          className="border border-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 border border-gray-300 rounded"
         />
         <input
           type="text"
@@ -181,7 +181,7 @@ export default function Delivery() {
           placeholder="Adresă"
           value={form.adresa}
           onChange={handleChange}
-          className="border border-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 border border-gray-300 rounded"
         />
         <input
           type="text"
@@ -189,7 +189,7 @@ export default function Delivery() {
           placeholder="Județ"
           value={form.judet}
           onChange={handleChange}
-          className="border border-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 border border-gray-300 rounded"
         />
         <input
           type="text"
@@ -197,7 +197,7 @@ export default function Delivery() {
           placeholder="Localitate"
           value={form.localitate}
           onChange={handleChange}
-          className="border border-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 border border-gray-300 rounded"
         />
         <input
           type="tel"
@@ -205,7 +205,7 @@ export default function Delivery() {
           placeholder="Telefon"
           value={form.telefon}
           onChange={handleChange}
-          className="border border-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 border border-gray-300 rounded"
         />
         <input
           type="email"
@@ -213,24 +213,24 @@ export default function Delivery() {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
-          className="border border-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 border border-gray-300 rounded"
         />
 
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <input
             type="text"
             name="codPromo"
             placeholder="Cod promoțional"
             value={form.codPromo}
             onChange={handleChange}
-            className="border border-gray-300 px-4 py-2 rounded w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded"
           />
           <button
             type="button"
             onClick={async () => {
               setPromoStatus("loading");
               const res = await fetch(
-                "https://us-central1-vvshop-srl.cloudfunctions.net/validatePromoCode",
+                "https://europe-west1-vvshop-srl.cloudfunctions.net/validatePromoCode",
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -246,30 +246,30 @@ export default function Delivery() {
                 setPromoStatus("error");
               }
             }}
-            className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
+            className="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             Verifică
           </button>
         </div>
 
         {promoStatus === "success" && (
-          <p className="text-green-600 text-sm mt-1">
+          <p className="mt-1 text-sm text-green-600">
             ✅ Cod aplicat: {discount}% reducere
           </p>
         )}
         {promoStatus === "error" && (
-          <p className="text-red-600 text-sm mt-1">
+          <p className="mt-1 text-sm text-red-600">
             ❌ Cod invalid sau expirat
           </p>
         )}
 
-        <div className="bg-gray-50 border border-gray-300 p-4 rounded mt-4 text-sm text-gray-700 font-medium space-y-1">
+        <div className="p-4 mt-4 space-y-1 text-sm font-medium text-gray-700 border border-gray-300 rounded bg-gray-50">
           {discount > 0 && (
             <>
               <p className="text-green-700">
                 🎁 Reducere aplicată: {discount}%
               </p>
-              <p className="text-green-800 font-bold">
+              <p className="font-bold text-green-800">
                 💰 Total cu reducere:{" "}
                 {(subtotal * (1 - discount / 100)).toFixed(2)} lei
               </p>
@@ -308,7 +308,7 @@ export default function Delivery() {
 
         <button
           type="submit"
-          className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+          className="py-2 text-white transition bg-green-600 rounded hover:bg-green-700"
         >
           Trimite comanda
         </button>
@@ -317,25 +317,25 @@ export default function Delivery() {
       <Footer />
 
       {showThankYou && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center relative w-full max-w-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="relative w-full max-w-sm p-6 text-center bg-white rounded-lg shadow-lg">
             <button
               onClick={() => {
                 setShowThankYou(false);
                 navigate("/");
               }}
-              className="absolute top-2 right-3 text-xl"
+              className="absolute text-xl top-2 right-3"
             >
               ✖
             </button>
-            <h2 className="text-lg font-bold mb-4">🎉 Comandă finalizată!</h2>
-            <p className="text-gray-600 mb-4">Îți mulțumim pentru comandă!</p>
+            <h2 className="mb-4 text-lg font-bold">🎉 Comandă finalizată!</h2>
+            <p className="mb-4 text-gray-600">Îți mulțumim pentru comandă!</p>
             <button
               onClick={() => {
                 setShowThankYou(false);
                 navigate("/");
               }}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+              className="px-4 py-2 text-white transition bg-green-600 rounded hover:bg-green-700"
             >
               Mergi la pagina principală
             </button>

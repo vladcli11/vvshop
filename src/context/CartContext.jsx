@@ -1,13 +1,21 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    const stored = localStorage.getItem("cartItems");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = (product) => {
     setCartItems((prev) => [...prev, product]);
   };
+
   const updateQuantity = (id, quantity) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -18,7 +26,10 @@ export function CartProvider({ children }) {
     );
   };
 
-  const clearCart = () => setCartItems([]);
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem("cartItems");
+  };
 
   return (
     <CartContext.Provider
@@ -26,7 +37,7 @@ export function CartProvider({ children }) {
         cartItems,
         addToCart,
         clearCart,
-        updateQuantity, // 🔥 expunem funcția în context
+        updateQuantity,
       }}
     >
       {children}

@@ -48,34 +48,33 @@ const modele = [
   { nume: "iPhone 13", slug: "iphone-13", imagine: iphone13 },
   { nume: "iPhone 12 Pro Max", slug: "iphone-12-pro-max", imagine: iphone12 },
 ];
-console.log("✅ Apple.jsx s-a montat");
 export default function Apple() {
   return (
-    <div className="min-h-screen bg-white px-6 pb-6 ">
+    <div className="min-h-screen px-6 pb-6 bg-white ">
       <Header />
 
       {/* 🔸 Separator vizual */}
       <div className="flex items-center my-4 -mx-6">
         <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-        <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
+        <span className="px-2 text-base tracking-wider text-gray-600 uppercase whitespace-nowrap">
           Alege modelul
         </span>
         <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 w-full max-w-4xl mx-auto justify-items-center">
+      <div className="grid w-full max-w-4xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
         {modele.map((model) => (
           <Link
             key={model.slug}
             to={`/apple/${model.slug}`}
-            className="border p-4 rounded-xl flex flex-col items-center hover:shadow-xl transition-transform duration-300 md: w-40 h-54"
+            className="flex flex-col items-center w-40 p-4 transition-transform duration-300 border rounded-xl hover:shadow-xl md: h-54"
           >
             <img
               src={model.imagine}
               alt={model.nume}
-              className="w-32 h-32 object-contain"
+              className="object-contain w-32 h-32"
             />
-            <span className="mt-2 font-semibold text-black text-center">
+            <span className="mt-2 font-semibold text-center text-black">
               {model.nume}
             </span>
           </Link>

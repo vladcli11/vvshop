@@ -15,7 +15,6 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log("✅ Google login reușit:", user);
 
       // 🔍 Verifică dacă există document Firestore pentru user
       const userRef = doc(db, "users", user.uid);
@@ -27,7 +26,6 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
           email: user.email,
           role: user.email === "scvvshopsrl@gmail.com" ? "owner" : "user",
         });
-        console.log("🟢 Document Firestore creat pentru user:", user.email);
       }
 
       if (typeof onClose === "function") {
@@ -42,8 +40,6 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(""); // șterge eroarea anterioară
-
-    console.log("➡️ Trimit login:", email, password);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -72,14 +68,14 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
   return (
     <form
       onSubmit={handleLogin}
-      className="flex flex-col gap-4 max-w-sm mx-auto mt-8"
+      className="flex flex-col max-w-sm gap-4 mx-auto mt-8"
     >
       <input
         type="email"
         id="email"
         name="email"
         placeholder="Email"
-        className="border border-gray-300 text-black px-3 py-2 rounded"
+        className="px-3 py-2 text-black border border-gray-300 rounded"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -89,24 +85,24 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
         id="password"
         name="password"
         placeholder="Parolă"
-        className="border border-gray-300 text-black px-3 py-2 rounded"
+        className="px-3 py-2 text-black border border-gray-300 rounded"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p className="text-sm text-red-500">{error}</p>}
       <button
         type="submit"
-        className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+        className="py-2 text-white transition bg-green-600 rounded hover:bg-green-700"
       >
         Conectează-te
       </button>
-      <div className="text-center mt-2 text-sm text-gray-500">sau</div>
+      <div className="mt-2 text-sm text-center text-gray-500">sau</div>
 
       <button
         type="button"
         onClick={loginWithGoogle}
-        className="bg-red-700 hover:bg-red-800 text-white flex items-center justify-center gap-3 w-full px-4 py-2 rounded mt-3"
+        className="flex items-center justify-center w-full gap-3 px-4 py-2 mt-3 text-white bg-red-700 rounded hover:bg-red-800"
       >
         <img
           src="	https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"

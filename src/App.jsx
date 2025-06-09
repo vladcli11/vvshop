@@ -31,7 +31,6 @@ function App() {
           const img = new Image();
           img.src = item.imagine;
         });
-        console.log("Imagini preîncărcate:", items.length);
       } catch (err) {
         console.error("Eroare preload imagini:", err);
       }

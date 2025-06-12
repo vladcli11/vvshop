@@ -4,6 +4,7 @@ const {
   validatePromoCode,
   stripeWebhook,
 } = require("./CreateCheckoutSession");
+const { generateAwb, saveAwbLabel } = require("./sameday");
 
 // Mutăm funcțiile în europa-west4
 exports.createCheckoutSession = functions
@@ -17,3 +18,6 @@ exports.validatePromoCode = functions
 exports.stripeWebhook = functions
   .region("europe-west1")
   .https.onRequest(stripeWebhook);
+
+exports.generateAwb = generateAwb;
+exports.saveAwbLabel = saveAwbLabel;

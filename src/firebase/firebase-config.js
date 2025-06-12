@@ -3,8 +3,8 @@ import { getAuth } from "firebase/auth";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getFunctions } from "firebase/functions";
 
-// Configurația Firebase
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -16,11 +16,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-const ai = getAI(app, { backend: new GoogleAIBackend() });
-
-export const geminiModel = getGenerativeModel(ai, {
-  model: "gemini-2.0-flash",
-});
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
+export const functions = getFunctions(app, "europe-west1");
+
+const ai = getAI(app, { backend: new GoogleAIBackend() });
+export const geminiModel = getGenerativeModel(ai, {
+  model: "gemini-2.0-flash",
+});

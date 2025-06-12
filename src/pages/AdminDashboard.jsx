@@ -1,10 +1,19 @@
 // pages/AdminDashboard.jsx
-import { collection, doc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import useUserRole from "../context/useUserRole";
 import { db } from "../firebase/firebase-config";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "../firebase/firebase-config";
 
 export default function AdminDashboard() {
   const { role, loading } = useUserRole();
@@ -77,6 +86,33 @@ export default function AdminDashboard() {
                 <p>
                   Plată: {order.plata} | Discount: {order.discount || 0}%
                 </p>
+                {order.awb && (
+                  <button
+                    className="text-sm text-blue-600 underline mt-1"
+                    onClick={async () => {
+                      try {
+                        const saveAwbLabel = httpsCallable(
+                          functions,
+                          "saveAwbLabel"
+                        );
+                        const result = await saveAwbLabel({
+                          awbNumber: order.awb,
+                        });
+
+                        if (result.data.success) {
+                          window.open(result.data.url, "_blank");
+                        } else {
+                          alert("Eticheta nu a putut fi generată.");
+                        }
+                      } catch (err) {
+                        console.error("❌ Eroare la descărcare etichetă:", err);
+                        alert("A apărut o eroare la descărcarea AWB-ului.");
+                      }
+                    }}
+                  >
+                    📄 Descarcă eticheta AWB
+                  </button>
+                )}
                 <div className="text-sm">
                   <strong>Status:</strong>{" "}
                   <select

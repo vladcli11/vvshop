@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
-import { db } from "../firebase/firebase-config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db, functions } from "../firebase/firebase-config";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import useAuth from "../context/useAuth";
+import { httpsCallable } from "firebase/functions";
+import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
 
 const stripePromise = loadStripe(
   "pk_test_51RUNogHJkUS6tZsDVmMisYsq1JYSmbGzoHVXtUwBJhn82ED1qAHQxqAJ2pj40OGzcIfzz5dqtDST7AezHfHmpdRI00eoo4Am7T"
@@ -23,6 +30,8 @@ export default function Delivery() {
     email: "",
     plata: "ramburs",
     codPromo: "",
+    metodaLivrare: "domiciliu",
+    locker: null,
   });
   const [showThankYou, setShowThankYou] = useState(false);
   const navigate = useNavigate();
@@ -32,21 +41,32 @@ export default function Delivery() {
   const { currentUser } = useAuth();
   // 🟢 Preluam datele utilizatorului curent daca este autentificat
   useEffect(() => {
-    if (currentUser?.email && form.email === "") {
-      setForm((prev) => ({
-        ...prev,
-        email: currentUser.email,
-      }));
+    const userEmail = currentUser?.email;
+    if (userEmail && form.email === "") {
+      setForm((prev) => ({ ...prev, email: userEmail }));
     }
-  }, [currentUser]);
+  }, [currentUser, form.email]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "metodaLivrare" && value !== "easybox") {
+      setForm((prev) => ({ ...prev, [name]: value, locker: null }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (form.metodaLivrare === "easybox" && !form.locker) {
+      alert(
+        "Te rugăm să selectezi un locker Easybox înainte de a trimite comanda."
+      );
+      return;
+    }
+
     const { nume, prenume, adresa, judet, localitate, telefon, email } = form;
 
     if (
@@ -118,7 +138,7 @@ export default function Delivery() {
       }
     } else {
       try {
-        await addDoc(collection(db, "comenzi"), {
+        const comandaRef = await addDoc(collection(db, "comenzi"), {
           ...form,
           produse: cartItems,
           discount,
@@ -127,6 +147,35 @@ export default function Delivery() {
           uid: currentUser?.uid || null,
           accountEmail: currentUser?.email || null,
         });
+        console.log("🟢 Test: Intrat în blocul ramburs");
+        try {
+          const genereazaAwb = httpsCallable(functions, "generateAwb");
+          const awbResponse = await genereazaAwb({
+            nume: form.nume,
+            telefon: form.telefon,
+            email: form.email,
+            judet: form.judet,
+            localitate: form.localitate,
+            strada: form.adresa,
+            codAmount: totalFinal,
+            greutate: 1.2,
+          });
+
+          if (awbResponse.data.success) {
+            await updateDoc(comandaRef, {
+              awb: awbResponse.data.awbNumber,
+            });
+            console.log(
+              "✅ AWB generat și salvat:",
+              awbResponse.data.awbNumber
+            );
+          } else {
+            console.warn("⚠️ Generarea AWB a eșuat:", awbResponse.data.error);
+          }
+        } catch (err) {
+          console.error("❌ Eroare la generare AWB:", err);
+        }
+
         setShowThankYou(true);
         clearCart();
       } catch (err) {
@@ -225,6 +274,7 @@ export default function Delivery() {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded"
           />
+
           <button
             type="button"
             onClick={async () => {
@@ -251,6 +301,45 @@ export default function Delivery() {
             Verifică
           </button>
         </div>
+
+        <div className="mt-4">
+          <p className="font-semibold text-black">Metodă de livrare:</p>
+          <label className="flex items-center gap-2 mt-2">
+            <input
+              type="radio"
+              name="metodaLivrare"
+              value="domiciliu"
+              checked={form.metodaLivrare === "domiciliu"}
+              onChange={handleChange}
+            />
+            Livrare la domiciliu
+          </label>
+          <label className="flex items-center gap-2 mt-2">
+            <input
+              type="radio"
+              name="metodaLivrare"
+              value="easybox"
+              checked={form.metodaLivrare === "easybox"}
+              onChange={handleChange}
+            />
+            Livrare la Easybox
+          </label>
+        </div>
+
+        {form.metodaLivrare === "easybox" && (
+          <SelectEasyBoxMap
+            clientId="VVSHOP-CLIENT-ID" // înlocuiește cu cel primit de la Sameday
+            judet={form.judet}
+            localitate={form.localitate}
+            onSelect={(locker) => setForm((prev) => ({ ...prev, locker }))}
+          />
+        )}
+        {form.locker && (
+          <p className="mt-2 text-sm text-gray-700">
+            🧾 Locker selectat: <strong>{form.locker.name}</strong>,{" "}
+            {form.locker.address}, {form.locker.city}
+          </p>
+        )}
 
         {promoStatus === "success" && (
           <p className="mt-1 text-sm text-green-600">

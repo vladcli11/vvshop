@@ -40,7 +40,7 @@ export default function Header() {
 
       <Link
         to="/cos"
-        className="absolute top-4 right-20 bg-white text-gray-700 p-4 rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition z-10"
+        className="absolute top-4 right-20 bg-white text-gray-600 p-4 rounded-full shadow-sm border border-gray-300 hover:bg-gray-100 transition z-10"
         aria-label="Coș de cumpărături"
       >
         <ShoppingCart className="w-6 h-6" />
@@ -59,12 +59,16 @@ export default function Header() {
             setShowModal(true);
           }
         }}
-        className={`absolute top-4 right-1 ${
-          currentUser ? "bg-green-200" : "bg-white"
-        } text-gray-700 p-4 rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition z-10`}
+        className={`absolute top-4 right-2 bg-white p-4 rounded-full shadow-sm transition z-10 hover:bg-gray-100 ${
+          currentUser ? "border-green-500" : "border-gray-300"
+        } border`}
         aria-label="Autentificare / Cont"
       >
-        <User className="w-6 h-6" />
+        <User
+          className={`w-6 h-6 ${
+            currentUser ? "text-green-600" : "text-gray-600"
+          }`}
+        />
       </button>
 
       {/* Modal de login/register */}
@@ -76,7 +80,7 @@ export default function Header() {
       {currentUser && showDropdown && (
         <div
           ref={dropdownRef}
-          className="absolute top-16 right-1 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-20 text-sm w-32 flex flex-col"
+          className="absolute top-20 -right-16 transform -translate-x-1/2 bg-white border border-gray-300 rounded-xl shadow-lg  z-20 text-sm text-center items-center w-28 flex flex-col"
         >
           <Link
             to="/contul-meu"

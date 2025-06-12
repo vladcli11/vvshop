@@ -1,0 +1,9 @@
+📅 12.06.2025 - Implementare metode de livrare
+- Adăugat livrare domiciliu + Easybox
+- Creat SelectEasyboxMap.jsx (cu SDK Sameday)
+- Validări în handleSubmit pentru locker
+- Reset locker la schimbarea metodei
+- Confirmare locker selectat (textual)
+- Așteptăm clientId + acces AWB
+
+Next: testare AWB cu oohLastMile + Stripe Easybox flow

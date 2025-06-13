@@ -170,7 +170,13 @@ export default function Delivery() {
               awbResponse.data.awbNumber
             );
           } else {
-            console.warn("⚠️ Generarea AWB a eșuat:", awbResponse.data.error);
+            const eroare = awbResponse.data.error;
+
+            console.warn("⚠️ Generarea AWB a eșuat:", eroare.message);
+            console.warn(
+              "📦 Erori pe câmpuri:",
+              JSON.stringify(eroare.errors?.children || {}, null, 2)
+            );
           }
         } catch (err) {
           console.error("❌ Eroare la generare AWB:", err);

@@ -88,9 +88,16 @@ export default function Delivery() {
       return;
     }
 
-    const totalFinal =
-      cartItems.reduce((s, i) => s + i.pret * (i.quantity || 1), 0) *
-      (1 - discount / 100);
+    const totalProduse = cartItems.reduce(
+      (s, i) => s + i.pret * (i.quantity || 1),
+      0
+    );
+
+    // Transport: gratuit peste 40 lei, altfel 15 lei
+    const costTransport = totalProduse >= 40 ? 0 : 15;
+
+    // Total final = produse + transport, apoi se aplică discountul
+    const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
 
     if (form.plata === "card") {
       const stripe = await stripePromise;
@@ -191,10 +198,13 @@ export default function Delivery() {
     }
   };
 
-  const subtotal = cartItems.reduce(
+  const totalProduse = cartItems.reduce(
     (s, i) => s + i.pret * (i.quantity || 1),
     0
   );
+
+  const costTransport = totalProduse >= 40 ? 0 : 15;
+  const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
 
   return (
     <div className="min-h-screen px-6 pb-6 bg-white">
@@ -354,28 +364,21 @@ export default function Delivery() {
           </p>
         )}
         {promoStatus === "error" && (
-          <p className="mt-1 text-sm text-red-600">
-            ❌ Cod invalid sau expirat
-          </p>
+          <p className="mt-1 text-sm text-red-600">Cod invalid sau expirat</p>
         )}
 
         <div className="p-4 mt-4 space-y-1 text-sm font-medium text-gray-700 border border-gray-300 rounded bg-gray-50">
+          <p>🛍️ Produse: {totalProduse.toFixed(2)} lei</p>
+          <p>
+            Transport:{" "}
+            {costTransport > 0 ? `${costTransport.toFixed(2)} lei` : "Gratuit"}
+          </p>
           {discount > 0 && (
-            <>
-              <p className="text-green-700">
-                🎁 Reducere aplicată: {discount}%
-              </p>
-              <p className="font-bold text-green-800">
-                💰 Total cu reducere:{" "}
-                {(subtotal * (1 - discount / 100)).toFixed(2)} lei
-              </p>
-            </>
+            <p className="text-green-700">Reducere: {discount}%</p>
           )}
-          {discount === 0 && (
-            <p className="font-bold">
-              💳 Total de plată: {subtotal.toFixed(2)} lei
-            </p>
-          )}
+          <p className="font-bold text-green-800">
+            Total de plată: {totalFinal.toFixed(2)} lei
+          </p>
         </div>
 
         <div>

@@ -38,10 +38,10 @@ exports.generateAwb = functions
         pickupPoint: 11150,
         serviceId: data.service || 7,
         payerType: "recipient",
-        awbPayment: "recipient",
+        awbPayment: data.awbPayment || "recipient",
         cashOnDelivery: data.codAmount || 0,
         insuredValue: 0,
-        packageType: "standard",
+        packageType: data.packageType || "standard",
         codAmount: data.codAmount || 0,
         packageNumber: 1,
         parcels: [
@@ -65,10 +65,10 @@ exports.generateAwb = functions
         awbRecipient: {
           name: data.nume,
           phoneNumber: data.telefon,
-          personType: "person", // 🔒 hardcoded — Sameday cere "person" sau "company"
+          personType: data.personType || "person",
           address: {
-            county: data.judet,
-            city: data.localitate,
+            countyString: data.judet,
+            cityString: data.localitate,
             addressText: data.strada,
           },
         },

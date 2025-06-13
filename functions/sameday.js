@@ -37,7 +37,8 @@ exports.generateAwb = functions
       const awbBody = {
         pickupPoint: 11150,
         serviceId: data.service || 7, // fallback la domiciliu dacă nu e setat
-        payerType: "client",
+        payerType: "recipient", // cine primește coletul plătește
+        awbPayment: "recipient",
         parcels: [
           {
             weight: data.greutate || 1,

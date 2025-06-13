@@ -36,9 +36,14 @@ exports.generateAwb = functions
 
       const awbBody = {
         pickupPoint: 11150,
-        serviceId: data.service || 7, // fallback la domiciliu dacă nu e setat
-        payerType: "recipient", // cine primește coletul plătește
+        serviceId: data.service || 7,
+        payerType: "recipient",
         awbPayment: "recipient",
+        cashOnDelivery: data.codAmount || 0,
+        insuredValue: 0,
+        packageType: "standard",
+        codAmount: data.codAmount || 0,
+        packageNumber: 1,
         parcels: [
           {
             weight: data.greutate || 1,
@@ -57,8 +62,17 @@ exports.generateAwb = functions
             street: data.strada,
           },
         },
-        codAmount: data.codAmount || 0,
-        oohLastMile: data.oohLastMile || undefined, // doar dacă există
+        awbRecipient: {
+          name: data.nume,
+          phoneNumber: data.telefon,
+          personType: "person", // 🔒 hardcoded — Sameday cere "person" sau "company"
+          address: {
+            county: data.judet,
+            city: data.localitate,
+            addressText: data.strada,
+          },
+        },
+        oohLastMile: data.oohLastMile || undefined,
       };
 
       const response = await axios.post(`${BASE_URL}/api/awb`, awbBody, {

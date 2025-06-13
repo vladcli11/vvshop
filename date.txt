@@ -64,3 +64,14 @@ sameday: Ciorap14!
 
 sameday api sandobx: •	utilizator: vvshopTEST 
 		     •	parola: 5ukh&M&7 
+
+
+
+{
+    "token": "51116c671f0f5a5b05485b19c65db1469fd13f4c",
+    "expire_at": "2025-06-12 22:56",
+    "expire_at_utc": "2025-06-12 19:56"
+}
+
+
+firebase functions:config:set sameday.username="vvshopTEST" sameday.password="5ukh&M&7"

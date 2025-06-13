@@ -327,11 +327,12 @@ export default function Delivery() {
         </div>
 
         {form.metodaLivrare === "easybox" && (
-          <SelectEasyBoxMap
-            clientId="VVSHOP-CLIENT-ID" // înlocuiește cu cel primit de la Sameday
+          <SelectEasyboxMap
+            clientId={import.meta.env.VITE_SAMEDAY_CLIENT_ID}
             judet={form.judet}
             localitate={form.localitate}
-            onSelect={(locker) => setForm((prev) => ({ ...prev, locker }))}
+            locker={form.locker}
+            setLocker={(locker) => setForm((prev) => ({ ...prev, locker }))}
           />
         )}
         {form.locker && (

@@ -327,7 +327,7 @@ export default function Delivery() {
         </div>
 
         {form.metodaLivrare === "easybox" && (
-          <SelectEasyboxMap
+          <SelectEasyBoxMap
             clientId={import.meta.env.VITE_SAMEDAY_CLIENT_ID}
             judet={form.judet}
             localitate={form.localitate}

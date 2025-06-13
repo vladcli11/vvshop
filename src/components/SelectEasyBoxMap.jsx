@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export default function SelectEasyboxMap({
+export default function SelectEasyBoxMap({
   clientId,
   judet,
   localitate,

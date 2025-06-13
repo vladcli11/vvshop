@@ -61,6 +61,7 @@ export default function SelectEasyBoxMap({
   return (
     <div className="mt-4 space-y-3">
       <button
+        type="button"
         onClick={handleOpenLockerMap}
         className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
       >

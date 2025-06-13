@@ -76,7 +76,11 @@ exports.generateAwb = functions
     } catch (err) {
       const errorData =
         err.response?.data || err.message || "Eroare necunoscută";
-      console.error("❌ Eroare la generare AWB:", errorData);
+      console.error(
+        "❌ Eroare la generare AWB:",
+        JSON.stringify(errorData, null, 2)
+      );
+
       return { success: false, error: errorData };
     }
   });

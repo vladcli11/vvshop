@@ -36,7 +36,7 @@ exports.generateAwb = functions
 
       const awbBody = {
         pickupPoint: 11150,
-        serviceId: data.service || 7, // ✅ fallback la domiciliu dacă nu vine
+        serviceId: data.service || 7, // fallback la domiciliu dacă nu e setat
         payerType: "client",
         parcels: [
           {
@@ -57,7 +57,7 @@ exports.generateAwb = functions
           },
         },
         codAmount: data.codAmount || 0,
-        oohLastMile: data.oohLastMile || undefined, // ✅ adăugăm dacă există
+        oohLastMile: data.oohLastMile || undefined, // doar dacă există
       };
 
       const response = await axios.post(`${BASE_URL}/api/awb`, awbBody, {
@@ -76,12 +76,22 @@ exports.generateAwb = functions
     } catch (err) {
       const errorData =
         err.response?.data || err.message || "Eroare necunoscută";
+
+      // ✅ Log explicit detaliat
       console.error(
         "❌ Eroare la generare AWB:",
         JSON.stringify(errorData, null, 2)
       );
 
-      return { success: false, error: errorData };
+      // ✅ Returnăm eroarea completă, inclusiv children (dacă există)
+      return {
+        success: false,
+        error: {
+          code: err.response?.status || 500,
+          message: err.message || "Eroare necunoscută",
+          errors: errorData.errors || {},
+        },
+      };
     }
   });
 

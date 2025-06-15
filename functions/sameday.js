@@ -35,36 +35,36 @@ exports.generateAwb = functions
       const token = await authenticate();
 
       const awbBody = {
-        pickupPoint: "1", // ID real din cont
-        contactPerson: "1", // ID real din cont
-        service: "7",
-        awbPayment: "1",
-        packageType: "0",
-        thirdPartyPickup: "0",
-        packageNumber: "1",
-        packageWeight: "1",
-        cashOnDelivery: data.codAmount || "0",
-        insuredValue: "0",
-        clientInternalReference: `cmd-${Date.now()}`,
+        pickupPoint: 11150,
+        contactPerson: 14476,
+        service: 7, // Home Delivery 24H (presupunând că îl ai activ)
+        awbPayment: 1, // clientul (adică tu) plătește
+        thirdPartyPickup: 0,
+        packageType: 0, // colet standard
+        packageWeight: 1,
+        packageNumber: 1,
+        insuredValue: 0,
+        cashOnDelivery: data.codAmount || 0,
+        clientInternalReference: `vvshop-${Date.now()}`,
         parcels: [
           {
-            weight: "1",
-            width: "20",
-            length: "30",
-            height: "10",
+            weight: 1,
+            width: 20,
+            length: 30,
+            height: 10,
           },
         ],
         awbRecipient: {
           name: data.nume,
           phoneNumber: data.telefon,
-          personType: "0",
-          address: data.strada,
-          countyString: data.judet,
-          cityString: data.localitate,
-          postalCode: data.codPostal || "060011",
+          personType: 0, // 0 = persoană fizică
+          postalCode: data.codPostal || "907015",
+          address: "Str. Clientului nr. X",
+          county: 15,
+          city: 9334,
         },
       };
-
+      console.log("📦 Trimit AWB cu date:", JSON.stringify(awbBody, null, 2));
       const response = await axios.post(`${BASE_URL}/api/awb`, awbBody, {
         headers: {
           "X-AUTH-TOKEN": token,

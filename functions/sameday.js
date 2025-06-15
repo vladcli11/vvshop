@@ -35,44 +35,34 @@ exports.generateAwb = functions
       const token = await authenticate();
 
       const awbBody = {
-        pickupPoint: 11150,
-        serviceId: data.service || 7,
-        payerType: "recipient",
-        awbPayment: data.awbPayment || "recipient",
-        cashOnDelivery: data.codAmount || 0,
-        insuredValue: 0,
-        packageType: data.packageType || "standard",
-        codAmount: data.codAmount || 0,
-        packageNumber: 1,
+        pickupPoint: "1", // ID real din cont
+        contactPerson: "1", // ID real din cont
+        service: "7",
+        awbPayment: "1",
+        packageType: "0",
+        thirdPartyPickup: "0",
+        packageNumber: "1",
+        packageWeight: "1",
+        cashOnDelivery: data.codAmount || "0",
+        insuredValue: "0",
+        clientInternalReference: `cmd-${Date.now()}`,
         parcels: [
           {
-            weight: data.greutate || 1,
-            width: 20,
-            length: 30,
-            height: 10,
+            weight: "1",
+            width: "20",
+            length: "30",
+            height: "10",
           },
         ],
-        recipientClient: {
-          name: data.nume,
-          phoneNumber: data.telefon,
-          email: data.email,
-          address: {
-            county: data.judet,
-            locality: data.localitate,
-            street: data.strada,
-          },
-        },
         awbRecipient: {
           name: data.nume,
           phoneNumber: data.telefon,
-          personType: data.personType || "person",
-          address: {
-            countyString: data.judet,
-            cityString: data.localitate,
-            addressText: data.strada,
-          },
+          personType: "0",
+          address: data.strada,
+          countyString: data.judet,
+          cityString: data.localitate,
+          postalCode: data.codPostal || "060011",
         },
-        oohLastMile: data.oohLastMile || undefined,
       };
 
       const response = await axios.post(`${BASE_URL}/api/awb`, awbBody, {

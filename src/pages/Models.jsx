@@ -16,7 +16,6 @@ import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
 export default function Models() {
   const { slug } = useParams();
   const [accesorii, setAccesorii] = useState([]);
-  const { slug: modelSlug } = useParams();
   const { addToCart } = useCart();
   useEffect(() => {
     fetchAccessoriesByModel(slug).then((items) => {

@@ -48,6 +48,10 @@
     ],
     "rewrites": [
       {
+        "source": "/img/**",
+        "destination": "/img/**"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

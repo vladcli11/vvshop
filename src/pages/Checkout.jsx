@@ -78,7 +78,9 @@ export default function Checkout() {
           >
             <div className="flex items-center gap-4">
               <img
-                src={item.imagine}
+                src={
+                  Array.isArray(item.imagine) ? item.imagine[0] : item.imagine
+                }
                 alt={item.nume}
                 className="w-28 h-28 object-contain"
               />

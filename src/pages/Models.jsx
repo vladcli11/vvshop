@@ -64,7 +64,12 @@ export default function Models() {
                   style={{ width: "130px", maxWidth: "100%" }}
                   className="max-w-full pb-6"
                 >
-                  {item.imagine?.map((url, index) => (
+                  {(Array.isArray(item.imagine)
+                    ? item.imagine
+                    : item.imagine
+                    ? [item.imagine]
+                    : []
+                  ).map((url, index) => (
                     <SwiperSlide key={index}>
                       <div className="overflow-hidden rounded-lg">
                         <LazyLoadImage

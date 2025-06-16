@@ -9,7 +9,7 @@ export default defineConfig({
       targets: [
         {
           src: "public/img",
-          dest: "", // Copiază în dist/img
+          dest: "img", // Copiază în dist/img
         },
       ],
     }),

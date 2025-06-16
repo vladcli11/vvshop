@@ -63,6 +63,10 @@
         "destination": "/css/**"
       },
       {
+        "source": "/img/**",
+        "destination": "/img/**"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

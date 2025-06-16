@@ -6,12 +6,16 @@
     "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run lint"]
   },
   "hosting": {
-    "public": "dist/",
+    "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "headers": [
       {
-        "source": "**/*.@(js|css)",
+        "source": "/js/**/*.js",
         "headers": [
+          {
+            "key": "Content-Type",
+            "value": "text/javascript"
+          },
           {
             "key": "Cache-Control",
             "value": "public, max-age=31536000, immutable"
@@ -19,37 +23,44 @@
         ]
       },
       {
-        "source": "/img/**",
+        "source": "/assets/**/*.@(webp|png|jpg|jpeg|svg|ico)",
         "headers": [
           {
+            "key": "Content-Type",
+            "value": "image/webp"
+          },
+          {
             "key": "Cache-Control",
-            "value": "public, max-age=604800, immutable"
+            "value": "public, max-age=31536000, immutable"
           }
         ]
       },
       {
-        "source": "/assets/**",
+        "source": "/css/**/*.css",
         "headers": [
           {
-            "key": "Cache-Control",
-            "value": "public, max-age=86400"
-          }
-        ]
-      },
-      {
-        "source": "**/*.@(png|jpg|jpeg|webp|svg|ico)",
-        "headers": [
+            "key": "Content-Type",
+            "value": "text/css"
+          },
           {
             "key": "Cache-Control",
-            "value": "public, max-age=300"
+            "value": "public, max-age=31536000, immutable"
           }
         ]
       }
     ],
     "rewrites": [
       {
-        "source": "/img/**",
-        "destination": "/img/**"
+        "source": "/js/**",
+        "destination": "/js/**"
+      },
+      {
+        "source": "/assets/**",
+        "destination": "/assets/**"
+      },
+      {
+        "source": "/css/**",
+        "destination": "/css/**"
       },
       {
         "source": "**",

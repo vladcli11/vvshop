@@ -37,18 +37,18 @@ exports.generateAwb = functions
       const awbBody = {
         pickupPoint: 11150,
         contactPerson: 14476,
-        service: 7, // Home Delivery 24H (presupunând că îl ai activ)
-        awbPayment: 1, // clientul (adică tu) plătește
+        service: data.service,
+        awbPayment: 1,
         thirdPartyPickup: 0,
-        packageType: 0, // colet standard
-        packageWeight: 1,
+        packageType: 0,
+        packageWeight: data.greutate || 1.2,
         packageNumber: 1,
         insuredValue: 0,
         cashOnDelivery: data.codAmount || 0,
         clientInternalReference: `vvshop-${Date.now()}`,
         parcels: [
           {
-            weight: 1,
+            weight: data.greutate || 1.2,
             width: 20,
             length: 30,
             height: 10,
@@ -57,13 +57,16 @@ exports.generateAwb = functions
         awbRecipient: {
           name: data.nume,
           phoneNumber: data.telefon,
-          personType: 0, // 0 = persoană fizică
-          postalCode: data.codPostal || "907015",
-          address: "Str. Clientului nr. X",
-          county: 15,
-          city: 9334,
+          personType: data.personType === "company" ? 1 : 0,
+          postalCode:
+            data.oohLastMile?.postalCode || data.codPostal || "000000",
+          address:
+            data.oohLastMile?.address || data.strada || "Adresă necunoscută",
+          county: data.oohLastMile?.county || data.judet || "Necunoscut",
+          city: data.oohLastMile?.city || data.localitate || "Necunoscut",
         },
       };
+
       console.log("📦 Trimit AWB cu date:", JSON.stringify(awbBody, null, 2));
       const response = await axios.post(`${BASE_URL}/api/awb`, awbBody, {
         headers: {

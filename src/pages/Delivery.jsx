@@ -157,7 +157,7 @@ export default function Delivery() {
         console.log("🟢 Test: Intrat în blocul ramburs");
         try {
           const genereazaAwb = httpsCallable(functions, "generateAwb");
-          const service = form.metodaLivrare === "easybox" ? 26 : 7;
+          const service = form.metodaLivrare === "easybox" ? 15 : 7;
 
           const awbResponse = await genereazaAwb({
             nume: form.nume,
@@ -168,17 +168,19 @@ export default function Delivery() {
             strada: form.adresa,
             codAmount: totalFinal,
             greutate: 1.2,
-            service,
+            service, // 7 pentru curier, 15 pentru easybox
             awbPayment: "recipient",
             packageType: "standard",
             personType: "person",
             oohLastMile:
               form.metodaLivrare === "easybox"
                 ? {
-                    lockerId: form.locker.lockerId,
-                    name: form.locker.name,
-                    address: form.locker.address,
-                    city: form.locker.city,
+                    lockerId: form.locker.lockerId || form.locker.oohId,
+                    name: form.locker?.name,
+                    address: form.locker?.address,
+                    city: form.locker?.city,
+                    county: form.locker?.county,
+                    postalCode: form.locker?.postalCode,
                   }
                 : undefined,
           });

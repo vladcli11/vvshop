@@ -66,7 +66,7 @@ export default function Models() {
                 >
                   {item.imagine.map((url, index) => (
                     <SwiperSlide key={index}>
-                      <div className="overflow-hidden rounded-lg">
+                      <div className="overflow-hidden rounded-lg aspect-square w-full">
                         <LazyLoadImage
                           src={url}
                           alt={`${item.nume} imagine ${index + 1}`}

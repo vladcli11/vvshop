@@ -28,8 +28,15 @@ function App() {
       try {
         const items = await fetchAccessoriesByModel("all"); // vezi nota de mai jos
         items.forEach((item) => {
-          const img = new Image();
-          img.src = item.imagine;
+          if (Array.isArray(item.imagine)) {
+            item.imagine.forEach((url) => {
+              const img = new Image();
+              img.src = url;
+            });
+          } else {
+            const img = new Image();
+            img.src = item.imagine;
+          }
         });
       } catch (err) {
         console.error("Eroare preload imagini:", err);

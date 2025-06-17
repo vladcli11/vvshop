@@ -64,6 +64,9 @@ exports.generateAwb = functions
         );
       }
 
+      console.log("cityKey:", cityKey);
+      console.log("cityId:", cityId, "countyId:", countyId);
+
       const awbBody = {
         pickupPoint: 11150,
         contactPerson: 14476,

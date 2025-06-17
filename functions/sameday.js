@@ -43,7 +43,14 @@ exports.generateAwb = functions
     try {
       const token = await authenticate();
 
-      const normalize = (str) => str?.trim().replace(/\s+/g, " ");
+      const normalize = (str) =>
+        str
+          ?.trim()
+          .replace(/\s+/g, " ")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") // elimină diacritice
+          .toLowerCase()
+          .replace(/\b\w/g, (l) => l.toUpperCase());
       const judet = normalize(data.oohLastMile?.county || data.judet);
       const localitate = normalize(data.oohLastMile?.city || data.localitate);
       const cityKey = `${localitate}, ${judet}`;

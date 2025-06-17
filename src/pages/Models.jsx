@@ -21,7 +21,7 @@ export default function Models() {
     fetchAccessoriesByModel(slug).then((items) => {
       items.forEach((item) => {
         const img = new Image();
-        img.src = item.imagine;
+        img.src = Array.isArray(item.imagine) ? item.imagine[0] : item.imagine;
       });
       setAccesorii(items);
     });
@@ -64,12 +64,7 @@ export default function Models() {
                   style={{ width: "130px", maxWidth: "100%" }}
                   className="max-w-full pb-6"
                 >
-                  {(Array.isArray(item.imagine)
-                    ? item.imagine
-                    : item.imagine
-                    ? [item.imagine]
-                    : []
-                  ).map((url, index) => (
+                  {item.imagine.map((url, index) => (
                     <SwiperSlide key={index}>
                       <div className="overflow-hidden rounded-lg">
                         <LazyLoadImage

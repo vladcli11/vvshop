@@ -1,11 +1,19 @@
 const functions = require("firebase-functions");
 const axios = require("axios");
+const { Storage } = require("@google-cloud/storage");
+const os = require("os");
+const fs = require("fs");
+const path = require("path");
+
 const cityMap = require("./sameday_city_ids.json");
 const countyMap = require("./sameday_county_ids.json");
 
 const SAMEDAY_USERNAME = functions.config().sameday.username;
 const SAMEDAY_PASSWORD = functions.config().sameday.password;
 const BASE_URL = "https://sameday-api.demo.zitec.com";
+
+const storage = new Storage();
+const bucket = storage.bucket("vv_shop_clean.appspot.com"); // modifică dacă ai alt bucket
 
 let cachedToken = null;
 let tokenTimestamp = 0;
@@ -35,13 +43,7 @@ exports.generateAwb = functions
     try {
       const token = await authenticate();
 
-      // Normalizează și construiește cheia pentru mapare
-      const normalize = (str) =>
-        str
-          ?.trim()
-          .toLowerCase()
-          .replace(/\b\w/g, (l) => l.toUpperCase());
-
+      const normalize = (str) => str?.trim().replace(/\s+/g, " ");
       const judet = normalize(data.oohLastMile?.county || data.judet);
       const localitate = normalize(data.oohLastMile?.city || data.localitate);
       const cityKey = `${localitate}, ${judet}`;
@@ -58,7 +60,7 @@ exports.generateAwb = functions
       const awbBody = {
         pickupPoint: 11150,
         contactPerson: 14476,
-        service: data.service,
+        service: data.service, // ex: 7 = curier, 15 = easybox, 48 = pudo
         awbPayment: 1,
         thirdPartyPickup: 0,
         packageType: 0,
@@ -131,5 +133,57 @@ exports.generateAwb = functions
           errors: errorData.errors || {},
         },
       };
+    }
+  });
+
+exports.saveAwbLabel = functions
+  .region("europe-west1")
+  .https.onCall(async (data) => {
+    const { awbNumber } = data;
+
+    if (!awbNumber) {
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "awbNumber lipsă"
+      );
+    }
+
+    try {
+      const token = await authenticate();
+      const pdfUrl = `${BASE_URL}/api/awb/${awbNumber}/label`;
+
+      const res = await axios.get(pdfUrl, {
+        responseType: "arraybuffer",
+        headers: {
+          "X-AUTH-TOKEN": token,
+          Accept: "application/pdf",
+        },
+      });
+
+      const filePath = path.join(os.tmpdir(), `${awbNumber}.pdf`);
+      fs.writeFileSync(filePath, res.data);
+
+      const destFileName = `awb/${awbNumber}.pdf`;
+      await bucket.upload(filePath, {
+        destination: destFileName,
+        contentType: "application/pdf",
+        metadata: {
+          cacheControl: "public,max-age=3600",
+        },
+      });
+
+      const file = bucket.file(destFileName);
+      const [url] = await file.getSignedUrl({
+        action: "read",
+        expires: Date.now() + 3600 * 1000,
+      });
+
+      return { success: true, url };
+    } catch (err) {
+      console.error(
+        "❌ Eroare la salvarea AWB PDF:",
+        err.response?.data || err
+      );
+      throw new functions.https.HttpsError("internal", "Eroare la salvare AWB");
     }
   });

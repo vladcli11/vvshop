@@ -238,14 +238,7 @@ export default function Samsung() {
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
 
-      {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-4 -mx-6">
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-        <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
-          Alege modelul
-        </span>
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
-      </div>
+      <Separator text="Modele disponibile" />
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 w-full max-w-6xl mx-auto justify-items-center">
         {modele.map((model) => (
           <Link

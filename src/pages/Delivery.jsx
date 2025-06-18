@@ -14,6 +14,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import useAuth from "../context/useAuth";
 import { httpsCallable } from "firebase/functions";
 import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
+import Separator from "../components/Separator";
 
 const stripePromise = loadStripe(
   "pk_test_51RUNogHJkUS6tZsDVmMisYsq1JYSmbGzoHVXtUwBJhn82ED1qAHQxqAJ2pj40OGzcIfzz5dqtDST7AezHfHmpdRI00eoo4Am7T"
@@ -39,7 +40,7 @@ export default function Delivery() {
   const [discount, setDiscount] = useState(0);
   const [promoStatus, setPromoStatus] = useState("");
   const { currentUser } = useAuth();
-  // 🟢 Preluam datele utilizatorului curent daca este autentificat
+  // Preiau datele utilizatorului curent daca este autentificat
   useEffect(() => {
     const userEmail = currentUser?.email;
     if (userEmail && form.email === "") {
@@ -224,90 +225,82 @@ export default function Delivery() {
   const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
 
   return (
-    <div className="min-h-screen px-6 pb-6 bg-white">
+    <div className="min-h-screen px-2 sm:px-6 pb-6 bg-white">
       <Header />
-
-      <div className="relative w-full pb-6 my-4">
-        <div className="absolute inset-0 flex items-center -mx-6">
-          <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-          <span className="px-2 text-base tracking-wider text-gray-600 uppercase whitespace-nowrap">
-            Date de livrare
-          </span>
-          <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
-        </div>
-      </div>
+      <Separator text="Livrare și plată" />
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col max-w-md gap-4 mx-auto mt-6"
+        className="flex flex-col max-w-lg gap-4 mx-auto mt-10 bg-white border border-gray-200 rounded-2xl shadow-lg p-4 sm:p-8"
       >
-        <input
-          type="text"
-          name="nume"
-          placeholder="Nume"
-          value={form.nume}
-          onChange={handleChange}
-          className="px-4 py-2 border border-gray-300 rounded"
-        />
-        <input
-          type="text"
-          name="prenume"
-          placeholder="Prenume"
-          value={form.prenume}
-          onChange={handleChange}
-          className="px-4 py-2 border border-gray-300 rounded"
-        />
-        <input
-          type="text"
-          name="adresa"
-          placeholder="Adresă"
-          value={form.adresa}
-          onChange={handleChange}
-          className="px-4 py-2 border border-gray-300 rounded"
-        />
-        <input
-          type="text"
-          name="judet"
-          placeholder="Județ"
-          value={form.judet}
-          onChange={handleChange}
-          className="px-4 py-2 border border-gray-300 rounded"
-        />
-        <input
-          type="text"
-          name="localitate"
-          placeholder="Localitate"
-          value={form.localitate}
-          onChange={handleChange}
-          className="px-4 py-2 border border-gray-300 rounded"
-        />
-        <input
-          type="tel"
-          name="telefon"
-          placeholder="Telefon"
-          value={form.telefon}
-          onChange={handleChange}
-          className="px-4 py-2 border border-gray-300 rounded"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className="px-4 py-2 border border-gray-300 rounded"
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="nume"
+            placeholder="Nume"
+            value={form.nume}
+            onChange={handleChange}
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+          />
+          <input
+            type="text"
+            name="prenume"
+            placeholder="Prenume"
+            value={form.prenume}
+            onChange={handleChange}
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+          />
+          <input
+            type="text"
+            name="adresa"
+            placeholder="Adresă"
+            value={form.adresa}
+            onChange={handleChange}
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none col-span-1 sm:col-span-2"
+          />
+          <input
+            type="text"
+            name="judet"
+            placeholder="Județ"
+            value={form.judet}
+            onChange={handleChange}
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+          />
+          <input
+            type="text"
+            name="localitate"
+            placeholder="Localitate"
+            value={form.localitate}
+            onChange={handleChange}
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+          />
+          <input
+            type="tel"
+            name="telefon"
+            placeholder="Telefon"
+            value={form.telefon}
+            onChange={handleChange}
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+          />
+        </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mt-2">
           <input
             type="text"
             name="codPromo"
             placeholder="Cod promoțional"
             value={form.codPromo}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded"
+            className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none"
           />
-
           <button
             type="button"
             onClick={async () => {
@@ -329,11 +322,19 @@ export default function Delivery() {
                 setPromoStatus("error");
               }
             }}
-            className="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+            className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition"
           >
             Verifică
           </button>
         </div>
+        {promoStatus === "success" && (
+          <p className="mt-1 text-sm text-green-600">
+            ✅ Cod aplicat: {discount}% reducere
+          </p>
+        )}
+        {promoStatus === "error" && (
+          <p className="mt-1 text-sm text-red-600">Cod invalid sau expirat</p>
+        )}
 
         <div className="mt-4">
           <p className="font-semibold text-black">Metodă de livrare:</p>
@@ -375,25 +376,22 @@ export default function Delivery() {
           </p>
         )}
 
-        {promoStatus === "success" && (
-          <p className="mt-1 text-sm text-green-600">
-            ✅ Cod aplicat: {discount}% reducere
-          </p>
-        )}
-        {promoStatus === "error" && (
-          <p className="mt-1 text-sm text-red-600">Cod invalid sau expirat</p>
-        )}
-
-        <div className="p-4 mt-4 space-y-1 text-sm font-medium text-gray-700 border border-gray-300 rounded bg-gray-50">
-          <p>🛍️ Produse: {totalProduse.toFixed(2)} lei</p>
+        <div className="p-4 mt-4 space-y-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-gray-50">
+          <p> Produse: {totalProduse.toFixed(2)} lei</p>
           <p>
             Transport:{" "}
-            {costTransport > 0 ? `${costTransport.toFixed(2)} lei` : "Gratuit"}
+            {costTransport > 0 ? (
+              <span className="text-blue-600">
+                {costTransport.toFixed(2)} lei
+              </span>
+            ) : (
+              <span className="text-green-600 font-semibold">Gratuit</span>
+            )}
           </p>
           {discount > 0 && (
             <p className="text-green-700">Reducere: {discount}%</p>
           )}
-          <p className="font-bold text-green-800">
+          <p className="font-bold text-green-800 text-lg">
             Total de plată: {totalFinal.toFixed(2)} lei
           </p>
         </div>
@@ -408,7 +406,7 @@ export default function Delivery() {
               checked={form.plata === "ramburs"}
               onChange={handleChange}
             />{" "}
-            Plata la livrare (ramburs)
+            Plata cu ramburs la livrare
           </label>
           <label className="flex items-center gap-2 mt-2">
             <input
@@ -418,13 +416,13 @@ export default function Delivery() {
               checked={form.plata === "card"}
               onChange={handleChange}
             />{" "}
-            Plată cu cardul (Stripe)
+            Plată online cu cardul
           </label>
         </div>
 
         <button
           type="submit"
-          className="py-2 text-white transition bg-green-600 rounded hover:bg-green-700"
+          className="py-3 text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl font-semibold text-lg hover:from-green-600 transition"
         >
           Trimite comanda
         </button>

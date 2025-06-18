@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { db } from "../firebase/firebase-config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import useAuth from "../context/useAuth";
+import Separator from "../components/Separator";
 
 export default function Contact() {
   const { currentUser } = useAuth();
@@ -51,13 +52,7 @@ export default function Contact() {
       <Header />
 
       {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-4 -mx-6">
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-        <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
-          Contactează-ne
-        </span>
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
-      </div>
+      <Separator text="Contactează-ne" />
       <h1 className="text-3xl font-bold text-center my-6">
         Descrie problema întâmpinată
       </h1>

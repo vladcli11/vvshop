@@ -1,19 +1,12 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Separator from "../components/Separator";
 
 export default function Termeni() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <Header />
-
-      {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-4 -mx-6">
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-        <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
-          Termeni și condiții
-        </span>
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
-      </div>
+      <Separator text="Termeni și condiții" />
       <div className="max-w-3xl mx-auto mt-10 text-gray-800 space-y-6 text-sm leading-relaxed">
         <p>
           Prin accesarea și utilizarea site-ului VVShop.ro, sunteți de acord cu

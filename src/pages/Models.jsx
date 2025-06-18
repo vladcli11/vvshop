@@ -1,5 +1,5 @@
 import { ShoppingCart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useParams } from "react-router-dom";
@@ -12,11 +12,24 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
+import Separator from "../components/Separator";
 
 export default function Models() {
   const { slug } = useParams();
   const [accesorii, setAccesorii] = useState([]);
   const { addToCart } = useCart();
+  const [showNotif, setShowNotif] = useState(false);
+  const notifTimeout = useRef(null);
+
+  const handleAddToCart = (item) => {
+    addToCart(item);
+    setShowNotif(true);
+    if (notifTimeout.current) clearTimeout(notifTimeout.current);
+    notifTimeout.current = setTimeout(() => {
+      setShowNotif(false);
+    }, 2200);
+  };
+
   useEffect(() => {
     fetchAccessoriesByModel(slug).then((items) => {
       items.forEach((item) => {
@@ -30,14 +43,43 @@ export default function Models() {
     <div className="min-h-screen px-6 pb-6 bg-white">
       <Header />
 
-      {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-4 -mx-6">
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-        <span className="px-2 text-base tracking-wider text-gray-600 uppercase whitespace-nowrap">
-          Accesorii {slug.replace(/-/g, " ")}
-        </span>
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
-      </div>
+      {showNotif && (
+        <div
+          className="
+      fixed bottom-6 left-1/2 z-50
+      -translate-x-1/2
+      bg-white/80
+      backdrop-blur-lg
+      border border-green-200
+      shadow-2xl
+      rounded-2xl
+      flex items-center gap-3
+      px-6 py-3
+      max-w-[90vw] sm:max-w-md
+      text-green-700
+      font-semibold
+      text-base sm:text-lg
+      transition-all duration-300
+    "
+          role="alert"
+        >
+          <svg
+            className="w-6 h-6 text-green-500 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          <span>Produsul a fost adăugat în coș!</span>
+        </div>
+      )}
+      <Separator text="Accesorii disponibile" />
 
       {/* 🔹 Conținut principal - EDITAT DESTUL DE MULT, AR TREBUI FOLOSIT SI PENTRU RESTUL PAGINILOR */}
       {accesorii.length === 0 ? (
@@ -92,7 +134,7 @@ export default function Models() {
               <button
                 onClick={(e) => {
                   e.stopPropagation(); // prevenim propagarea clickului în container
-                  addToCart(item);
+                  handleAddToCart(item);
                 }}
                 className="flex items-center justify-center w-full gap-3 px-2 py-2 mt-2 text-sm text-white transition bg-green-500 rounded-lg hover:bg-green-600"
               >

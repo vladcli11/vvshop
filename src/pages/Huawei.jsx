@@ -36,14 +36,7 @@ export default function Huawei() {
     <div className="min-h-screen px-6 pb-6 bg-white">
       <Header />
 
-      {/* 🔸 Separator vizual */}
-      <div className="flex items-center my-4 -mx-6">
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-        <span className="px-2 text-base tracking-wider text-gray-600 uppercase whitespace-nowrap">
-          Alege modelul
-        </span>
-        <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
-      </div>
+      <Separator text="Modele disponibile" />
       <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
         {modele.map((model) => (
           <Link

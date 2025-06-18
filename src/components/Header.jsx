@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Home, User } from "lucide-react";
+import { ShoppingCart, User } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useState, useRef, useEffect } from "react";
 import AuthModal from "./AuthModal";
@@ -15,91 +15,100 @@ export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Daca nu esti logat, arata modalul de login/register
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
       }
     };
-
-    // Poti sa inchizi dropdown-ul daca dai click in afara lui
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto px-6 h-[64px] mb-2">
-      {/* Bara de navigare */}
-      <Link
-        to="/"
-        className="absolute top-1 sm:top-2 w-20 md:top-2 left-4 h-20 sm:h- md:h-[88px] z-10"
-      >
-        <img src={logo} alt="VVShop" className="h-full object-contain" />
-      </Link>
+    <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl shadow-md border-b border-green-100">
+      <nav className="relative flex items-center justify-between max-w-5xl mx-auto px-3 sm:px-8 h-20 sm:h-22">
+        {/* Logo mare */}
+        <Link to="/" className="flex items-center group" aria-label="Acasă">
+          <img
+            src={logo}
+            alt="VVShop"
+            className="h-16 sm:h-24 w-auto object-contain drop-shadow-lg transition-transform duration-300 group-hover:scale-105"
+            fetchpriority="high"
+            width={180}
+            height={96}
+            style={{ filter: "drop-shadow(0 4px 12px #22c55e22)" }}
+          />
+        </Link>
 
-      <Link
-        to="/cos"
-        className="absolute top-4 right-20 bg-white text-gray-600 p-4 rounded-full shadow-sm border border-gray-300 hover:bg-gray-100 transition z-10"
-        aria-label="Coș de cumpărături"
-      >
-        <ShoppingCart className="w-6 h-6" />
-
-        {cartItems.length > 0 && (
-          <span className="absolute -top-0 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-            {cartItems.length}
-          </span>
-        )}
-      </Link>
-      <button
-        onClick={() => {
-          if (currentUser) {
-            setShowDropdown((prev) => !prev);
-          } else {
-            setShowModal(true);
-          }
-        }}
-        className={`absolute top-4 right-2 bg-white p-4 rounded-full shadow-sm transition z-10 hover:bg-gray-100 ${
-          currentUser ? "border-green-500" : "border-gray-300"
-        } border`}
-        aria-label="Autentificare / Cont"
-      >
-        <User
-          className={`w-6 h-6 ${
-            currentUser ? "text-green-600" : "text-gray-600"
-          }`}
-        />
-      </button>
-
-      {/* Modal de login/register */}
-      {!currentUser && (
-        <AuthModal isOpen={ShowModal} onClose={() => setShowModal(false)} />
-      )}
-
-      {/* Dropdown logout */}
-      {currentUser && showDropdown && (
-        <div
-          ref={dropdownRef}
-          className="absolute top-20 -right-16 transform -translate-x-1/2 bg-white border border-gray-300 rounded-xl shadow-lg  z-20 text-sm text-center items-center w-28 flex flex-col"
-        >
+        {/* Butoane dreapta */}
+        <div className="flex items-center gap-3 sm:gap-6">
+          {/* Coș */}
           <Link
-            to="/contul-meu"
-            className="px-3 py-2 hover:bg-gray-100 rounded text-left"
-            onClick={() => setShowDropdown(false)}
+            to="/cos"
+            className="relative bg-white/80 text-gray-700 p-3 sm:p-4 rounded-full shadow-lg border border-green-200 hover:bg-green-50 hover:scale-105 transition-all duration-200"
+            aria-label="Coș de cumpărături"
           >
-            Contul meu
+            <ShoppingCart className="w-7 h-7" />
+            {cartItems.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-gradient-to-tr from-green-400 to-green-600 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow">
+                {cartItems.length}
+              </span>
+            )}
           </Link>
+
+          {/* Cont */}
           <button
             onClick={() => {
-              signOut(auth);
-              setShowDropdown(false);
+              if (currentUser) {
+                setShowDropdown((prev) => !prev);
+              } else {
+                setShowModal(true);
+              }
             }}
-            className="px-3 py-2 hover:bg-gray-100 rounded text-left"
+            className={`relative bg-white/80 p-3 sm:p-4 rounded-full shadow-lg border transition-all duration-200 hover:bg-green-50 hover:scale-105 ${
+              currentUser ? "border-green-400" : "border-gray-200"
+            }`}
+            aria-label="Autentificare / Cont"
           >
-            Logout
+            <User
+              className={`w-7 h-7 ${
+                currentUser ? "text-green-600" : "text-gray-600"
+              }`}
+            />
           </button>
         </div>
-      )}
-    </div>
+
+        {/* Modal de login/register */}
+        {!currentUser && (
+          <AuthModal isOpen={ShowModal} onClose={() => setShowModal(false)} />
+        )}
+
+        {/* Dropdown logout */}
+        {currentUser && showDropdown && (
+          <div
+            ref={dropdownRef}
+            className="absolute right-0 top-24 sm:top-28 bg-white/90 border border-green-200 rounded-2xl shadow-2xl z-40 text-base w-48 flex flex-col animate-fade-in"
+          >
+            <Link
+              to="/contul-meu"
+              className="px-5 py-4 hover:bg-green-50 rounded-t-2xl text-left font-semibold text-green-700 transition"
+              onClick={() => setShowDropdown(false)}
+            >
+              Contul meu
+            </Link>
+            <button
+              onClick={() => {
+                signOut(auth);
+                setShowDropdown(false);
+              }}
+              className="px-5 py-4 hover:bg-green-50 rounded-b-2xl text-left text-red-600 font-semibold transition"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </nav>
+    </header>
   );
 }

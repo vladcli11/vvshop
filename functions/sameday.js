@@ -36,6 +36,26 @@ async function authenticate() {
   tokenTimestamp = now;
   return cachedToken;
 }
+// Aici se face normalizarea cheilor pentru a compara inputul userului cu judetul si localitatea din sameday_city_ids.json
+function normalizeKey(str) {
+  return str
+    ?.trim()
+    .replace(/\s+/g, " ")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function matchCityKey(localitate, judet) {
+  const normalizedKey = normalizeKey(`${localitate}, ${judet}`);
+  for (const key of Object.keys(cityMap)) {
+    const normalizedCandidate = normalizeKey(key);
+    if (normalizedCandidate === normalizedKey) {
+      return key;
+    }
+  }
+  return null;
+}
 
 exports.generateAwb = functions
   .region("europe-west1")
@@ -43,34 +63,31 @@ exports.generateAwb = functions
     try {
       const token = await authenticate();
 
-      const normalize = (str) =>
-        str
-          ?.trim()
-          .replace(/\s+/g, " ")
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "") // elimină diacritice
-          .toLowerCase()
-          .replace(/\b\w/g, (l) => l.toUpperCase());
-      const judet = normalize(data.oohLastMile?.county || data.judet);
-      const localitate = normalize(data.oohLastMile?.city || data.localitate);
-      const cityKey = `${localitate}, ${judet}`;
-      const cityId = cityMap[cityKey];
+      const localitate = (
+        data.oohLastMile?.city ||
+        data.localitate ||
+        ""
+      ).trim();
+      const judet = (data.oohLastMile?.county || data.judet || "").trim();
+
+      const matchedKey = matchCityKey(localitate, judet);
+      const cityId = matchedKey ? cityMap[matchedKey] : null;
       const countyId = countyMap[judet];
+
+      console.log("🔎 cityKey original:", `${localitate}, ${judet}`);
+      console.log("✅ cityKey matched:", matchedKey);
 
       if (!cityId || !countyId) {
         throw new functions.https.HttpsError(
           "invalid-argument",
-          `Oraș sau județ invalid: ${cityKey}`
+          `Oraș sau județ invalid: ${localitate}, ${judet}`
         );
       }
-
-      console.log("cityKey:", cityKey);
-      console.log("cityId:", cityId, "countyId:", countyId);
 
       const awbBody = {
         pickupPoint: 11150,
         contactPerson: 14476,
-        service: data.service, // ex: 7 = curier, 15 = easybox, 48 = pudo
+        service: data.service, // 7 = curier, 15 = easybox, 48 = pudo
         awbPayment: 1,
         thirdPartyPickup: 0,
         packageType: 0,
@@ -129,12 +146,10 @@ exports.generateAwb = functions
     } catch (err) {
       const errorData =
         err.response?.data || err.message || "Eroare necunoscută";
-
       console.error(
         "❌ Eroare la generare AWB:",
         JSON.stringify(errorData, null, 2)
       );
-
       return {
         success: false,
         error: {

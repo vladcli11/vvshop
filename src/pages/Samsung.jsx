@@ -1,6 +1,7 @@
 import Header from "../components/Header";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
+import Separator from "../components/Separator";
 // S series
 import S20 from "../assets/S20.png";
 import S20FE from "../assets/S20 FE.png";

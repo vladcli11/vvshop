@@ -10,6 +10,7 @@ import P30Pro from "../assets/Huawei-P30-Pro.webp";
 import P30 from "../assets/Huawei-P30.webp";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Separator from "../components/Separator";
 
 const modele = [
   {

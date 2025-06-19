@@ -9,8 +9,6 @@ import Separator from "../components/Separator";
 export default function Home() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6 ">
-      <Header />
-
       <main className="pb-10 flex flex-col items-center">
         <Separator text="Branduri disponibile" />
 

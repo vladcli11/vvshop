@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
+import { Mail, Lock } from "lucide-react";
 
 export default function RegisterForm({ onClose, redirectTo = "/home" }) {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function RegisterForm({ onClose, redirectTo = "/home" }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -20,7 +22,6 @@ export default function RegisterForm({ onClose, redirectTo = "/home" }) {
       if (redirectTo) {
         navigate(redirectTo);
       }
-
       if (typeof onClose === "function") {
         onClose();
       }
@@ -40,29 +41,46 @@ export default function RegisterForm({ onClose, redirectTo = "/home" }) {
   return (
     <form
       onSubmit={handleRegister}
-      className="flex flex-col gap-4 max-w-sm mx-auto mt-8"
+      className="flex flex-col gap-5 max-w-sm mx-auto mt-4 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-green-100 p-6 animate-fade-in-up"
     >
-      <input
-        type="email"
-        placeholder="Email"
-        className="border border-gray-300 text-black px-3 py-2 rounded"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Parolă"
-        className="border border-gray-300 text-black px-3 py-2 rounded"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      {success && <p className="text-green-600 text-sm">{success}</p>}
+      <h2 className="text-2xl font-bold text-green-700 text-center mb-2 tracking-wide">
+        Creează un cont nou
+      </h2>
+      <div className="flex items-center bg-green-50 rounded-lg px-3 py-2 border border-green-200 focus-within:ring-2 focus-within:ring-green-400 transition">
+        <Mail className="w-5 h-5 text-green-500 mr-2" />
+        <input
+          type="email"
+          placeholder="Email"
+          className="bg-transparent outline-none flex-1 text-black placeholder-gray-400"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div className="flex items-center bg-green-50 rounded-lg px-3 py-2 border border-green-200 focus-within:ring-2 focus-within:ring-green-400 transition">
+        <Lock className="w-5 h-5 text-green-500 mr-2" />
+        <input
+          type="password"
+          placeholder="Parolă"
+          className="bg-transparent outline-none flex-1 text-black placeholder-gray-400"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      {error && (
+        <p className="text-red-500 text-sm text-center bg-red-50 rounded-lg py-2 px-3 animate-fade-in">
+          {error}
+        </p>
+      )}
+      {success && (
+        <p className="text-green-600 text-sm text-center bg-green-50 rounded-lg py-2 px-3 animate-fade-in">
+          {success}
+        </p>
+      )}
       <button
         type="submit"
-        className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+        className="bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl font-semibold text-lg shadow hover:from-green-600 hover:to-green-700 transition-all tracking-wide mt-2"
       >
         Creează cont
       </button>

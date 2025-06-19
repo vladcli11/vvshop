@@ -5,8 +5,6 @@ import Footer from "../components/Footer";
 export default function Succes() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
-      <Header />
-
       <div className="text-center mt-20">
         <h1 className="text-2xl font-bold text-green-600">
           🎉 Comanda ta a fost plasată cu succes!

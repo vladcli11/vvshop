@@ -226,7 +226,6 @@ export default function Delivery() {
 
   return (
     <div className="min-h-screen px-2 sm:px-6 pb-6 bg-white">
-      <Header />
       <Separator text="Livrare și plată" />
 
       <form

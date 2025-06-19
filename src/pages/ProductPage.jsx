@@ -37,7 +37,6 @@ export default function ProductPage() {
   if (!product) {
     return (
       <div className="min-h-screen bg-white">
-        <Header />
         <div className="flex items-center justify-center h-[300px] text-gray-500 text-sm">
           Se încarcă produsul...
         </div>
@@ -48,7 +47,6 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen px-6 pb-6 bg-white">
-      <Header />
       <Separator text={product.nume} />
 
       <div className="flex flex-col max-w-6xl gap-10 mx-auto mt-6 lg:flex-row">

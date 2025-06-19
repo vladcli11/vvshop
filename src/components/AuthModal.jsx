@@ -12,30 +12,43 @@ function AuthModal({ isOpen, onClose, initialMode = "login", redirectTo }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-2 right-3 text-xl">
-          ✖
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in">
+      <div className="relative bg-white/90 backdrop-blur-xl border border-green-100 rounded-2xl shadow-2xl w-11/12 max-w-md p-4 sm:p-8 max-h-[90vh] overflow-y-auto animate-fade-in-up">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-5 text-2xl text-gray-400 hover:text-red-500 transition"
+          aria-label="Închide"
+        >
+          ×
         </button>
-
+        <div className="mb-4 text-center">
+          <h2 className="text-2xl font-bold text-green-700 tracking-wide">
+            {authMode === "login" ? "Autentificare" : "Înregistrare"}
+          </h2>
+        </div>
         {authMode === "login" ? (
           <LoginForm onClose={onClose} redirectTo={redirectTo} />
         ) : (
           <RegisterForm onClose={onClose} redirectTo={redirectTo} />
         )}
-
-        <div className="mt-4 text-center text-sm">
+        <div className="mt-6 text-center text-sm">
           {authMode === "login" ? (
             <>
               Nu ai cont?{" "}
-              <button onClick={toggleMode} className="text-blue-600 underline">
+              <button
+                onClick={toggleMode}
+                className="text-green-600 font-semibold underline underline-offset-2 hover:text-green-700 transition"
+              >
                 Înregistrează-te
               </button>
             </>
           ) : (
             <>
               Ai deja cont?{" "}
-              <button onClick={toggleMode} className="text-blue-600 underline">
+              <button
+                onClick={toggleMode}
+                className="text-green-600 font-semibold underline underline-offset-2 hover:text-green-700 transition"
+              >
                 Autentifică-te
               </button>
             </>

@@ -5,7 +5,6 @@ import Separator from "../components/Separator";
 export default function Confidentialitate() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
-      <Header />
       <Separator text="Politica de confidențialitate" />
       <div className="max-w-3xl mx-auto mt-10 text-gray-800 space-y-6 text-sm leading-relaxed">
         <p>

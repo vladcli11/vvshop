@@ -39,7 +39,6 @@ export default function UserOrders() {
 
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
-      <Header />
       {/* 🔸 Separator full-width */}
       <Separator text="Comenzile mele" />
       <h1 className="text-2xl font-bold text-center my-6 text-black">

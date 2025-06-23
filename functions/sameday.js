@@ -72,7 +72,10 @@ exports.generateAwb = functions
 
       const matchedKey = matchCityKey(localitate, judet);
       const cityId = matchedKey ? cityMap[matchedKey] : null;
-      const countyId = countyMap[judet];
+      const countyIdKey = Object.keys(countyMap).find(
+        (key) => normalizeKey(key) === normalizeKey(judet)
+      );
+      const countyId = countyMap[countyIdKey];
 
       console.log("🔎 cityKey original:", `${localitate}, ${judet}`);
       console.log("✅ cityKey matched:", matchedKey);

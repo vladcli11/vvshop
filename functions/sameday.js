@@ -60,8 +60,6 @@ function matchCityKey(localitate, judet) {
 exports.generateAwb = functions
   .region("europe-west1")
   .https.onCall(async (data) => {
-    let awbBody = null; // 👈 DEFINIT AFARĂ
-
     try {
       const token = await authenticate();
 
@@ -76,6 +74,9 @@ exports.generateAwb = functions
       const cityId = matchedKey ? cityMap[matchedKey] : null;
       const countyId = countyMap[judet];
 
+      console.log("🔎 cityKey original:", `${localitate}, ${judet}`);
+      console.log("✅ cityKey matched:", matchedKey);
+
       if (!cityId || !countyId) {
         throw new functions.https.HttpsError(
           "invalid-argument",
@@ -83,10 +84,10 @@ exports.generateAwb = functions
         );
       }
 
-      awbBody = {
+      const awbBody = {
         pickupPoint: 11150,
         contactPerson: 14476,
-        service: data.service,
+        service: data.service, // 7 = curier, 15 = easybox, 48 = pudo
         awbPayment: 1,
         thirdPartyPickup: 0,
         packageType: 0,
@@ -116,15 +117,15 @@ exports.generateAwb = functions
         },
       };
 
-      if ([15, 48].includes(data.service)) {
-        if (!data.oohLastMile?.lockerId && !data.oohLastMile?.oohId) {
-          throw new functions.https.HttpsError(
-            "invalid-argument",
-            "Locker ID lipsă pentru serviciu OOH."
-          );
-        }
-        awbBody.oohLastMile =
-          data.oohLastMile.lockerId || data.oohLastMile.oohId;
+      if (data.oohLastMile) {
+        awbBody.oohLastMile = {
+          lockerId: data.oohLastMile.lockerId || data.oohLastMile.oohId,
+          name: data.oohLastMile.name,
+          address: data.oohLastMile.address,
+          city: data.oohLastMile.city,
+          county: data.oohLastMile.county,
+          postalCode: data.oohLastMile.postalCode,
+        };
       }
 
       console.log("📦 Trimit AWB cu:", JSON.stringify(awbBody, null, 2));
@@ -145,17 +146,16 @@ exports.generateAwb = functions
     } catch (err) {
       const errorData =
         err.response?.data || err.message || "Eroare necunoscută";
-      console.error("❌ Eroare la generare AWB:", {
-        payload: awbBody,
-        error: errorData,
-      });
-
+      console.error(
+        "❌ Eroare la generare AWB:",
+        JSON.stringify(errorData, null, 2)
+      );
       return {
         success: false,
         error: {
           code: err.response?.status || 500,
           message: err.message || "Eroare necunoscută",
-          errors: err.response?.data?.errors || {},
+          errors: errorData.errors || {},
         },
       };
     }

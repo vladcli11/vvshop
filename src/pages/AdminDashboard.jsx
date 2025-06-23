@@ -54,11 +54,7 @@ export default function AdminDashboard() {
       ) {
         return alert("❌ Comanda Easybox nu are locker selectat.");
       }
-      console.error("❌ Eroare completă:", {
-        request: JSON.stringify(awbBody, null, 2),
-        response: err.response?.data,
-        status: err.response?.status,
-      });
+
       const generateAwb = httpsCallable(functions, "generateAwb");
       const service = order.metodaLivrare === "easybox" ? 15 : 7;
 
@@ -75,16 +71,9 @@ export default function AdminDashboard() {
         awbPayment: 1,
         packageType: 0,
         personType: order.personType === "company" ? 1 : 0,
-        ...(service === 15 && order.locker
+        ...(service === 15 || service === 48
           ? {
-              oohLastMile: {
-                lockerId: order.locker.lockerId || order.locker.oohId,
-                name: order.locker.name,
-                address: order.locker.address,
-                city: order.locker.city,
-                county: order.locker.county,
-                postalCode: order.locker.postalCode,
-              },
+              oohLastMile: order.locker?.lockerId || order.locker?.oohId,
             }
           : {}),
       };

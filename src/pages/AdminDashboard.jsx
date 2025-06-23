@@ -33,10 +33,26 @@ export default function AdminDashboard() {
 
   const genereazaAwb = async (order) => {
     try {
+      if (
+        !order.nume ||
+        !order.telefon ||
+        !order.judet ||
+        !order.localitate ||
+        !order.adresa
+      ) {
+        return alert("Comanda are informații lipsă. Nu se poate genera AWB.");
+      }
+
+      if (order.metodaLivrare === "easybox" && !order.locker) {
+        return alert(
+          "Locker Easybox lipsă. Selectează unul sau alege altă metodă de livrare."
+        );
+      }
+
       const generateAwb = httpsCallable(functions, "generateAwb");
       const service = order.metodaLivrare === "easybox" ? 15 : 7;
 
-      const awbResponse = await generateAwb({
+      const awbPayload = {
         nume: order.nume,
         telefon: order.telefon,
         email: order.email,
@@ -46,40 +62,43 @@ export default function AdminDashboard() {
         codAmount: order.totalFinal,
         greutate: 1.2,
         service,
-        awbPayment: "recipient",
-        packageType: "standard",
-        personType: "person",
-        ...(order.metodaLivrare === "easybox" && order.locker
-          ? {
-              oohLastMile: {
+        awbPayment: 1,
+        packageType: 0,
+        personType: order.personType === "company" ? 1 : 0,
+        oohLastMile:
+          order.metodaLivrare === "easybox" && order.locker
+            ? {
                 lockerId: order.locker.lockerId || order.locker.oohId,
                 name: order.locker.name,
                 address: order.locker.address,
                 city: order.locker.city,
                 county: order.locker.county,
                 postalCode: order.locker.postalCode,
-              },
-            }
-          : {}),
-      });
+              }
+            : undefined,
+      };
+
+      console.log("🔍 AWB payload:", awbPayload);
+
+      const awbResponse = await generateAwb(awbPayload);
 
       if (awbResponse.data.success) {
         await updateDoc(doc(db, "comenzi", order.id), {
           awb: awbResponse.data.awbNumber,
         });
-        alert("AWB generat cu succes!");
+        alert("✅ AWB generat cu succes!");
         setOrders((prev) =>
           prev.map((o) =>
             o.id === order.id ? { ...o, awb: awbResponse.data.awbNumber } : o
           )
         );
       } else {
-        alert(
-          "Eroare la generarea AWB: " + (awbResponse.data.error?.message || "")
-        );
+        alert("❌ Eroare AWB: " + (awbResponse.data.error?.message || ""));
+        console.warn("🧪 Detalii:", awbResponse.data.error?.errors);
       }
     } catch (err) {
-      alert("Eroare la generarea AWB: " + err.message);
+      console.error("❌ Excepție la generarea AWB:", err);
+      alert("Eroare internă la generarea AWB.");
     }
   };
 

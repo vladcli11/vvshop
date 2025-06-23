@@ -54,7 +54,11 @@ export default function AdminDashboard() {
       ) {
         return alert("❌ Comanda Easybox nu are locker selectat.");
       }
-
+      console.error("❌ Eroare completă:", {
+        request: JSON.stringify(awbBody, null, 2),
+        response: err.response?.data,
+        status: err.response?.status,
+      });
       const generateAwb = httpsCallable(functions, "generateAwb");
       const service = order.metodaLivrare === "easybox" ? 15 : 7;
 

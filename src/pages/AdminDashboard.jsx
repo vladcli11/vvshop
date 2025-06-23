@@ -155,20 +155,24 @@ export default function AdminDashboard() {
                   Plată: {order.plata} | Discount: {order.discount || 0}%
                 </p>
 
-                <button
-                  className="px-3 py-1 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                  onClick={() => genereazaAwb(order)}
-                >
-                  Generează AWB
-                </button>
+                {!order.awb && (
+                  <button onClick={() => genereazaAwb(order)}>
+                    Generează AWB
+                  </button>
+                )}
 
                 {order.awb && (
-                  <button
-                    className="text-sm text-blue-600 underline mt-1"
-                    onClick={() => descarcaEticheta(order.awb)}
-                  >
-                    📄 Descarcă eticheta AWB
-                  </button>
+                  <>
+                    <button
+                      className="text-sm text-blue-600 underline mt-1"
+                      onClick={() => descarcaEticheta(order.awb)}
+                    >
+                      📄 Descarcă eticheta AWB
+                    </button>
+                    <p className="text-sm text-gray-700 mt-1">
+                      🧾 AWB: <span className="font-semibold">{order.awb}</span>
+                    </p>
+                  </>
                 )}
 
                 <div className="text-sm mt-2">

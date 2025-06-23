@@ -32,49 +32,77 @@ export default function AdminDashboard() {
 
   const genereazaAwb = async (order) => {
     try {
-      if (
-        !order.nume ||
-        !order.telefon ||
-        !order.email ||
-        !order.judet ||
-        !order.localitate ||
-        !order.adresa ||
-        typeof order.totalFinal !== "number"
-      ) {
-        console.warn("⚠️ Comandă incompletă:", order);
-        return alert("Comanda are informații lipsă. Nu se poate genera AWB.");
+      const generateAwb = httpsCallable(functions, "generateAwb");
+      const service = order.metodaLivrare === "easybox" ? 15 : 7;
+
+      // 🔍 Verificare câmpuri obligatorii
+      const requiredFields = [
+        "nume",
+        "telefon",
+        "email",
+        "judet",
+        "localitate",
+        "adresa",
+        "totalFinal",
+      ];
+      for (const field of requiredFields) {
+        if (
+          !order[field] ||
+          (typeof order[field] !== "string" && field !== "totalFinal")
+        ) {
+          alert(`❌ Câmp lipsă sau invalid: ${field}`);
+          console.error(`Câmp invalid sau lipsă:`, field, order[field]);
+          return;
+        }
       }
 
-      const generateAwb = httpsCallable(functions, "generateAwb");
-      console.log("📦 Generare AWB pentru comanda:", order.id);
+      if (service === 15 && (!order.locker || !order.locker.lockerId)) {
+        alert("❌ Locker Easybox lipsă sau invalid.");
+        return;
+      }
+
+      // 🧠 Transformare safe
+      const personTypeRaw = order.personType;
+      const personType =
+        personTypeRaw === "company" || personTypeRaw === 1 ? 1 : 0;
+
       const payload = {
-        nume: order.nume,
-        telefon: order.telefon,
-        email: order.email,
-        judet: order.judet,
-        localitate: order.localitate,
-        strada: order.adresa,
-        codAmount: order.totalFinal,
+        nume: order.nume.trim(),
+        telefon: order.telefon.trim(),
+        email: order.email.trim(),
+        judet: order.judet.trim(),
+        localitate: order.localitate.trim(),
+        strada: order.adresa.trim(),
+        codAmount: order.totalFinal || 0,
         greutate: 1.2,
-        service: order.metodaLivrare === "easybox" ? 15 : 7,
+        service,
         awbPayment: 1,
         packageType: 0,
-        personType: order.personType === "company" ? 1 : 0,
-        ...(order.metodaLivrare === "easybox" && order.locker
+        personType,
+        ...(service === 15
           ? {
               oohLastMile: {
-                lockerId: order.locker.lockerId || order.locker.oohId,
-                name: order.locker.name,
-                address: order.locker.address,
-                city: order.locker.city,
-                county: order.locker.county,
-                postalCode: order.locker.postalCode,
+                lockerId: order.locker?.lockerId || order.locker?.oohId || "",
+                name: order.locker?.name || "",
+                address: order.locker?.address || "",
+                city: order.locker?.city || "",
+                county: order.locker?.county || "",
+                postalCode: order.locker?.postalCode || "",
               },
             }
           : {}),
       };
 
-      console.log("📦 Payload AWB (Admin):", payload);
+      // 🧪 Debug complet
+      console.log("📦 Payload AWB (Admin):", JSON.stringify(payload, null, 2));
+
+      // ❗️Optional: validare finală
+      const invalidFields = Object.entries(payload).filter(
+        ([key, val]) => val === "" || val === undefined
+      );
+      if (invalidFields.length > 0) {
+        console.warn("❌ Payload incomplet:", invalidFields);
+      }
 
       const awbResponse = await generateAwb(payload);
 
@@ -83,7 +111,6 @@ export default function AdminDashboard() {
           awb: awbResponse.data.awbNumber,
           awbStatus: "generat",
         });
-
         alert("✅ AWB generat cu succes!");
         setOrders((prev) =>
           prev.map((o) =>
@@ -91,7 +118,6 @@ export default function AdminDashboard() {
           )
         );
       } else {
-        console.warn("⚠️ AWB generat cu erori:", awbResponse.data);
         const err = awbResponse.data.error;
         console.error("❌ Eroare API AWB:", err.message);
         console.warn("📦 Erori pe câmpuri:", err.errors);

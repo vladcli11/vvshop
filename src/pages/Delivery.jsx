@@ -2,17 +2,12 @@ import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
-import { db, functions } from "../firebase/firebase-config";
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import useAuth from "../context/useAuth";
-import { httpsCallable } from "firebase/functions";
+
 import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
 import Separator from "../components/Separator";
 
@@ -146,7 +141,7 @@ export default function Delivery() {
       }
     } else {
       try {
-        const comandaRef = await addDoc(collection(db, "comenzi"), {
+        await addDoc(collection(db, "comenzi"), {
           ...form,
           produse: cartItems,
           discount,
@@ -155,58 +150,8 @@ export default function Delivery() {
           uid: currentUser?.uid || null,
           accountEmail: currentUser?.email || null,
         });
-        console.log("🟢 Test: Intrat în blocul ramburs");
-        try {
-          const genereazaAwb = httpsCallable(functions, "generateAwb");
-          const service = form.metodaLivrare === "easybox" ? 15 : 7;
 
-          const awbResponse = await genereazaAwb({
-            nume: form.nume,
-            telefon: form.telefon,
-            email: form.email,
-            judet: form.judet,
-            localitate: form.localitate,
-            strada: form.adresa,
-            codAmount: totalFinal,
-            greutate: 1.2,
-            service, // 7 pentru curier, 15 pentru easybox
-            awbPayment: "recipient",
-            packageType: "standard",
-            personType: "person",
-            oohLastMile:
-              form.metodaLivrare === "easybox"
-                ? {
-                    lockerId: form.locker.lockerId || form.locker.oohId,
-                    name: form.locker?.name,
-                    address: form.locker?.address,
-                    city: form.locker?.city,
-                    county: form.locker?.county,
-                    postalCode: form.locker?.postalCode,
-                  }
-                : undefined,
-          });
-
-          if (awbResponse.data.success) {
-            await updateDoc(comandaRef, {
-              awb: awbResponse.data.awbNumber,
-            });
-            console.log(
-              "✅ AWB generat și salvat:",
-              awbResponse.data.awbNumber
-            );
-          } else {
-            const eroare = awbResponse.data.error;
-
-            console.warn("⚠️ Generarea AWB a eșuat:", eroare.message);
-            console.warn(
-              "📦 Erori pe câmpuri:",
-              JSON.stringify(eroare.errors?.children || {}, null, 2)
-            );
-          }
-        } catch (err) {
-          console.error("❌ Eroare la generare AWB:", err);
-        }
-
+        console.log("🟢 Comanda salvată fără AWB automat");
         setShowThankYou(true);
         clearCart();
       } catch (err) {

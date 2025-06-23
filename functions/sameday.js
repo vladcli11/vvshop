@@ -13,7 +13,7 @@ const SAMEDAY_PASSWORD = functions.config().sameday.password;
 const BASE_URL = "https://sameday-api.demo.zitec.com";
 
 const storage = new Storage();
-const bucket = storage.bucket("vv_shop_clean.appspot.com"); // modifică dacă ai alt bucket
+const bucket = storage.bucket("vv_shop_clean.appspot.com");
 
 let cachedToken = null;
 let tokenTimestamp = 0;
@@ -36,7 +36,7 @@ async function authenticate() {
   tokenTimestamp = now;
   return cachedToken;
 }
-// Aici se face normalizarea cheilor pentru a compara inputul userului cu judetul si localitatea din sameday_city_ids.json
+
 function normalizeKey(str) {
   return str
     ?.trim()
@@ -72,6 +72,7 @@ exports.generateAwb = functions
 
       const matchedKey = matchCityKey(localitate, judet);
       const cityId = matchedKey ? cityMap[matchedKey] : null;
+
       const countyIdKey = Object.keys(countyMap).find(
         (key) => normalizeKey(key) === normalizeKey(judet)
       );
@@ -90,7 +91,7 @@ exports.generateAwb = functions
       const awbBody = {
         pickupPoint: 11150,
         contactPerson: 14476,
-        service: data.service, // 7 = curier, 15 = easybox, 48 = pudo
+        service: data.service,
         awbPayment: 1,
         thirdPartyPickup: 0,
         packageType: 0,

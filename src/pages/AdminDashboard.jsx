@@ -9,7 +9,6 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
 import useUserRole from "../context/useUserRole";
 import { db, functions } from "../firebase/firebase-config";
 import { httpsCallable } from "firebase/functions";

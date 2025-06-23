@@ -49,17 +49,18 @@ export default function AdminDashboard() {
         awbPayment: "recipient",
         packageType: "standard",
         personType: "person",
-        oohLastMile:
-          order.metodaLivrare === "easybox"
-            ? {
-                lockerId: order.locker?.lockerId || order.locker?.oohId,
-                name: order.locker?.name,
-                address: order.locker?.address,
-                city: order.locker?.city,
-                county: order.locker?.county,
-                postalCode: order.locker?.postalCode,
-              }
-            : undefined,
+        ...(order.metodaLivrare === "easybox" && order.locker
+          ? {
+              oohLastMile: {
+                lockerId: order.locker.lockerId || order.locker.oohId,
+                name: order.locker.name,
+                address: order.locker.address,
+                city: order.locker.city,
+                county: order.locker.county,
+                postalCode: order.locker.postalCode,
+              },
+            }
+          : {}),
       });
 
       if (awbResponse.data.success) {

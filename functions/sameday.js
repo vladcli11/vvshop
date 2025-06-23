@@ -60,6 +60,8 @@ function matchCityKey(localitate, judet) {
 exports.generateAwb = functions
   .region("europe-west1")
   .https.onCall(async (data) => {
+    let awbBody = null; // ✅ definit global pentru funcție
+
     try {
       const token = await authenticate();
 
@@ -74,9 +76,6 @@ exports.generateAwb = functions
       const cityId = matchedKey ? cityMap[matchedKey] : null;
       const countyId = countyMap[judet];
 
-      console.log("🔎 cityKey original:", `${localitate}, ${judet}`);
-      console.log("✅ cityKey matched:", matchedKey);
-
       if (!cityId || !countyId) {
         throw new functions.https.HttpsError(
           "invalid-argument",
@@ -84,10 +83,10 @@ exports.generateAwb = functions
         );
       }
 
-      const awbBody = {
+      awbBody = {
         pickupPoint: 11150,
         contactPerson: 14476,
-        service: data.service, // 7 = curier, 15 = easybox, 48 = pudo
+        service: data.service,
         awbPayment: 1,
         thirdPartyPickup: 0,
         packageType: 0,
@@ -117,15 +116,18 @@ exports.generateAwb = functions
         },
       };
 
-      if (data.oohLastMile) {
-        awbBody.oohLastMile = {
-          lockerId: data.oohLastMile.lockerId || data.oohLastMile.oohId,
-          name: data.oohLastMile.name,
-          address: data.oohLastMile.address,
-          city: data.oohLastMile.city,
-          county: data.oohLastMile.county,
-          postalCode: data.oohLastMile.postalCode,
-        };
+      if ([15, 48].includes(data.service)) {
+        if (
+          !data.oohLastMile ||
+          (!data.oohLastMile.lockerId && !data.oohLastMile.oohId)
+        ) {
+          throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Pentru servicii Easybox/PUDO trebuie transmis un lockerId/oohId numeric în oohLastMile."
+          );
+        }
+        awbBody.oohLastMile =
+          data.oohLastMile.lockerId || data.oohLastMile.oohId;
       }
 
       console.log("📦 Trimit AWB cu:", JSON.stringify(awbBody, null, 2));
@@ -146,10 +148,11 @@ exports.generateAwb = functions
     } catch (err) {
       const errorData =
         err.response?.data || err.message || "Eroare necunoscută";
-      console.error(
-        "❌ Eroare la generare AWB:",
-        JSON.stringify(errorData, null, 2)
-      );
+
+      console.error("❌ Eroare brută la generare AWB:");
+      console.error("▶️ Payload trimis:", JSON.stringify(awbBody, null, 2)); // ✅ acum nu mai dă no-undef
+      console.error("▶️ Răspuns Sameday:", errorData);
+
       return {
         success: false,
         error: {

@@ -156,7 +156,10 @@ export default function AdminDashboard() {
                 </p>
 
                 {!order.awb && (
-                  <button onClick={() => genereazaAwb(order)}>
+                  <button
+                    className="text-sm text-blue-600 underline mt-1"
+                    onClick={() => genereazaAwb(order)}
+                  >
                     Generează AWB
                   </button>
                 )}

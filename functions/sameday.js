@@ -189,7 +189,7 @@ exports.saveAwbLabel = functions
       });
 
       const filePath = path.join(os.tmpdir(), `${awbNumber}.pdf`);
-      fs.writeFileSync(filePath, res.data);
+      fs.writeFileSync(filePath, Buffer.from(res.data));
 
       const destFileName = `awb/${awbNumber}.pdf`;
       await bucket.upload(filePath, {

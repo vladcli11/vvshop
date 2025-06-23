@@ -12,15 +12,12 @@ const SAMEDAY_USERNAME = functions.config().sameday.username;
 const SAMEDAY_PASSWORD = functions.config().sameday.password;
 const BASE_URL = "https://sameday-api.demo.zitec.com";
 
-// Trebuie sa schimb unde o sa salvez etichetele AWB-urilor
 const storage = new Storage();
-const bucket = storage.bucket("vv_shop_clean.appspot.com");
+const bucket = storage.bucket("vv_shop_clean.appspot.com"); // modifică dacă ai alt bucket
 
 let cachedToken = null;
 let tokenTimestamp = 0;
-// Functia de autentificare pentru a obtine tokenul de acces la API-ul SameDay la fiecare 23 de ore
-// Tokenul este stocat in cache pentru a evita apelurile repetate la autentificare
-// Tokenul este valid timp de 24 ore in mod normal
+
 async function authenticate() {
   const now = Date.now();
   if (cachedToken && now - tokenTimestamp < 23 * 60 * 60 * 1000) {
@@ -189,7 +186,7 @@ exports.saveAwbLabel = functions
       });
 
       const filePath = path.join(os.tmpdir(), `${awbNumber}.pdf`);
-      fs.writeFileSync(filePath, Buffer.from(res.data));
+      fs.writeFileSync(filePath, res.data);
 
       const destFileName = `awb/${awbNumber}.pdf`;
       await bucket.upload(filePath, {

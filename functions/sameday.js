@@ -1,204 +1,217 @@
-// pages/AdminDashboard.jsx
-import {
-  collection,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  updateDoc,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import useUserRole from "../context/useUserRole";
-import { db, functions } from "../firebase/firebase-config";
-import { httpsCallable } from "firebase/functions";
+const functions = require("firebase-functions");
+const axios = require("axios");
+const { Storage } = require("@google-cloud/storage");
+const os = require("os");
+const fs = require("fs");
+const path = require("path");
 
-export default function AdminDashboard() {
-  const { role, loading } = useUserRole();
-  const [orders, setOrders] = useState([]);
+const cityMap = require("./sameday_city_ids.json");
+const countyMap = require("./sameday_county_ids.json");
 
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      const orderRef = doc(db, "comenzi", orderId);
-      await updateDoc(orderRef, { status: newStatus });
-      setOrders((prev) =>
-        prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-      );
-    } catch (err) {
-      console.error("❌ Eroare la actualizarea statusului:", err);
-      alert("Eroare la modificarea statusului comenzii.");
-    }
-  };
+const SAMEDAY_USERNAME = functions.config().sameday.username;
+const SAMEDAY_PASSWORD = functions.config().sameday.password;
+const BASE_URL = "https://sameday-api.demo.zitec.com";
 
-  const genereazaAwb = async (order) => {
-    try {
-      const generateAwb = httpsCallable(functions, "generateAwb");
-      const service = order.metodaLivrare === "easybox" ? 15 : 7;
+// Trebuie sa schimb unde o sa salvez etichetele AWB-urilor
+const storage = new Storage();
+const bucket = storage.bucket("vv_shop_clean.appspot.com");
 
-      const awbResponse = await generateAwb({
-        nume: order.nume,
-        telefon: order.telefon,
-        email: order.email,
-        judet: order.judet,
-        localitate: order.localitate,
-        strada: order.adresa,
-        codAmount: order.totalFinal,
-        greutate: 1.2,
-        service,
-        awbPayment: "recipient",
-        packageType: "standard",
-        personType: "person",
-        oohLastMile:
-          order.metodaLivrare === "easybox"
-            ? {
-                lockerId: order.locker?.lockerId || order.locker?.oohId,
-                name: order.locker?.name,
-                address: order.locker?.address,
-                city: order.locker?.city,
-                county: order.locker?.county,
-                postalCode: order.locker?.postalCode,
-              }
-            : undefined,
-      });
-
-      if (awbResponse.data.success) {
-        await updateDoc(doc(db, "comenzi", order.id), {
-          awb: awbResponse.data.awbNumber,
-        });
-        alert("AWB generat cu succes!");
-        setOrders((prev) =>
-          prev.map((o) =>
-            o.id === order.id ? { ...o, awb: awbResponse.data.awbNumber } : o
-          )
-        );
-      } else {
-        alert(
-          "Eroare la generarea AWB: " + (awbResponse.data.error?.message || "")
-        );
-      }
-    } catch (err) {
-      alert("Eroare la generarea AWB: " + err.message);
-    }
-  };
-
-  const descarcaEticheta = async (awb) => {
-    try {
-      const saveAwbLabel = httpsCallable(functions, "saveAwbLabel");
-      const result = await saveAwbLabel({ awbNumber: awb });
-      if (result.data.success) {
-        window.open(result.data.url, "_blank");
-      } else {
-        alert("Eticheta nu a putut fi generată.");
-      }
-    } catch (err) {
-      console.error("❌ Eroare la descărcare etichetă:", err);
-      alert("A apărut o eroare la descărcarea AWB-ului.");
-    }
-  };
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const q = query(collection(db, "comenzi"), orderBy("data", "desc"));
-      const snap = await getDocs(q);
-      const list = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setOrders(list);
-    };
-    if (role === "owner") fetchOrders();
-  }, [role]);
-
-  if (loading) return <p className="mt-10 text-center">Se încarcă...</p>;
-
-  if (role !== "owner") {
-    return (
-      <div className="mt-10 text-lg text-center text-red-600">
-        ❌ Acces interzis. Această pagină este doar pentru administrator.
-      </div>
-    );
+let cachedToken = null;
+let tokenTimestamp = 0;
+// Functia de autentificare pentru a obtine tokenul de acces la API-ul SameDay la fiecare 23 de ore
+// Tokenul este stocat in cache pentru a evita apelurile repetate la autentificare
+// Tokenul este valid timp de 24 ore in mod normal
+async function authenticate() {
+  const now = Date.now();
+  if (cachedToken && now - tokenTimestamp < 23 * 60 * 60 * 1000) {
+    return cachedToken;
   }
 
-  return (
-    <div className="min-h-screen px-6 pb-6 bg-white">
-      <Header />
-      <h1 className="my-6 text-2xl font-bold text-center">
-        📦 Comenzi înregistrate
-      </h1>
+  const res = await axios.post(`${BASE_URL}/api/authenticate`, null, {
+    headers: {
+      "X-AUTH-USERNAME": SAMEDAY_USERNAME,
+      "X-AUTH-PASSWORD": SAMEDAY_PASSWORD,
+      Accept: "application/json",
+    },
+  });
 
-      <div className="grid max-w-4xl gap-4 mx-auto">
-        {orders.length === 0 ? (
-          <p className="text-center text-gray-500">Nicio comandă deocamdată.</p>
-        ) : (
-          orders.map((order) => (
-            <div
-              key={order.id}
-              className="p-4 space-y-2 border rounded shadow-sm bg-gray-50"
-            >
-              <div className="flex justify-between text-sm text-gray-600">
-                <span>ID: {order.id}</span>
-                <span>{order.data?.toDate().toLocaleString()}</span>
-              </div>
-              <div>
-                <p className="font-semibold">
-                  {order.nume} {order.prenume} — {order.email}
-                </p>
-                <p>
-                  {order.adresa}, {order.localitate}, {order.judet}
-                </p>
-                <p>Telefon: {order.telefon}</p>
-                <p>
-                  Plată: {order.plata} | Discount: {order.discount || 0}%
-                </p>
-
-                {order.awb ? (
-                  <button
-                    className="text-sm text-blue-600 underline mt-1"
-                    onClick={() => descarcaEticheta(order.awb)}
-                  >
-                    📄 Descarcă eticheta AWB
-                  </button>
-                ) : (
-                  <button
-                    className="px-3 py-1 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                    onClick={() => genereazaAwb(order)}
-                  >
-                    Generează AWB
-                  </button>
-                )}
-
-                <div className="text-sm mt-2">
-                  <strong>Status:</strong>
-                  <select
-                    value={order.status || "necunoscut"}
-                    onChange={(e) =>
-                      handleStatusChange(order.id, e.target.value)
-                    }
-                    className="px-2 py-1 ml-2 text-sm border border-gray-300 rounded"
-                  >
-                    <option value="plasata">plasata</option>
-                    <option value="asteptare_plata">asteptare_plata</option>
-                    <option value="platita">platita</option>
-                    <option value="livrata">livrata</option>
-                    <option value="anulata">anulata</option>
-                  </select>
-                </div>
-              </div>
-
-              <ul className="mt-2 space-y-1 text-sm text-gray-700">
-                {order.produse?.map((prod, i) => (
-                  <li key={i}>
-                    - {prod.nume} ({prod.pret} lei) x {prod.quantity || 1}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-2 font-bold text-green-700">
-                Total: {order.totalFinal?.toFixed(2)} lei
-              </p>
-            </div>
-          ))
-        )}
-      </div>
-
-      <Footer />
-    </div>
-  );
+  cachedToken = res.data.token;
+  tokenTimestamp = now;
+  return cachedToken;
 }
+// Aici se face normalizarea cheilor pentru a compara inputul userului cu judetul si localitatea din sameday_city_ids.json
+function normalizeKey(str) {
+  return str
+    ?.trim()
+    .replace(/\s+/g, " ")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function matchCityKey(localitate, judet) {
+  const normalizedKey = normalizeKey(`${localitate}, ${judet}`);
+  for (const key of Object.keys(cityMap)) {
+    const normalizedCandidate = normalizeKey(key);
+    if (normalizedCandidate === normalizedKey) {
+      return key;
+    }
+  }
+  return null;
+}
+
+exports.generateAwb = functions
+  .region("europe-west1")
+  .https.onCall(async (data) => {
+    try {
+      const token = await authenticate();
+
+      const localitate = (
+        data.oohLastMile?.city ||
+        data.localitate ||
+        ""
+      ).trim();
+      const judet = (data.oohLastMile?.county || data.judet || "").trim();
+
+      const matchedKey = matchCityKey(localitate, judet);
+      const cityId = matchedKey ? cityMap[matchedKey] : null;
+      const countyId = countyMap[judet];
+
+      console.log("🔎 cityKey original:", `${localitate}, ${judet}`);
+      console.log("✅ cityKey matched:", matchedKey);
+
+      if (!cityId || !countyId) {
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          `Oraș sau județ invalid: ${localitate}, ${judet}`
+        );
+      }
+
+      const awbBody = {
+        pickupPoint: 11150,
+        contactPerson: 14476,
+        service: data.service, // 7 = curier, 15 = easybox, 48 = pudo
+        awbPayment: 1,
+        thirdPartyPickup: 0,
+        packageType: 0,
+        packageWeight: data.greutate || 1.2,
+        packageNumber: 1,
+        insuredValue: 0,
+        cashOnDelivery: data.codAmount || 0,
+        clientInternalReference: `vvshop-${Date.now()}`,
+        parcels: [
+          {
+            weight: data.greutate || 1.2,
+            width: 20,
+            length: 30,
+            height: 10,
+          },
+        ],
+        awbRecipient: {
+          name: data.nume,
+          phoneNumber: data.telefon,
+          personType: data.personType === "company" ? 1 : 0,
+          postalCode:
+            data.oohLastMile?.postalCode || data.codPostal || "000000",
+          address:
+            data.oohLastMile?.address || data.strada || "Adresă necunoscută",
+          county: countyId,
+          city: cityId,
+        },
+      };
+
+      if (data.oohLastMile) {
+        awbBody.oohLastMile = {
+          lockerId: data.oohLastMile.lockerId || data.oohLastMile.oohId,
+          name: data.oohLastMile.name,
+          address: data.oohLastMile.address,
+          city: data.oohLastMile.city,
+          county: data.oohLastMile.county,
+          postalCode: data.oohLastMile.postalCode,
+        };
+      }
+
+      console.log("📦 Trimit AWB cu:", JSON.stringify(awbBody, null, 2));
+
+      const response = await axios.post(`${BASE_URL}/api/awb`, awbBody, {
+        headers: {
+          "X-AUTH-TOKEN": token,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      return {
+        success: true,
+        awbNumber: response.data.parcels?.[0]?.awbNumber,
+        data: response.data,
+      };
+    } catch (err) {
+      const errorData =
+        err.response?.data || err.message || "Eroare necunoscută";
+      console.error(
+        "❌ Eroare la generare AWB:",
+        JSON.stringify(errorData, null, 2)
+      );
+      return {
+        success: false,
+        error: {
+          code: err.response?.status || 500,
+          message: err.message || "Eroare necunoscută",
+          errors: errorData.errors || {},
+        },
+      };
+    }
+  });
+
+exports.saveAwbLabel = functions
+  .region("europe-west1")
+  .https.onCall(async (data) => {
+    const { awbNumber } = data;
+
+    if (!awbNumber) {
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "awbNumber lipsă"
+      );
+    }
+
+    try {
+      const token = await authenticate();
+      const pdfUrl = `${BASE_URL}/api/awb/${awbNumber}/label`;
+
+      const res = await axios.get(pdfUrl, {
+        responseType: "arraybuffer",
+        headers: {
+          "X-AUTH-TOKEN": token,
+          Accept: "application/pdf",
+        },
+      });
+
+      const filePath = path.join(os.tmpdir(), `${awbNumber}.pdf`);
+      fs.writeFileSync(filePath, res.data);
+
+      const destFileName = `awb/${awbNumber}.pdf`;
+      await bucket.upload(filePath, {
+        destination: destFileName,
+        contentType: "application/pdf",
+        metadata: {
+          cacheControl: "public,max-age=3600",
+        },
+      });
+
+      const file = bucket.file(destFileName);
+      const [url] = await file.getSignedUrl({
+        action: "read",
+        expires: Date.now() + 3600 * 1000,
+      });
+
+      return { success: true, url };
+    } catch (err) {
+      console.error(
+        "❌ Eroare la salvarea AWB PDF:",
+        err.response?.data || err
+      );
+      throw new functions.https.HttpsError("internal", "Eroare la salvare AWB");
+    }
+  });

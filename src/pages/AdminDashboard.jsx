@@ -56,8 +56,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen px-6 pb-6 bg-white">
-      <Header />
-
       <h1 className="my-6 text-2xl font-bold text-center">
         📦 Comenzi înregistrate
       </h1>

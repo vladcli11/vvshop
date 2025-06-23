@@ -19,4 +19,10 @@ exports.stripeWebhook = functions
   .region("europe-west1")
   .https.onRequest(stripeWebhook);
 
-exports.saveAwbLabel = saveAwbLabel;
+exports.saveAwbLabel = functions
+  .region("europe-west1")
+  .https.onCall(saveAwbLabel);
+
+exports.generateAwb = functions
+  .region("europe-west1")
+  .https.onCall(require("./sameday").generateAwb);

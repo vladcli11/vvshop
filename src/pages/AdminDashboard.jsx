@@ -11,25 +11,89 @@ import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import useUserRole from "../context/useUserRole";
-import { db } from "../firebase/firebase-config";
+import { db, functions } from "../firebase/firebase-config";
 import { httpsCallable } from "firebase/functions";
-import { functions } from "../firebase/firebase-config";
 
 export default function AdminDashboard() {
   const { role, loading } = useUserRole();
   const [orders, setOrders] = useState([]);
+
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const orderRef = doc(db, "comenzi", orderId);
       await updateDoc(orderRef, { status: newStatus });
-
-      // Update local fără să refaci tot fetch-ul
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
       );
     } catch (err) {
       console.error("❌ Eroare la actualizarea statusului:", err);
       alert("Eroare la modificarea statusului comenzii.");
+    }
+  };
+
+  const genereazaAwb = async (order) => {
+    try {
+      const generateAwb = httpsCallable(functions, "generateAwb");
+      const service = order.metodaLivrare === "easybox" ? 15 : 7;
+
+      const awbResponse = await generateAwb({
+        nume: order.nume,
+        telefon: order.telefon,
+        email: order.email,
+        judet: order.judet,
+        localitate: order.localitate,
+        strada: order.adresa,
+        codAmount: order.totalFinal,
+        greutate: 1.2,
+        service,
+        awbPayment: "recipient",
+        packageType: "standard",
+        personType: "person",
+        oohLastMile:
+          order.metodaLivrare === "easybox"
+            ? {
+                lockerId: order.locker?.lockerId || order.locker?.oohId,
+                name: order.locker?.name,
+                address: order.locker?.address,
+                city: order.locker?.city,
+                county: order.locker?.county,
+                postalCode: order.locker?.postalCode,
+              }
+            : undefined,
+      });
+
+      if (awbResponse.data.success) {
+        await updateDoc(doc(db, "comenzi", order.id), {
+          awb: awbResponse.data.awbNumber,
+        });
+        alert("AWB generat cu succes!");
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === order.id ? { ...o, awb: awbResponse.data.awbNumber } : o
+          )
+        );
+      } else {
+        alert(
+          "Eroare la generarea AWB: " + (awbResponse.data.error?.message || "")
+        );
+      }
+    } catch (err) {
+      alert("Eroare la generarea AWB: " + err.message);
+    }
+  };
+
+  const descarcaEticheta = async (awb) => {
+    try {
+      const saveAwbLabel = httpsCallable(functions, "saveAwbLabel");
+      const result = await saveAwbLabel({ awbNumber: awb });
+      if (result.data.success) {
+        window.open(result.data.url, "_blank");
+      } else {
+        alert("Eticheta nu a putut fi generată.");
+      }
+    } catch (err) {
+      console.error("❌ Eroare la descărcare etichetă:", err);
+      alert("A apărut o eroare la descărcarea AWB-ului.");
     }
   };
 
@@ -40,7 +104,6 @@ export default function AdminDashboard() {
       const list = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setOrders(list);
     };
-
     if (role === "owner") fetchOrders();
   }, [role]);
 
@@ -84,35 +147,25 @@ export default function AdminDashboard() {
                 <p>
                   Plată: {order.plata} | Discount: {order.discount || 0}%
                 </p>
-                {order.awb && (
+
+                {order.awb ? (
                   <button
                     className="text-sm text-blue-600 underline mt-1"
-                    onClick={async () => {
-                      try {
-                        const saveAwbLabel = httpsCallable(
-                          functions,
-                          "saveAwbLabel"
-                        );
-                        const result = await saveAwbLabel({
-                          awbNumber: order.awb,
-                        });
-
-                        if (result.data.success) {
-                          window.open(result.data.url, "_blank");
-                        } else {
-                          alert("Eticheta nu a putut fi generată.");
-                        }
-                      } catch (err) {
-                        console.error("❌ Eroare la descărcare etichetă:", err);
-                        alert("A apărut o eroare la descărcarea AWB-ului.");
-                      }
-                    }}
+                    onClick={() => descarcaEticheta(order.awb)}
                   >
                     📄 Descarcă eticheta AWB
                   </button>
+                ) : (
+                  <button
+                    className="px-3 py-1 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    onClick={() => genereazaAwb(order)}
+                  >
+                    Generează AWB
+                  </button>
                 )}
-                <div className="text-sm">
-                  <strong>Status:</strong>{" "}
+
+                <div className="text-sm mt-2">
+                  <strong>Status:</strong>
                   <select
                     value={order.status || "necunoscut"}
                     onChange={(e) =>
@@ -128,6 +181,7 @@ export default function AdminDashboard() {
                   </select>
                 </div>
               </div>
+
               <ul className="mt-2 space-y-1 text-sm text-gray-700">
                 {order.produse?.map((prod, i) => (
                   <li key={i}>

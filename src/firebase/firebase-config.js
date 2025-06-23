@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
+
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getFunctions } from "firebase/functions";
@@ -20,8 +20,3 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, "europe-west1");
-
-const ai = getAI(app, { backend: new GoogleAIBackend() });
-export const geminiModel = getGenerativeModel(ai, {
-  model: "gemini-2.0-flash",
-});

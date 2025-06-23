@@ -32,8 +32,20 @@ export default function AdminDashboard() {
 
   const genereazaAwb = async (order) => {
     try {
-      const generateAwb = httpsCallable(functions, "generateAwb");
+      if (
+        !order.nume ||
+        !order.telefon ||
+        !order.email ||
+        !order.judet ||
+        !order.localitate ||
+        !order.adresa ||
+        typeof order.totalFinal !== "number"
+      ) {
+        console.warn("⚠️ Comandă incompletă:", order);
+        return alert("Comanda are informații lipsă. Nu se poate genera AWB.");
+      }
 
+      const generateAwb = httpsCallable(functions, "generateAwb");
       const service = order.metodaLivrare === "easybox" ? 15 : 7;
 
       const payload = {
@@ -48,16 +60,17 @@ export default function AdminDashboard() {
         service,
         awbPayment: 1,
         packageType: 0,
-        personType: "person", // sau order.personType dacă ai
+        personType:
+          typeof order.personType === "string" ? order.personType : "person", // fallback implicit dacă lipsește
         ...(service === 15 && order.locker
           ? {
               oohLastMile: {
                 lockerId: order.locker.lockerId || order.locker.oohId,
-                name: order.locker.name,
-                address: order.locker.address,
-                city: order.locker.city,
-                county: order.locker.county,
-                postalCode: order.locker.postalCode,
+                name: order.locker.name || "Locker Easybox",
+                address: order.locker.address || "Adresă locker necunoscută",
+                city: order.locker.city || order.localitate,
+                county: order.locker.county || order.judet,
+                postalCode: order.locker.postalCode || "000000",
               },
             }
           : {}),
@@ -80,13 +93,13 @@ export default function AdminDashboard() {
         );
       } else {
         const err = awbResponse.data.error;
-        console.error("❌ Eroare de la API:", err.message);
+        console.error("❌ Eroare API AWB:", err.message);
         console.warn("📦 Erori pe câmpuri:", err.errors);
         alert("❌ Eroare la generarea AWB: " + err.message);
       }
     } catch (err) {
       console.error("❌ Excepție la generarea AWB (admin):", err);
-      alert("A apărut o eroare la generarea AWB. Verifică consola.");
+      alert("Eroare internă la generarea AWB. Vezi consola.");
     }
   };
 

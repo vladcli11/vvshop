@@ -7,7 +7,7 @@
     "deploy": "firebase deploy --only functions"
   },
   "engines": {
-    "node": "20"
+    "node": "18"
   },
   "main": "index.js",
   "dependencies": {
@@ -15,12 +15,12 @@
     "@google/genai": "^1.4.0",
     "@google/generative-ai": "^0.24.1",
     "@sendgrid/mail": "^8.1.5",
+    "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "firebase": "^11.8.1",
     "firebase-admin": "^11.10.1",
     "firebase-functions": "^4.4.1",
-    "functions": "^1.0.9",
     "stripe": "^12.15.0"
   },
   "devDependencies": {

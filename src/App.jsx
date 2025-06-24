@@ -5,7 +5,7 @@ import Apple from "./pages/Apple";
 import Samsung from "./pages/Samsung";
 import Model from "./pages/Models";
 import AuthPage from "./pages/AuthPage";
-import Register_Form from "./components/RegisterForm";
+
 import { fetchAccessoriesByModel } from "./utils/fetchAccessoriesByModel";
 import PrivateRoute from "./components/PrivateRoute";
 import Checkout from "./pages/Checkout";

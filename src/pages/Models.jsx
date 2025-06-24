@@ -12,7 +12,6 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
-import Separator from "../components/Separator";
 
 export default function Models() {
   const { slug } = useParams();
@@ -69,8 +68,6 @@ export default function Models() {
       )}
 
       <div className="relative z-10">
-        <Separator text="Accesorii disponibile" />
-
         {/* Efect decorativ de lumină */}
         <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-40 bg-gradient-to-b from-green-200/30 via-white/0 to-transparent blur-2xl opacity-70 z-0" />
 
@@ -80,7 +77,7 @@ export default function Models() {
               Momentan nu există accesorii disponibile.
             </p>
           ) : (
-            <div className="grid max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+            <div className="grid max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
               {accesorii.map((item) => (
                 <div
                   key={item.id}

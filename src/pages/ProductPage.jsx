@@ -12,7 +12,6 @@ import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import Separator from "../components/Separator";
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -47,8 +46,6 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen px-6 pb-6 bg-white">
-      <Separator text={product.nume} />
-
       <div className="flex flex-col max-w-6xl gap-10 mx-auto mt-6 lg:flex-row">
         {/* Galerie Swiper */}
         <div className="w-full lg:w-1/2">

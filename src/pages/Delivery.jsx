@@ -9,7 +9,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import useAuth from "../context/useAuth";
 
 import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
-import Separator from "../components/Separator";
 
 const stripePromise = loadStripe(
   "pk_test_51RUNogHJkUS6tZsDVmMisYsq1JYSmbGzoHVXtUwBJhn82ED1qAHQxqAJ2pj40OGzcIfzz5dqtDST7AezHfHmpdRI00eoo4Am7T"
@@ -171,8 +170,6 @@ export default function Delivery() {
 
   return (
     <div className="min-h-screen px-2 sm:px-6 pb-6 bg-white">
-      <Separator text="Livrare și plată" />
-
       <form
         onSubmit={handleSubmit}
         className="flex flex-col max-w-lg gap-4 mx-auto mt-10 bg-white border border-gray-200 rounded-2xl shadow-lg p-4 sm:p-8"

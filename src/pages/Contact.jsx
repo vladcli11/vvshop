@@ -5,7 +5,6 @@ import Footer from "../components/Footer";
 import { db } from "../firebase/firebase-config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import useAuth from "../context/useAuth";
-import Separator from "../components/Separator";
 
 export default function Contact() {
   const { currentUser } = useAuth();
@@ -49,7 +48,6 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
-      <Separator text="Contactează-ne" />
       <h1 className="text-3xl font-bold text-center my-6">
         Descrie problema întâmpinată
       </h1>

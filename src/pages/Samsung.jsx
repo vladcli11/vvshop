@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
-import Separator from "../components/Separator";
+
 // S series
 import S20 from "../assets/S20.png";
 import S20FE from "../assets/S20 FE.png";
@@ -244,8 +244,7 @@ export default function Samsung() {
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-green-200/30 rounded-full blur-3xl animate-pulse-slow" />
       </div>
       <div className="relative z-10">
-        <Separator text="Modele disponibile" />
-        <div className="grid w-full max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+        <div className="grid w-full max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
               key={model.slug}

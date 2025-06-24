@@ -9,7 +9,6 @@ import P40 from "../assets/Huawei-P40.webp";
 import P30Pro from "../assets/Huawei-P30-Pro.webp";
 import P30 from "../assets/Huawei-P30.webp";
 import Footer from "../components/Footer";
-import Separator from "../components/Separator";
 
 const modele = [
   { nume: "Huawei P70 Ultra", slug: "huawei-p70-ultra", imagine: P70Ultra },
@@ -36,8 +35,7 @@ export default function Huawei() {
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
       </div>
       <div className="relative z-10">
-        <Separator text="Modele disponibile" />
-        <div className="grid w-full max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+        <div className="grid w-full max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
               key={model.slug}

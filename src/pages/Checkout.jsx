@@ -3,9 +3,7 @@ import useAuth from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "../components/AuthModal";
 import { useState, useEffect } from "react";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Separator from "../components/Separator";
 
 export default function Checkout() {
   const { cartItems, updateQuantity } = useCart();
@@ -56,8 +54,6 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-white px-2 sm:px-6 pb-6">
-      <Separator text="Coșul tău" />
-
       <div className="flex justify-center">
         <div className="w-full max-w-full sm:max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-sm p-3 sm:p-4">
           <ul className="divide-y divide-gray-100">

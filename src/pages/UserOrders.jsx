@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import useAuth from "../context/useAuth";
-import Header from "../components/Header";
+
 import Footer from "../components/Footer";
 import StatusBadge from "../components/StatusBadge";
-import Separator from "../components/Separator";
 
 export default function UserOrders() {
   const { currentUser } = useAuth();
@@ -39,8 +38,6 @@ export default function UserOrders() {
 
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
-      {/* 🔸 Separator full-width */}
-      <Separator text="Comenzile mele" />
       <h1 className="text-2xl font-bold text-center my-6 text-black">
         Comenzile mele
       </h1>

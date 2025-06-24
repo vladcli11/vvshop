@@ -12,7 +12,6 @@ import iphone13 from "../assets/iphone13.png";
 import iphone14 from "../assets/iphone14.webp";
 import iphone12 from "../assets/iphone12.png";
 import Footer from "../components/Footer";
-import Separator from "../components/Separator";
 
 const modele = [
   {
@@ -54,8 +53,7 @@ export default function Apple() {
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
       </div>
       <div className="relative z-10">
-        <Separator text="Modele disponibile" />
-        <div className="grid w-full max-w-5xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+        <div className="grid w-full max-w-5xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
               key={model.slug}

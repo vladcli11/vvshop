@@ -1,21 +1,25 @@
 import { ShoppingCart } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-
 import "swiper/css";
 import "swiper/css/pagination";
-
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
-
+import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
 export default function Models() {
-  const [accesorii] = useState([]);
+  const [accesorii, setAccesorii] = useState([]);
   const { addToCart } = useCart();
   const [showNotif, setShowNotif] = useState(false);
   const notifTimeout = useRef(null);
+
+  useEffect(() => {
+    fetchAccessoriesByModel("all").then((items) => {
+      setAccesorii(items);
+    });
+  }, []);
 
   const handleAddToCart = (item) => {
     addToCart(item);

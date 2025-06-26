@@ -1,8 +1,28 @@
-node_modules/ 
-dist/ 
-.env 
-.env.local 
-.vscode/ 
-.DS_Store 
-firebase-debug.log 
-date.txt    
+# Node.js
+node_modules/
+dist/
+
+# Config și variabile
+.env
+.env.*
+*.local
+
+# Firebase
+firebase-debug.log
+firebase.json
+
+# Chei și fișiere sensibile
+**/serviceAccountKey.json
+*.key.json
+*.secret.*
+*.credentials.*
+
+# Mac & VS Code
+.DS_Store
+.vscode/
+
+# Fișiere temporare
+date.txt
+*.log
+*.bak
+*.tmp

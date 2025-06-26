@@ -34,21 +34,20 @@
             "value": "no-cache"
           }
         ]
-        
       },
       {
-  "source": "/img/**/*.@(webp|png|jpg|jpeg|svg|ico)",
-  "headers": [
-    {
-      "key": "Content-Type",
-      "value": "image/webp"
-    },
-    {
-      "key": "Cache-Control",
-      "value": "public, max-age=604800"
-    }
-  ]
-},
+        "source": "/img/**/*.@(webp|png|jpg|jpeg|svg|ico)",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "image/webp"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "no-store"
+          }
+        ]
+      },
       {
         "source": "/css/**/*.css",
         "headers": [

@@ -30,7 +30,7 @@ export default function Models() {
   };
 
   useEffect(() => {
-    fetchAccessoriesByModel("all").then((items) => {
+    fetchAccessoriesByModel(slug).then((items) => {
       items.forEach((item) => {
         const img = new Image();
         img.src = Array.isArray(item.imagine) ? item.imagine[0] : item.imagine;

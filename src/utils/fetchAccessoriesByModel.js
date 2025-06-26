@@ -13,10 +13,7 @@ export async function fetchAccessoriesByModel(slug) {
     where("models", "array-contains", slug)
   );
 
-  const qString = query(
-    collection(db, "products"),
-    where("models", "==", slug)
-  );
+  const qString = query(collection(db, "products"), where("slug", "==", slug));
 
   const [snapArray, snapString] = await Promise.all([
     getDocs(qArray),

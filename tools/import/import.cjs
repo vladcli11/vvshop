@@ -1,5 +1,3 @@
-// 📦 Script complet Node.js pentru importare produse din CSV și generare automată imagini WebP 700x700 în public/img, cu slug ca ID și fallback la link original dacă conversia eșuează
-
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
@@ -18,8 +16,8 @@ const allowedCategories = [
   "Accesorii Telefoane si Tablete | Huse",
   "Accesorii Telefoane si Tablete | Folii Protectie",
 ];
-const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img"; // 📍 Calea absolută pentru imagini locale
-const BASE_IMAGE_URL = "https://vv-shop.ro/img"; // 🔗 Link absolut către imaginile publice
+const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img";
+const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
 function slugify(str) {
   return str
@@ -73,6 +71,7 @@ https.get(feedUrl, (res) => {
       const categorie = row["CATEGORIE"];
       if (!allowedBrands.includes(marca)) return;
       if (!allowedCategories.includes(categorie)) return;
+
       const isInStock = row["Disponibilitate"]?.toLowerCase() === "in stoc";
       const codUnic = row["COD_UNIC"];
       const nume = row["NUME"];
@@ -81,7 +80,7 @@ https.get(feedUrl, (res) => {
       if (!codUnic || !nume) return;
 
       const slug = slugify(nume);
-      const docRef = db.collection("products").doc(slug); // 🔁 Slug devine ID
+      const docRef = db.collection("products").doc(slug);
       const snapshot = await docRef.get();
 
       const imageFileName = `${slug}.webp`;
@@ -94,7 +93,17 @@ https.get(feedUrl, (res) => {
         activ: isInStock,
       };
 
-      // Produs nou
+      // 🧠 Extragem modelSlug din nume
+      let modelSlug = "";
+      const modelMatch = nume.match(
+        /iPhone\s(?:SE\s)?[0-9]{2}(?:\s(?:Pro Max|Pro|Plus|Max))?/i
+      );
+      if (modelMatch) {
+        modelSlug = slugify(`iphone ${modelMatch[0].split("iPhone")[1]}`);
+      } else {
+        console.warn(`❓ Nu am putut extrage modelSlug din nume: ${nume}`);
+      }
+
       if (!snapshot.exists) {
         ensureDirExists(publicImgPath);
 
@@ -104,14 +113,6 @@ https.get(feedUrl, (res) => {
         if (isInStock && imagineUrl) {
           hasWebp = await downloadAndConvertImage(imagineUrl, imagePath);
           finalImageUrl = hasWebp ? imageFirestoreUrl : imagineUrl;
-
-          if (hasWebp && fs.existsSync(imagePath)) {
-            console.log(`✅ Imagine salvată corect în: ${imagePath}`);
-          } else if (hasWebp) {
-            console.error(
-              `⚠️  Conversie reușită dar fișierul nu apare fizic în: ${imagePath}`
-            );
-          }
         } else {
           console.log(`⚠️  Nu există link imagine pentru produs: ${nume}`);
         }
@@ -130,13 +131,12 @@ https.get(feedUrl, (res) => {
           activ: isInStock,
           necesitaImagine: !hasWebp,
           imagine: finalImageUrl ? [finalImageUrl] : [],
-          models: [slug], // 🔗 Adaugă câmpul models pentru compatibilitate cu afișare per model
+          modelSlug,
         };
 
         await docRef.set(newData, { merge: true });
         console.log(`✅ Creat produs nou: ${slug}`);
       } else {
-        // Actualizare produs existent
         await docRef.set(updateData, { merge: true });
         console.log(`🔄 Actualizat produs: ${slug}`);
       }

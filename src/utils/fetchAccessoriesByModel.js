@@ -1,6 +1,10 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 
+/**
+ * Returnează accesoriile corespunzătoare unui model de telefon (ex: iPhone 14 Pro Max).
+ * Se bazează pe câmpul `modelSlug` generat în timpul importului în Firestore.
+ */
 export async function fetchAccessoriesByModel(slug) {
   if (slug === "all") {
     const snapshot = await getDocs(collection(db, "products"));
@@ -8,30 +12,18 @@ export async function fetchAccessoriesByModel(slug) {
     return sortByTipAndName(items);
   }
 
-  const qArray = query(
-    collection(db, "products"),
-    where("models", "array-contains", slug)
-  );
+  const q = query(collection(db, "products"), where("modelSlug", "==", slug));
 
-  const qString = query(collection(db, "products"), where("slug", "==", slug));
-
-  const [snapArray, snapString] = await Promise.all([
-    getDocs(qArray),
-    getDocs(qString),
-  ]);
-
-  const seen = new Set();
-  const merged = [...snapArray.docs, ...snapString.docs].filter((doc) => {
-    if (seen.has(doc.id)) return false;
-    seen.add(doc.id);
-    return true;
-  });
-
-  const items = merged.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const snapshot = await getDocs(q);
+  const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   return sortByTipAndName(items);
 }
 
-// 🔁 Funcție separată, reutilizabilă și clară
+/**
+ * Sortează accesoriile astfel:
+ * 1. Produsele cu `tip === "folie"` vin primele
+ * 2. Restul sunt ordonate alfabetic după `nume`
+ */
 function sortByTipAndName(items) {
   return items.sort((a, b) => {
     const isFolieA = a.tip === "folie";

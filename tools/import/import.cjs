@@ -17,8 +17,7 @@ const allowedCategories = [
   "Accesorii Telefoane si Tablete | Huse",
   "Accesorii Telefoane si Tablete | Folii Protectie",
 ];
-const publicImgPath = "D:/DropshippingV2/VV_shop_clean/public/img";
-
+const publicImgPath = "D:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
 const modelRegex =

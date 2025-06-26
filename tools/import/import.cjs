@@ -14,6 +14,10 @@ const db = admin.firestore();
 
 const feedUrl = "https://www.gsmnet.ro/csv/feedPriceCustomersDiamond.csv";
 const allowedBrands = ["Apple", "Samsung", "Huawei"];
+const allowedCategories = [
+  "Accesorii Telefoane si Tablete | Huse",
+  "Accesorii Telefoane si Tablete | Folii Protectie",
+];
 const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img"; // 📍 Calea absolută pentru imagini locale
 const BASE_IMAGE_URL = "https://vv-shop.ro/img"; // 🔗 Link absolut către imaginile publice
 
@@ -66,7 +70,9 @@ https.get(feedUrl, (res) => {
     .on("data", async (rawRow) => {
       const row = cleanRowKeys(rawRow);
       const marca = row["MARCA"];
+      const categorie = row["CATEGORIE"];
       if (!allowedBrands.includes(marca)) return;
+      if (!allowedCategories.includes(categorie)) return;
       const isInStock = row["Disponibilitate"]?.toLowerCase() === "in stoc";
       const codUnic = row["COD_UNIC"];
       const nume = row["NUME"];
@@ -117,13 +123,14 @@ https.get(feedUrl, (res) => {
           nume,
           slug,
           marca,
-          categorie: row["CATEGORIE"] || "",
+          categorie: categorie || "",
           garantie: parseInt(row["Garantie in luni"], 10) || 0,
           disponibilitate: updateData.disponibilitate,
           updatedAt: updateData.updatedAt,
           activ: isInStock,
           necesitaImagine: !hasWebp,
           imagine: finalImageUrl ? [finalImageUrl] : [],
+          models: [slug], // 🔗 Adaugă câmpul models pentru compatibilitate cu afișare per model
         };
 
         await docRef.set(newData, { merge: true });

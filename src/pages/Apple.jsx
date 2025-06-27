@@ -16,32 +16,36 @@ import Footer from "../components/Footer";
 const modele = [
   {
     nume: "iPhone 16 Pro Max",
-    slug: "iphone-16-pro-max",
+    modelSlug: "iphone-16-pro-max",
     imagine: iphone16promax,
   },
-  { nume: "iPhone 16 Pro", slug: "iphone-16-pro", imagine: iphone16pro },
-  { nume: "iPhone 16", slug: "iphone-16", imagine: iphone16 },
+  { nume: "iPhone 16 Pro", modelSlug: "iphone-16-pro", imagine: iphone16pro },
+  { nume: "iPhone 16", modelSlug: "iphone-16", imagine: iphone16 },
   {
     nume: "iPhone 15 Pro Max",
-    slug: "iphone-15-pro-max",
+    modelSlug: "iphone-15-pro-max",
     imagine: iphone15promax,
   },
-  { nume: "iPhone 15 Pro", slug: "iphone-15-pro", imagine: iphone15pro },
+  { nume: "iPhone 15 Pro", modelSlug: "iphone-15-pro", imagine: iphone15pro },
   {
     nume: "iPhone 14 Pro Max",
-    slug: "iphone-14-pro-max",
+    modelSlug: "iphone-14-pro-max",
     imagine: iphone14promax,
   },
-  { nume: "iPhone 14 Pro", slug: "iphone-14-pro", imagine: iphone14pro },
-  { nume: "iPhone 14", slug: "iphone-14", imagine: iphone14 },
+  { nume: "iPhone 14 Pro", modelSlug: "iphone-14-pro", imagine: iphone14pro },
+  { nume: "iPhone 14", modelSlug: "iphone-14", imagine: iphone14 },
   {
     nume: "iPhone 13 Pro Max",
-    slug: "iphone-13-pro-max",
+    modelSlug: "iphone-13-pro-max",
     imagine: iphone13promax,
   },
-  { nume: "iPhone 13 Pro", slug: "iphone-13-pro", imagine: iphone13pro },
-  { nume: "iPhone 13", slug: "iphone-13", imagine: iphone13 },
-  { nume: "iPhone 12 Pro Max", slug: "iphone-12-pro-max", imagine: iphone12 },
+  { nume: "iPhone 13 Pro", modelSlug: "iphone-13-pro", imagine: iphone13pro },
+  { nume: "iPhone 13", modelSlug: "iphone-13", imagine: iphone13 },
+  {
+    nume: "iPhone 12 Pro Max",
+    modelSlug: "iphone-12-pro-max",
+    imagine: iphone12,
+  },
 ];
 
 export default function Apple() {
@@ -56,8 +60,8 @@ export default function Apple() {
         <div className="grid w-full max-w-5xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
-              key={model.slug}
-              to={`/apple/${model.slug}`}
+              key={model.modelSlug}
+              to={`/apple/${model.modelSlug}`}
               className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white/80 border border-green-100 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 backdrop-blur-xl
                 hover:scale-[1.03] hover:border-green-300 hover:bg-white/90
                 before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-green-200/30 before:to-blue-200/20 before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300"

@@ -1,4 +1,5 @@
-// 📦 Script complet Node.js pentru importare produse din CSV și generare automată imagini WebP 700x700 în public/img, cu slug ca ID și fallback la link original dacă conversia eșuează
+// 📦 Script complet Node.js pentru importare produse din CSV și generare automată imagini WebP 700x700 în public/img,
+// cu slug ca ID și fallback la link original dacă conversia eșuează
 
 const https = require("https");
 const fs = require("fs");
@@ -17,11 +18,8 @@ const allowedCategories = [
   "Accesorii Telefoane si Tablete | Huse",
   "Accesorii Telefoane si Tablete | Folii Protectie",
 ];
-const publicImgPath = "D:/DropshippingV2/vv_shop_clean/public/img";
+const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
-
-const modelRegex =
-  /(iPhone\s[\w\s\+\-]+|Samsung Galaxy\s[\w\s\+\-]+|Huawei\s[\w\s\+\-]+)/i;
 
 function slugify(str) {
   return str
@@ -76,13 +74,15 @@ https.get(feedUrl, (res) => {
 
       if (!allowedCategories.includes(categorie)) return;
 
-      // Filtrare pe baza denumirii produsului
+      // 🛑 FILTRARE PE STOC - elimină produsele care nu sunt "in stoc"
+      const isInStock = row["Disponibilitate"]?.toLowerCase() === "in stoc";
+      if (!isInStock) return;
+
+      // 🔎 Filtrare pe baza denumirii
       if (!/iphone|apple|samsung|galaxy|huawei/i.test(nume)) return;
 
-      const isInStock = row["Disponibilitate"]?.toLowerCase() === "in stoc";
       const codUnic = row["COD_UNIC"];
       const imagineUrl = row["LINK POZA"];
-
       if (!codUnic || !nume) return;
 
       const slug = slugify(nume);
@@ -96,16 +96,29 @@ https.get(feedUrl, (res) => {
       const updateData = {
         disponibilitate: row["Disponibilitate"] || "",
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        activ: isInStock,
+        activ: true,
       };
 
-      // 🧠 Extragem modelSlug din nume
+      // 🎯 Extragem modelSlug
       let modelSlug = "";
-      const cleanName = nume.replace(/^(Husa|Folie).*?pentru\s/i, "").trim();
-      const match = cleanName.match(modelRegex);
+      const cleanName = nume
+        .replace(/^(Husa|Folie).*?pentru\s*/i, "")
+        .replace(/,\s?.*$/, "")
+        .trim();
 
-      if (match) {
-        modelSlug = slugify(match[0]);
+      const modelRegex =
+        /\b(iPhone\s(?:[0-9]{1,2}(?:\s?(Pro Max|Pro|Plus|Mini|Ultra))?)|Samsung Galaxy\s(?:S|A|Z Fold|Z Flip)?\s?[0-9]{1,2}(?:\s?(Ultra|Plus|FE|Lite))?|Huawei\s(?:P|Mate)?\s?[0-9]{1,2}(?:\s?(Pro|Lite|Pocket|Ultra))?)\b/i;
+
+      const match = cleanName.match(modelRegex);
+      if (match && match[0]) {
+        const candidate = slugify(match[0]);
+        if (!/^[a-z]{2,}-[a-z]*[0-9]{3,}/.test(candidate)) {
+          modelSlug = candidate;
+        } else {
+          console.warn(
+            `🚫 Match invalid sau cod produs mascat: ${match[0]} (${candidate})`
+          );
+        }
       } else {
         console.warn(`❓ Nu am putut extrage modelSlug din nume: ${nume}`);
       }
@@ -116,7 +129,7 @@ https.get(feedUrl, (res) => {
         let hasWebp = false;
         let finalImageUrl = "";
 
-        if (isInStock && imagineUrl) {
+        if (imagineUrl) {
           hasWebp = await downloadAndConvertImage(imagineUrl, imagePath);
           finalImageUrl = hasWebp ? imageFirestoreUrl : imagineUrl;
         } else {
@@ -134,7 +147,7 @@ https.get(feedUrl, (res) => {
           garantie: parseInt(row["Garantie in luni"], 10) || 0,
           disponibilitate: updateData.disponibilitate,
           updatedAt: updateData.updatedAt,
-          activ: isInStock,
+          activ: true,
           necesitaImagine: !hasWebp,
           imagine: finalImageUrl ? [finalImageUrl] : [],
           modelSlug,

@@ -1,24 +1,27 @@
 import { ShoppingCart } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { useParams } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
-
 export default function Models() {
-  const { slug } = useParams();
   const [accesorii, setAccesorii] = useState([]);
   const { addToCart } = useCart();
   const [showNotif, setShowNotif] = useState(false);
   const notifTimeout = useRef(null);
+  const { slug } = useParams();
+
+  useEffect(() => {
+    fetchAccessoriesByModel(slug).then((items) => {
+      setAccesorii(items);
+    });
+  }, [slug]);
 
   const handleAddToCart = (item) => {
     addToCart(item);
@@ -28,16 +31,6 @@ export default function Models() {
       setShowNotif(false);
     }, 2200);
   };
-
-  useEffect(() => {
-    fetchAccessoriesByModel(slug).then((items) => {
-      items.forEach((item) => {
-        const img = new Image();
-        img.src = Array.isArray(item.imagine) ? item.imagine[0] : item.imagine;
-      });
-      setAccesorii(items);
-    });
-  }, [slug]);
 
   return (
     <div className="min-h-screen px-0 pb-0 bg-gradient-to-br from-green-50 via-white to-blue-50 relative overflow-x-hidden">

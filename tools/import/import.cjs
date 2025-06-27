@@ -73,12 +73,16 @@ https.get(feedUrl, (res) => {
       const nume = row["NUME"];
 
       if (!allowedCategories.includes(categorie)) return;
+
+      // 🛑 FILTRARE PE STOC - elimină produsele care nu sunt "in stoc"
+      const isInStock = row["Disponibilitate"]?.toLowerCase() === "in stoc";
+      if (!isInStock) return;
+
+      // 🔎 Filtrare pe baza denumirii
       if (!/iphone|apple|samsung|galaxy|huawei/i.test(nume)) return;
 
-      const isInStock = row["Disponibilitate"]?.toLowerCase() === "in stoc";
       const codUnic = row["COD_UNIC"];
       const imagineUrl = row["LINK POZA"];
-
       if (!codUnic || !nume) return;
 
       const slug = slugify(nume);
@@ -92,10 +96,10 @@ https.get(feedUrl, (res) => {
       const updateData = {
         disponibilitate: row["Disponibilitate"] || "",
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        activ: isInStock,
+        activ: true,
       };
 
-      // 🧠 Extragem modelSlug din nume
+      // 🎯 Extragem modelSlug
       let modelSlug = "";
       const cleanName = nume
         .replace(/^(Husa|Folie).*?pentru\s*/i, "")
@@ -106,7 +110,6 @@ https.get(feedUrl, (res) => {
         /\b(iPhone\s(?:[0-9]{1,2}(?:\s?(Pro Max|Pro|Plus|Mini|Ultra))?)|Samsung Galaxy\s(?:S|A|Z Fold|Z Flip)?\s?[0-9]{1,2}(?:\s?(Ultra|Plus|FE|Lite))?|Huawei\s(?:P|Mate)?\s?[0-9]{1,2}(?:\s?(Pro|Lite|Pocket|Ultra))?)\b/i;
 
       const match = cleanName.match(modelRegex);
-
       if (match && match[0]) {
         const candidate = slugify(match[0]);
         if (!/^[a-z]{2,}-[a-z]*[0-9]{3,}/.test(candidate)) {
@@ -126,7 +129,7 @@ https.get(feedUrl, (res) => {
         let hasWebp = false;
         let finalImageUrl = "";
 
-        if (isInStock && imagineUrl) {
+        if (imagineUrl) {
           hasWebp = await downloadAndConvertImage(imagineUrl, imagePath);
           finalImageUrl = hasWebp ? imageFirestoreUrl : imagineUrl;
         } else {
@@ -144,7 +147,7 @@ https.get(feedUrl, (res) => {
           garantie: parseInt(row["Garantie in luni"], 10) || 0,
           disponibilitate: updateData.disponibilitate,
           updatedAt: updateData.updatedAt,
-          activ: isInStock,
+          activ: true,
           necesitaImagine: !hasWebp,
           imagine: finalImageUrl ? [finalImageUrl] : [],
           modelSlug,

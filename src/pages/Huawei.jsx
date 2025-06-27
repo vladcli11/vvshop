@@ -11,19 +11,23 @@ import P30 from "../assets/Huawei-P30.webp";
 import Footer from "../components/Footer";
 
 const modele = [
-  { nume: "Huawei P70 Ultra", slug: "huawei-p70-ultra", imagine: P70Ultra },
-  { nume: "Huawei P70 Pro", slug: "huawei-p70-pro", imagine: P70Pro },
-  { nume: "Huawei P70", slug: "huawei-p70", imagine: P70 },
-  { nume: "Huawei P60 Pro", slug: "huawei-p60-pro", imagine: P60Pro },
+  {
+    nume: "Huawei P70 Ultra",
+    modelSlug: "huawei-p70-ultra",
+    imagine: P70Ultra,
+  },
+  { nume: "Huawei P70 Pro", modelSlug: "huawei-p70-pro", imagine: P70Pro },
+  { nume: "Huawei P70", modelSlug: "huawei-p70", imagine: P70 },
+  { nume: "Huawei P60 Pro", modelSlug: "huawei-p60-pro", imagine: P60Pro },
   {
     nume: "Huawei P50 Pro Pocket",
-    slug: "huawei-p50-pro-pocket",
+    modelSlug: "huawei-p50-pro-pocket",
     imagine: P50ProPocket,
   },
-  { nume: "Huawei P40 Pro", slug: "huawei-p40-pro", imagine: P40Pro },
-  { nume: "Huawei P40", slug: "huawei-p40", imagine: P40 },
-  { nume: "Huawei P30 Pro", slug: "huawei-p30-pro", imagine: P30Pro },
-  { nume: "Huawei P30", slug: "huawei-p30", imagine: P30 },
+  { nume: "Huawei P40 Pro", modelSlug: "huawei-p40-pro", imagine: P40Pro },
+  { nume: "Huawei P40", modelSlug: "huawei-p40", imagine: P40 },
+  { nume: "Huawei P30 Pro", modelSlug: "huawei-p30-pro", imagine: P30Pro },
+  { nume: "Huawei P30", modelSlug: "huawei-p30", imagine: P30 },
 ];
 
 export default function Huawei() {
@@ -38,8 +42,8 @@ export default function Huawei() {
         <div className="grid w-full max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
-              key={model.slug}
-              to={`/huawei/${model.slug}`}
+              key={model.modelSlug}
+              to={`/huawei/${model.modelSlug}`}
               className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white/80 border border-rose-100 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 backdrop-blur-xl
                 hover:scale-[1.03] hover:border-rose-300 hover:bg-white/90
                 before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-rose-200/30 before:to-blue-200/20 before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300"

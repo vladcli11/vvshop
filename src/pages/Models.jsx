@@ -74,8 +74,11 @@ export default function Models() {
               {accesorii.map((item) => (
                 <div
                   key={item.id}
-                  className="group flex flex-col items-center justify-between w-full h-full p-4 bg-white/90 border border-green-100 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 backdrop-blur-xl relative overflow-hidden animate-fade-in-up
-                  hover:scale-[1.03] hover:border-green-300 hover:bg-white/95"
+                  className="group flex flex-col items-center justify-between w-full h-full p-4 
+    bg-white border border-green-100 rounded-3xl shadow-xl 
+    hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 
+    relative overflow-hidden animate-fade-in-up
+    hover:scale-[1.03] hover:border-green-300"
                 >
                   {/* Accent decorativ */}
                   <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-200/40 to-blue-200/10 rounded-full blur-2xl opacity-60 z-0" />
@@ -102,20 +105,20 @@ export default function Models() {
                               src={url}
                               alt={`${item.nume} imagine ${index + 1}`}
                               effect="blur"
-                              className="object-contain w-full h-44 sm:h-56 drop-shadow-xl transition-transform duration-300 group-hover:scale-110"
+                              className="object-contain w-full h-44 sm:h-56 transition-transform duration-300 group-hover:scale-110"
                             />
                           </div>
                         </SwiperSlide>
                       ))}
                     </Swiper>
 
-                    <h2 className="mt-1 text-lg sm:text-xl font-extrabold text-center text-black tracking-wide drop-shadow transition-all duration-200">
+                    <h2 className="mt-1 text-sm font-extrabold text-center text-black tracking-tight drop-shadow transition-all duration-200">
                       {item.nume}
                     </h2>
                   </div>
 
                   {/* Prețul */}
-                  <p className="mt-3 text-base font-bold text-green-700 bg-green-50 rounded-lg px-4 py-1 shadow-sm border border-green-100">
+                  <p className="mt-1 text-sm font-semibold text-green-600 border border-green-200 rounded-full px-3 py-1 shadow-sm">
                     {item.pret.toFixed(2)} lei
                   </p>
 
@@ -125,7 +128,14 @@ export default function Models() {
                       e.stopPropagation();
                       handleAddToCart(item);
                     }}
-                    className="flex items-center justify-center w-full gap-2 px-3 py-2 mt-2 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow hover:from-green-600 hover:to-green-700 hover:scale-105 transition-all"
+                    className="
+  flex items-center justify-center w-full gap-2 px-3 py-2 mt-2
+  text-sm sm:text-base font-semibold text-white
+  bg-gradient-to-r from-orange-400 to-orange-500
+  rounded-xl shadow-md
+  hover:from-orange-500 hover:to-orange-600
+  hover:scale-105 transition-all
+"
                   >
                     <ShoppingCart className="w-5 h-7" />
                     Adaugă în coș

@@ -1,3 +1,5 @@
+// 📦 Script complet Node.js pentru importare produse din CSV și generare automată imagini WebP 700x700 în public/img, cu slug ca ID și fallback la link original dacă conversia eșuează
+
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
@@ -11,7 +13,6 @@ admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 const db = admin.firestore();
 
 const feedUrl = "https://www.gsmnet.ro/csv/feedPriceCustomersDiamond.csv";
-const allowedBrands = ["Apple", "Samsung", "Huawei"];
 const allowedCategories = [
   "Accesorii Telefoane si Tablete | Huse",
   "Accesorii Telefoane si Tablete | Folii Protectie",
@@ -19,11 +20,14 @@ const allowedCategories = [
 const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
+const modelRegex =
+  /(iPhone\s[\w\s\+\-]+|Samsung Galaxy\s[\w\s\+\-]+|Huawei\s[\w\s\+\-]+)/i;
+
 function slugify(str) {
   return str
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
@@ -67,14 +71,16 @@ https.get(feedUrl, (res) => {
     .pipe(csv({ separator: ";" }))
     .on("data", async (rawRow) => {
       const row = cleanRowKeys(rawRow);
-      const marca = row["MARCA"];
       const categorie = row["CATEGORIE"];
-      if (!allowedBrands.includes(marca)) return;
+      const nume = row["NUME"];
+
       if (!allowedCategories.includes(categorie)) return;
+
+      // Filtrare pe baza denumirii produsului
+      if (!/iphone|apple|samsung|galaxy|huawei/i.test(nume)) return;
 
       const isInStock = row["Disponibilitate"]?.toLowerCase() === "in stoc";
       const codUnic = row["COD_UNIC"];
-      const nume = row["NUME"];
       const imagineUrl = row["LINK POZA"];
 
       if (!codUnic || !nume) return;
@@ -95,15 +101,32 @@ https.get(feedUrl, (res) => {
 
       // 🧠 Extragem modelSlug din nume
       let modelSlug = "";
-      const modelMatch = nume.match(
-        /iPhone\s(?:SE\s)?[0-9]{2}(?:\s(?:Pro Max|Pro|Plus|Max))?/i
-      );
-      if (modelMatch) {
-        modelSlug = slugify(`iphone ${modelMatch[0].split("iPhone")[1]}`);
+      const cleanName = nume
+        .replace(/^(Husa|Folie).*?pentru\s*/i, "") // scoate "Husa pentru", "Folie pentru", etc.
+        .replace(/,\s?.*$/, "") // elimină descrieri extra după virgulă
+        .trim();
+
+      // 🎯 Regex dedicat pentru modele de Apple, Samsung, Huawei
+      const modelRegex =
+        /\b(iPhone\s(?:[0-9]{1,2}(?:\s?(Pro Max|Pro|Plus|Ultra|Mini))?)|Samsung Galaxy\sS[0-9]{1,2}(?:\s?(Ultra|Plus|FE))?|Huawei\sP[0-9]{1,2}(?:\s?(Lite|Pro))?)\b/i;
+
+      const match = cleanName.match(modelRegex);
+
+      // 📤 Slugify doar dacă extragerea pare validă
+      if (match && match[0]) {
+        const candidate = slugify(match[0]);
+
+        // 🧪 Validare de siguranță: să nu fie doar cod de produs
+        if (!/^[a-z]{2,}-[a-z]*[0-9]{3,}/.test(candidate)) {
+          modelSlug = candidate;
+        } else {
+          console.warn(
+            `🚫 Match invalid sau cod produs mascat: ${match[0]} (${candidate})`
+          );
+        }
       } else {
         console.warn(`❓ Nu am putut extrage modelSlug din nume: ${nume}`);
       }
-
       if (!snapshot.exists) {
         ensureDirExists(publicImgPath);
 
@@ -123,7 +146,7 @@ https.get(feedUrl, (res) => {
           ean: String(row["EAN"] || ""),
           nume,
           slug,
-          marca,
+          marca: "",
           categorie: categorie || "",
           garantie: parseInt(row["Garantie in luni"], 10) || 0,
           disponibilitate: updateData.disponibilitate,
@@ -132,6 +155,7 @@ https.get(feedUrl, (res) => {
           necesitaImagine: !hasWebp,
           imagine: finalImageUrl ? [finalImageUrl] : [],
           modelSlug,
+          pret: 1.0,
         };
 
         await docRef.set(newData, { merge: true });

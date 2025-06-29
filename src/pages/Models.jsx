@@ -1,6 +1,5 @@
 import { ShoppingCart } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -69,7 +68,7 @@ export default function Models() {
                 Momentan nu există accesorii disponibile.
               </p>
             ) : (
-              accesorii.map((item) => (
+              accesorii.map((item, idx) => (
                 <div
                   key={item.id}
                   className="group flex flex-col items-center justify-between w-full h-full p-4 
@@ -91,9 +90,10 @@ export default function Models() {
                     <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white shadow-inner transition-all duration-300">
                       <img
                         src={`${item.imagine[0]}?v=${item.id}`}
+                        sizes="(max-width: 640px) 90vw, 300px"
                         alt={item.nume}
-                        loading="eager"
-                        fetchPriority="high"
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        fetchPriority={idx === 0 ? "high" : "auto"}
                         width="300"
                         height="300"
                         className="absolute inset-0 w-full h-full object-contain"

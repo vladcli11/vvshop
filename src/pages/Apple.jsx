@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
-import iphone16promax from "../assets/iphone16promax.png";
-import iphone16pro from "../assets/iphone16pro.png";
-import iphone16 from "../assets/iphone16.png";
-import iphone15promax from "../assets/iphone15promax.png";
-import iphone15pro from "../assets/iphone15pro.png";
-import iphone14promax from "../assets/iphone14promax.png";
-import iphone14pro from "../assets/iphone14pro.png";
-import iphone13promax from "../assets/iphone13promax.png";
-import iphone13pro from "../assets/iphone13pro.png";
-import iphone13 from "../assets/iphone13.png";
+import iphone16promax from "../assets/iphone16promax.webp";
+import iphone16pro from "../assets/iphone16pro.webp";
+import iphone16 from "../assets/iphone16.webp";
+import iphone15promax from "../assets/iphone15promax.webp";
+import iphone15pro from "../assets/iphone15pro.webp";
+import iphone14promax from "../assets/iphone14promax.webp";
+import iphone14pro from "../assets/iphone14pro.webp";
+import iphone13promax from "../assets/iphone13promax.webp";
+import iphone13pro from "../assets/iphone13pro.webp";
+import iphone13 from "../assets/iphone13.webp";
 import iphone14 from "../assets/iphone14.webp";
-import iphone12 from "../assets/iphone12.png";
+import iphone12 from "../assets/iphone12.webp";
 import Footer from "../components/Footer";
 
 const modele = [

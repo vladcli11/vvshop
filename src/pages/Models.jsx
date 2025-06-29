@@ -88,7 +88,7 @@ export default function Models() {
                       (window.location.href = `/produs/${item.slug}`)
                     }
                   >
-                    <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white border border-green-100 shadow-inner transition-all duration-300">
+                    <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white shadow-inner transition-all duration-300">
                       <img
                         src={`${item.imagine[0]}?v=${item.id}`}
                         alt={item.nume}
@@ -96,7 +96,7 @@ export default function Models() {
                         fetchPriority="high"
                         width="300"
                         height="300"
-                        className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-contain"
                       />
                     </div>
 

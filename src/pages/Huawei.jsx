@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import P70Ultra from "../assets/P70-ultra.webp";
-import P70Pro from "../assets/P70-pro.webp";
-import P70 from "../assets/P70.webp";
+//import P70Ultra from "../assets/P70-ultra.webp";
+//import P70Pro from "../assets/P70-pro.webp";
+//import P70 from "../assets/P70.webp";
 import P60Pro from "../assets/Huawei-P60-Pro.webp";
 import P50ProPocket from "../assets/Huawei-P50-Pocketavif.webp";
 import P40Pro from "../assets/Huawei-P40-Pro.webp";
@@ -11,13 +11,9 @@ import P30 from "../assets/Huawei-P30.webp";
 import Footer from "../components/Footer";
 
 const modele = [
-  {
-    nume: "Huawei P70 Ultra",
-    modelSlug: "huawei-p70-ultra",
-    imagine: P70Ultra,
-  },
-  { nume: "Huawei P70 Pro", modelSlug: "huawei-p70-pro", imagine: P70Pro },
-  { nume: "Huawei P70", modelSlug: "huawei-p70", imagine: P70 },
+  //{ nume: "Huawei P70 Ultra", modelSlug: "huawei-p70-ultra", imagine: P70Ultra },
+  //{ nume: "Huawei P70 Pro", modelSlug: "huawei-p70-pro", imagine: P70Pro },
+  //{ nume: "Huawei P70", modelSlug: "huawei-p70", imagine: P70 },
   { nume: "Huawei P60 Pro", modelSlug: "huawei-p60-pro", imagine: P60Pro },
   {
     nume: "Huawei P50 Pro Pocket",

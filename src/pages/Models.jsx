@@ -5,8 +5,6 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import "swiper/css";
 import "swiper/css/pagination";
 import { useParams } from "react-router-dom";
-import { Pagination } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
@@ -64,21 +62,21 @@ export default function Models() {
         {/* Efect decorativ de lumină */}
         <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-40 bg-gradient-to-b from-green-200/30 via-white/0 to-transparent blur-2xl opacity-70 z-0" />
 
-        <main className="relative z-10 pb-10">
-          {accesorii.length === 0 ? (
-            <p className="text-center text-gray-500 mt-10 text-lg font-medium animate-fade-in">
-              Momentan nu există accesorii disponibile.
-            </p>
-          ) : (
-            <div className="grid max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
-              {accesorii.map((item) => (
+        <main className="relative z-10 pb-36">
+          <div className="grid max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4 min-h-[700px]">
+            {accesorii.length === 0 ? (
+              <p className="col-span-full text-center text-gray-500 mt-10 text-lg font-medium animate-fade-in">
+                Momentan nu există accesorii disponibile.
+              </p>
+            ) : (
+              accesorii.map((item) => (
                 <div
                   key={item.id}
                   className="group flex flex-col items-center justify-between w-full h-full p-4 
-    bg-white border border-green-100 rounded-3xl shadow-xl 
-    hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 
-    relative overflow-hidden animate-fade-in-up
-    hover:scale-[1.03] hover:border-green-300"
+            bg-white border border-green-100 rounded-3xl shadow-xl 
+            hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 
+            relative overflow-hidden animate-fade-in-up
+            hover:scale-[1.03] hover:border-green-300"
                 >
                   {/* Accent decorativ */}
                   <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-200/40 to-blue-200/10 rounded-full blur-2xl opacity-60 z-0" />
@@ -90,30 +88,19 @@ export default function Models() {
                       (window.location.href = `/produs/${item.slug}`)
                     }
                   >
-                    <Swiper
-                      modules={[Pagination]}
-                      spaceBetween={10}
-                      slidesPerView={1}
-                      pagination={{ clickable: true }}
-                      style={{ width: "170px", maxWidth: "100%" }}
-                      className="max-w-full pb-1"
-                    >
-                      {item.imagine.map((url, index) => (
-                        <SwiperSlide key={index}>
-                          <div className="overflow-hidden rounded-2xl aspect-square w-full bg-white border border-green-100 flex items-center justify-center p-5 shadow-inner transition-all duration-300">
-                            <LazyLoadImage
-                              key={url}
-                              src={`${url}?v=${item.id}`}
-                              alt={`${item.nume} imagine ${index + 1}`}
-                              effect="blur"
-                              className="object-contain w-full h-44 sm:h-56 transition-transform duration-300 group-hover:scale-110"
-                            />
-                          </div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
+                    <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white border border-green-100 shadow-inner transition-all duration-300">
+                      <img
+                        src={`${item.imagine[0]}?v=${item.id}`}
+                        alt={item.nume}
+                        loading="eager"
+                        fetchPriority="high"
+                        width="300"
+                        height="300"
+                        className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
 
-                    <h2 className="mt-1 text-sm font-extrabold text-center text-black tracking-tight drop-shadow transition-all duration-200">
+                    <h2 className="mt-1 text-xs sm:text-sm font-extrabold text-center text-black tracking-tight drop-shadow transition-all duration-200">
                       {item.nume}
                     </h2>
                   </div>
@@ -129,22 +116,20 @@ export default function Models() {
                       e.stopPropagation();
                       handleAddToCart(item);
                     }}
-                    className="
-  flex items-center justify-center w-full gap-2 px-3 py-2 mt-2
-  text-sm sm:text-base font-semibold text-white
-  bg-gradient-to-r from-orange-400 to-orange-500
-  rounded-xl shadow-md
-  hover:from-orange-500 hover:to-orange-600
-  hover:scale-105 transition-all
-"
+                    className="flex items-center justify-center w-full gap-2 px-3 py-2 mt-2
+              text-sm sm:text-base font-semibold text-white
+              bg-gradient-to-r from-orange-400 to-orange-500
+              rounded-xl shadow-md
+              hover:from-orange-500 hover:to-orange-600
+              hover:scale-105 transition-all"
                   >
                     <ShoppingCart className="w-5 h-7" />
                     Adaugă în coș
                   </button>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </main>
       </div>
       <Footer />

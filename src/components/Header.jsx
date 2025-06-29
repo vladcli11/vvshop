@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart, User } from "lucide-react";
-import logo from "../assets/logo.png";
 import { useState, useRef, useEffect } from "react";
 import useCart from "../context/useCart";
 import useAuth from "../context/useAuth";
@@ -28,9 +27,10 @@ export default function Header({ onAuthClick }) {
         {/* Logo mare */}
         <Link to="/" className="flex items-center group" aria-label="Acasă">
           <img
-            src={logo}
+            src="/img/logo.webp"
             alt="VVShop"
             className="h-20 sm:h-24 w-auto object-contain drop-shadow-lg transition-transform duration-300 group-hover:scale-105"
+            loading="eager"
             fetchPriority="high"
             width={180}
             height={96}

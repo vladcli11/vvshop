@@ -234,7 +234,7 @@ export default function Samsung() {
   return (
     <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-blue-100 via-white to-green-100 relative overflow-x-hidden">
       {/* Efecte bokeh pentru profunzime */}
-      <div className="absolute inset-0 pointer-events-none z-0">
+      <div className="fixed inset-0 z-[-1] pointer-events-none">
         <div className="absolute top-10 left-1/4 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-green-200/30 rounded-full blur-3xl animate-pulse-slow" />
       </div>

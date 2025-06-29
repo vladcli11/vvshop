@@ -46,6 +46,14 @@
         ]
       }
     ],
-    "rewrites": [{ "source": "**", "destination": "/index.html" }]
+    "rewrites": [
+      { "source": "/img/**", "destination": "/img/**" },
+      { "source": "/assets/**", "destination": "/assets/**" },
+      { "source": "/js/**", "destination": "/js/**" },
+      { "source": "/css/**", "destination": "/css/**" },
+      { "source": "**", "destination": "/index.html" }
+    ],
+    "cleanUrls": true,
+    "trailingSlash": false
   }
 }

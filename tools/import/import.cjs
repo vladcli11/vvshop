@@ -12,6 +12,7 @@ const fetch = require("node-fetch");
 const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 const db = admin.firestore();
+const allowedModelSlugs = new Set(require("./allowedModelSlugs.json"));
 
 const feedUrl = "https://www.gsmnet.ro/csv/feedPriceCustomersDiamond.csv";
 const allowedCategories = [
@@ -121,6 +122,11 @@ https.get(feedUrl, (res) => {
         }
       } else {
         console.warn(`❓ Nu am putut extrage modelSlug din nume: ${nume}`);
+      }
+
+      if (!allowedModelSlugs.has(modelSlug)) {
+        console.log(`⏭️ Ignorat: ${nume} — model necunoscut (${modelSlug})`);
+        return;
       }
 
       if (!snapshot.exists) {

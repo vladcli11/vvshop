@@ -61,7 +61,8 @@ export default function ProductPage() {
             {product.imagine?.map((url, index) => (
               <SwiperSlide key={index}>
                 <LazyLoadImage
-                  src={url}
+                  key={url}
+                  src={`${url}?v=${product.id}`}
                   alt={`${product.nume} imagine ${index + 1}`}
                   effect="blur"
                   className="w-full h-[380px] object-contain border rounded-lg p-4 bg-gray-50"

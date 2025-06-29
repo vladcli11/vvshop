@@ -102,7 +102,8 @@ export default function Models() {
                         <SwiperSlide key={index}>
                           <div className="overflow-hidden rounded-2xl aspect-square w-full bg-white border border-green-100 flex items-center justify-center p-5 shadow-inner transition-all duration-300">
                             <LazyLoadImage
-                              src={url}
+                              key={url}
+                              src={`${url}?v=${item.id}`}
                               alt={`${item.nume} imagine ${index + 1}`}
                               effect="blur"
                               className="object-contain w-full h-44 sm:h-56 transition-transform duration-300 group-hover:scale-110"

@@ -31,7 +31,7 @@
           },
           {
             "key": "Cache-Control",
-            "value": "no-cache"
+            "value": "public, max-age=604800, immutable"
           }
         ]
       },
@@ -44,7 +44,7 @@
           },
           {
             "key": "Cache-Control",
-            "value": "no-store"
+            "value": "public, max-age=604800, immutable"
           }
         ]
       },

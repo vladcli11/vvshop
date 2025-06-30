@@ -141,6 +141,17 @@ https.get(feedUrl, (res) => {
         } else {
           console.log(`⚠️  Nu există link imagine pentru produs: ${nume}`);
         }
+        // 🔢 Calcul preț final: Diamond + 7.8 + 2.5%
+        let pretBaza = parseFloat(
+          row["Pret Diamond cu TVA"]?.replace(",", ".") || "0"
+        );
+
+        if (isNaN(pretBaza) || pretBaza <= 0) {
+          console.warn(`⚠️ Preț invalid pentru produs: ${nume}`);
+          return;
+        }
+
+        const pretFinal = Math.round((pretBaza + 7.8) * 1.025 * 100) / 100;
 
         const newData = {
           codUnic: String(codUnic),
@@ -157,7 +168,7 @@ https.get(feedUrl, (res) => {
           necesitaImagine: !hasWebp,
           imagine: finalImageUrl ? [finalImageUrl] : [],
           modelSlug,
-          pret: 1.0,
+          pret: pretFinal,
         };
 
         await docRef.set(newData, { merge: true });

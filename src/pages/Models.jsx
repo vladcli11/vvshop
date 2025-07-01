@@ -4,12 +4,9 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import "swiper/css";
 import "swiper/css/pagination";
 import { useParams } from "react-router-dom";
-import { Pagination } from "swiper/modules";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
-import { ImageOff } from "lucide-react";
-
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
   const { addToCart } = useCart();
@@ -71,7 +68,7 @@ export default function Models() {
                 Momentan nu există accesorii disponibile.
               </p>
             ) : (
-              accesorii.map((item) => (
+              accesorii.map((item, idx) => (
                 <div
                   key={item.id}
                   className="group flex flex-col items-center justify-between w-full h-full p-4 
@@ -90,27 +87,18 @@ export default function Models() {
                       (window.location.href = `/produs/${item.slug}`)
                     }
                   >
-                    <Swiper
-                      modules={[Pagination]}
-                      spaceBetween={10}
-                      slidesPerView={1}
-                      pagination={{ clickable: true }}
-                      style={{ width: "170px", maxWidth: "100%" }}
-                      className="max-w-full pb-1"
-                    >
-                      {item.imagine.map((url, index) => (
-                        <SwiperSlide key={index}>
-                          <div className="overflow-hidden rounded-2xl aspect-square w-full bg-white border border-green-100 flex items-center justify-center p-5 shadow-inner transition-all duration-300">
-                            <LazyLoadImage
-                              src={url}
-                              alt={`${item.nume} imagine ${index + 1}`}
-                              effect="blur"
-                              className="object-contain w-full h-44 sm:h-56 transition-transform duration-300 group-hover:scale-110"
-                            />
-                          </div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
+                    <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white shadow-inner transition-all duration-300">
+                      <img
+                        src={`${item.imagine[0]}?v=${item.id}`}
+                        sizes="(max-width: 640px) 90vw, 300px"
+                        alt={item.nume}
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        fetchPriority={idx === 0 ? "high" : "auto"}
+                        width="300"
+                        height="300"
+                        className="absolute inset-0 w-full h-full object-contain"
+                      />
+                    </div>
 
                     <h2 className="mt-1 text-xs sm:text-sm font-extrabold text-center text-black tracking-tight drop-shadow transition-all duration-200">
                       {item.nume}

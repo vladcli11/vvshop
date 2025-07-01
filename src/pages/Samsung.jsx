@@ -244,7 +244,7 @@ export default function Samsung() {
             <Link
               key={model.modelSlug}
               to={`/samsung/${model.modelSlug}`}
-              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white/80 border border-blue-100 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 backdrop-blur-xl
+              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-blue-100 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 backdrop-blur-xl
                 hover:scale-[1.03] hover:border-blue-300 hover:bg-white/90
                 before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-blue-200/30 before:to-green-200/20 before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300"
               style={{ perspective: 800 }}
@@ -269,12 +269,17 @@ export default function Samsung() {
                   {model.gen}
                 </span>
               )}
-              {/* Imagine cu efect 3D */}
-              <div className="overflow-hidden rounded-2xl aspect-square w-full bg-gradient-to-br from-blue-50 via-white to-green-50 border border-blue-100 flex items-center justify-center p-5 shadow-inner group-hover:rotate-[-3deg] group-hover:scale-105 transition-all duration-300">
+              {/* Imagine */}
+              <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white transition-all duration-300">
                 <img
                   src={model.imagine}
                   alt={model.nume}
-                  className="object-contain w-28 h-28 sm:w-32 sm:h-32 drop-shadow-xl transition-transform duration-300 group-hover:scale-110"
+                  sizes="(max-width: 640px) 90vw, 300px"
+                  loading="eager"
+                  fetchPriority="high"
+                  width="300"
+                  height="300"
+                  className="absolute inset-0 w-full h-full object-contain"
                   draggable={false}
                 />
               </div>

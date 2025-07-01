@@ -12,13 +12,14 @@ const fetch = require("node-fetch");
 const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 const db = admin.firestore();
+const allowedModelSlugs = new Set(require("./allowedModelSlugs.json"));
 
 const feedUrl = "https://www.gsmnet.ro/csv/feedPriceCustomersDiamond.csv";
 const allowedCategories = [
   "Accesorii Telefoane si Tablete | Huse",
   "Accesorii Telefoane si Tablete | Folii Protectie",
 ];
-const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img";
+const publicImgPath = "D:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
 function slugify(str) {
@@ -123,6 +124,11 @@ https.get(feedUrl, (res) => {
         console.warn(`❓ Nu am putut extrage modelSlug din nume: ${nume}`);
       }
 
+      if (!allowedModelSlugs.has(modelSlug)) {
+        console.log(`⏭️ Ignorat: ${nume} — model necunoscut (${modelSlug})`);
+        return;
+      }
+
       if (!snapshot.exists) {
         ensureDirExists(publicImgPath);
 
@@ -135,6 +141,17 @@ https.get(feedUrl, (res) => {
         } else {
           console.log(`⚠️  Nu există link imagine pentru produs: ${nume}`);
         }
+        // 🔢 Calcul preț final: Diamond + 7.8 + 2.5%
+        let pretBaza = parseFloat(
+          row["Pret Diamond cu TVA"]?.replace(",", ".") || "0"
+        );
+
+        if (isNaN(pretBaza) || pretBaza <= 0) {
+          console.warn(`⚠️ Preț invalid pentru produs: ${nume}`);
+          return;
+        }
+
+        const pretFinal = Math.round((pretBaza + 7.8) * 1.025 * 100) / 100;
 
         const newData = {
           codUnic: String(codUnic),
@@ -151,7 +168,7 @@ https.get(feedUrl, (res) => {
           necesitaImagine: !hasWebp,
           imagine: finalImageUrl ? [finalImageUrl] : [],
           modelSlug,
-          pret: 1.0,
+          pret: pretFinal,
         };
 
         await docRef.set(newData, { merge: true });

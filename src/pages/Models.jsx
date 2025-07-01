@@ -10,6 +10,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
+import { ImageOff } from "lucide-react";
+
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
   const { addToCart } = useCart();
@@ -90,27 +92,34 @@ export default function Models() {
                       (window.location.href = `/produs/${item.slug}`)
                     }
                   >
-                    <Swiper
-                      modules={[Pagination]}
-                      spaceBetween={10}
-                      slidesPerView={1}
-                      pagination={{ clickable: true }}
-                      style={{ width: "170px", maxWidth: "100%" }}
-                      className="max-w-full pb-1"
-                    >
-                      {item.imagine.map((url, index) => (
-                        <SwiperSlide key={index}>
-                          <div className="overflow-hidden rounded-2xl aspect-square w-full bg-white border border-green-100 flex items-center justify-center p-5 shadow-inner transition-all duration-300">
-                            <LazyLoadImage
-                              src={url}
-                              alt={`${item.nume} imagine ${index + 1}`}
-                              effect="blur"
-                              className="object-contain w-full h-44 sm:h-56 transition-transform duration-300 group-hover:scale-110"
-                            />
-                          </div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
+                    {item.imagine && item.imagine.length > 0 ? (
+                      <Swiper
+                        modules={[Pagination]}
+                        spaceBetween={10}
+                        slidesPerView={1}
+                        pagination={{ clickable: true }}
+                        style={{ width: "170px", maxWidth: "100%" }}
+                        className="max-w-full pb-1"
+                      >
+                        {item.imagine.map((url, index) => (
+                          <SwiperSlide key={index}>
+                            <div className="overflow-hidden rounded-2xl aspect-square w-full bg-white border border-green-100 flex items-center justify-center p-5 shadow-inner transition-all duration-300">
+                              <LazyLoadImage
+                                src={url}
+                                alt={`${item.nume} imagine ${index + 1}`}
+                                effect="blur"
+                                className="object-contain w-full h-44 sm:h-56 transition-transform duration-300 group-hover:scale-110"
+                              />
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    ) : (
+                      <div className="rounded-2xl aspect-square w-[170px] bg-gray-200 border border-gray-400 flex flex-col items-center justify-center gap-2 p-4 text-sm text-gray-500 italic text-center shadow-inner">
+                        <ImageOff className="w-6 h-6 text-gray-400" />
+                        Imagine indisponibilă
+                      </div>
+                    )}
 
                     <h2 className="mt-1 text-sm font-extrabold text-center text-black tracking-tight drop-shadow transition-all duration-200">
                       {item.nume}

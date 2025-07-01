@@ -53,7 +53,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-2 sm:px-6 pb-6">
+    <div className="mt-5 min-h-screen bg-white px-2 sm:px-6 pb-6">
       <div className="flex justify-center">
         <div className="w-full max-w-full sm:max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-sm p-3 sm:p-4">
           <ul className="divide-y divide-gray-100">

@@ -60,7 +60,7 @@ export default function Huawei() {
                 />
               </div>
               {/* Titlu */}
-              <span className="mt-3 text-base sm:text-lg font-bold text-center text-black group-hover:text-rose-700 group-hover:underline tracking-wide drop-shadow transition-all duration-200 line-clamp-2 w-full">
+              <span className="mt-3 text-base sm:text-lg font-bold text-center text-black">
                 {model.nume}
               </span>
               {/* Glow la hover */}

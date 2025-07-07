@@ -82,7 +82,7 @@ export default function Apple() {
                 />
               </div>
               {/* Titlu */}
-              <span className="mt-3 text-base sm:text-lg font-bold text-center text-black group-hover:text-green-700 group-hover:underline tracking-wide drop-shadow transition-all duration-200">
+              <span className="mt-3 text-base sm:text-lg font-bold text-center text-black">
                 {model.nume}
               </span>
               {/* Glow la hover */}

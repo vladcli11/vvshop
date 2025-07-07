@@ -31,7 +31,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <span className="mt-4 text-lg sm:text-xl font-semibold text-gray-800 group-hover:text-green-600 transition-colors text-center">
+              <span className="mt-4 text-lg sm:text-xl font-semibold text-gray-800 text-center">
                 {name}
               </span>
             </Link>

@@ -32,21 +32,43 @@ export default function Checkout() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-white px-4 sm:px-6">
-        <div className="relative w-full my-6">
-          <div className="absolute inset-0 -mx-4 flex items-center">
-            <div className="flex-grow h-[2px] bg-gradient-to-r from-green-400 to-green-600" />
-            <span className="px-2 text-gray-600 text-base uppercase tracking-wider whitespace-nowrap">
-              Coșul este gol 🛒
-            </span>
-            <div className="flex-grow h-[2px] bg-gradient-to-r from-blue-600 to-blue-400" />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 px-4 sm:px-6">
+        <div className="flex items-center justify-center min-h-[80vh]">
+          <div className="text-center max-w-md mx-auto">
+            {/* Iconiță animată */}
+            <div className="mb-8 relative">
+              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-6xl animate-bounce">🛒</span>
+              </div>
+            </div>
+
+            {/* Titlu */}
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+              Coșul este gol
+            </h2>
+
+            {/* Descriere */}
+            <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+              Nu ai adăugat încă produse în coșul tău.
+              <br className="hidden sm:block" />
+              Găsește-ți accesoriul preferat în câteva secunde.
+            </p>
+
+            {/* Buton de navigare */}
+            <button
+              onClick={() => navigate("/")}
+              className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 transition-all duration-200 font-semibold text-lg"
+            >
+              Începe cumpărăturile
+            </button>
+
+            {/* Decorațiuni */}
+            <div className="mt-12 flex justify-center gap-8 text-gray-300">
+              <div className="text-4xl opacity-50">📱</div>
+            </div>
           </div>
         </div>
-        <div className="text-center text-gray-500 mt-20">
-          <p className="mt-8 text-xl text-gray-700">
-            Adaugă produse în coș pentru a continua cumpărăturile.
-          </p>
-        </div>
+
         <Footer />
       </div>
     );

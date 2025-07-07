@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
+
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
   const { addToCart } = useCart();
@@ -33,15 +34,15 @@ export default function Models() {
     <div className="min-h-screen px-0 pb-0 bg-gradient-to-br from-green-50 via-white to-blue-50 relative overflow-x-hidden">
       {/* Efecte bokeh și lumină */}
       <div className="fixed inset-0 z-[-1] pointer-events-none">
-        <div className="absolute top-10 left-1/4 w-72 h-72 bg-green-200/30 rounded-full blur-3xl animate-pulse-slow" />
+        <div className="absolute top-10 left-1/4 w-72 h-72 bg-green-400/40 rounded-full blur-3xl animate-pulse-slow" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
       </div>
 
       {/* Notificare adăugare în coș */}
       {showNotif && (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 bg-white/90 backdrop-blur-lg border border-green-200 shadow-2xl rounded-2xl flex items-center gap-3 px-6 py-3 max-w-[90vw] sm:max-w-md text-green-700 font-semibold text-base sm:text-lg animate-fade-in-up">
+        <div className="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 bg-white/90 backdrop-blur-lg border border-green-200 shadow-2xl rounded-2xl flex items-center gap-3 px-6 py-3 max-w-[90vw] sm:max-w-md text-green-700 font-semibold text-base sm:text-lg animate-fade-in-up">
           <svg
-            className="w-6 h-6 text-green-500 flex-shrink-0"
+            className="w-6 h-6 text-green-600 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
@@ -78,16 +79,16 @@ export default function Models() {
             hover:scale-[1.03] hover:border-green-300"
                 >
                   {/* Accent decorativ */}
-                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-200/40 to-blue-200/10 rounded-full blur-2xl opacity-60 z-0" />
+                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-300/40 to-blue-200/10 rounded-full blur-2xl opacity-60 z-0" />
 
-                  {/* Zona clickabilă: imagine + titlu */}
+                  {/* Zona clickable: imagine + titlu */}
                   <div
                     className="flex flex-col items-center w-full cursor-pointer z-10"
                     onClick={() =>
                       (window.location.href = `/produs/${item.slug}`)
                     }
                   >
-                    <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white shadow-inner transition-all duration-300">
+                    <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white transition-all duration-300">
                       <img
                         src={`${item.imagine[0]}?v=${item.id}`}
                         sizes="(max-width: 640px) 90vw, 300px"

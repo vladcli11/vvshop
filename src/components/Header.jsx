@@ -49,7 +49,10 @@ export default function Header({ onAuthClick }) {
             <ShoppingCart className="w-7 h-7" />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-gradient-to-tr from-green-400 to-green-600 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow">
-                {cartItems.length}
+                {cartItems.reduce(
+                  (total, item) => total + (item.quantity || 1),
+                  0
+                )}
               </span>
             )}
           </Link>

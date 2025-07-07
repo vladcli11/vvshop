@@ -176,6 +176,7 @@ exports.saveAwbLabel = functions
     try {
       const token = await authenticate();
       const pdfUrl = `${BASE_URL}/api/awb/${awbNumber}/label`;
+      console.log("📥 PDF URL:", pdfUrl);
 
       const res = await axios.get(pdfUrl, {
         responseType: "arraybuffer",
@@ -185,8 +186,11 @@ exports.saveAwbLabel = functions
         },
       });
 
+      console.log("📄 Răspuns PDF status:", res.status);
+
       const filePath = path.join(os.tmpdir(), `${awbNumber}.pdf`);
       fs.writeFileSync(filePath, res.data);
+      console.log("✅ Fișier scris local:", filePath);
 
       const destFileName = `awb/${awbNumber}.pdf`;
       await bucket.upload(filePath, {
@@ -197,11 +201,15 @@ exports.saveAwbLabel = functions
         },
       });
 
+      console.log("📤 Upload finalizat:", destFileName);
+
       const file = bucket.file(destFileName);
       const [url] = await file.getSignedUrl({
         action: "read",
         expires: Date.now() + 3600 * 1000,
       });
+
+      console.log("🔗 URL semnat generat:", url);
 
       return { success: true, url };
     } catch (err) {

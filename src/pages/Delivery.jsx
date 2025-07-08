@@ -5,14 +5,9 @@ import useCart from "../context/useCart";
 import { db } from "../firebase/firebase-config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { loadStripe } from "@stripe/stripe-js";
+
 import useAuth from "../context/useAuth";
-
 import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
-
-const stripePromise = loadStripe(
-  "pk_test_51RUNogHJkUS6tZsDVmMisYsq1JYSmbGzoHVXtUwBJhn82ED1qAHQxqAJ2pj40OGzcIfzz5dqtDST7AezHfHmpdRI00eoo4Am7T"
-);
 
 export default function Delivery() {
   const [form, setForm] = useState({
@@ -95,7 +90,10 @@ export default function Delivery() {
     const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
 
     if (form.plata === "card") {
-      const stripe = await stripePromise;
+      const { loadStripe } = await import("@stripe/stripe-js");
+      const stripe = await loadStripe(
+        "pk_test_51RUNogHJkUS6tZsDVmMisYsq1JYSmbGzoHVXtUwBJhn82ED1qAHQxqAJ2pj40OGzcIfzz5dqtDST7AezHfHmpdRI00eoo4Am7T"
+      );
       const lineItems = cartItems.map((item) => ({
         nume: item.nume,
         pret: item.pret,

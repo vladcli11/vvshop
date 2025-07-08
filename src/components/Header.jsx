@@ -1,16 +1,15 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart, User } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import useCart from "../context/useCart";
 import useAuth from "../context/useAuth";
-import AccountDropdown from "./AccountDropdown";
 
 export default function Header({ onAuthClick }) {
   const { currentUser } = useAuth();
   const { cartItems } = useCart();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-
+  const AccountDropdown = lazy(() => import("./AccountDropdown"));
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -81,7 +80,9 @@ export default function Header({ onAuthClick }) {
       </nav>
       {/* Dropdown cont */}
       {currentUser && showDropdown && (
-        <AccountDropdown onClose={() => setShowDropdown(false)} />
+        <Suspense fallback={null}>
+          <AccountDropdown onClose={() => setShowDropdown(false)} />
+        </Suspense>
       )}
     </header>
   );

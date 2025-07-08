@@ -130,6 +130,9 @@ export default function ProductPage() {
                         key={url}
                         src={`${url}?v=${product.id}`}
                         alt={`${product.nume} imagine ${index + 1}`}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        fetchPriority={index === 0 ? "high" : "auto"}
+                        width="600"
                         effect="blur"
                         className="w-full h-[400px] object-contain p-6"
                       />

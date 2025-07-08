@@ -1,6 +1,7 @@
-import { useState } from "react";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
+import { useState, lazy, Suspense } from "react";
+
+const LoginForm = lazy(() => import("./LoginForm"));
+const RegisterForm = lazy(() => import("./RegisterForm"));
 
 function AuthModal({ isOpen, onClose, initialMode = "login", redirectTo }) {
   const [authMode, setAuthMode] = useState(initialMode);
@@ -26,11 +27,13 @@ function AuthModal({ isOpen, onClose, initialMode = "login", redirectTo }) {
             {authMode === "login" ? "Autentificare" : "Înregistrare"}
           </h2>
         </div>
-        {authMode === "login" ? (
-          <LoginForm onClose={onClose} redirectTo={redirectTo} />
-        ) : (
-          <RegisterForm onClose={onClose} redirectTo={redirectTo} />
-        )}
+        <Suspense fallback={<div>Se încarcă formularul...</div>}>
+          {authMode === "login" ? (
+            <LoginForm onClose={onClose} redirectTo={redirectTo} />
+          ) : (
+            <RegisterForm onClose={onClose} redirectTo={redirectTo} />
+          )}
+        </Suspense>
         <div className="mt-6 text-center text-sm">
           {authMode === "login" ? (
             <>

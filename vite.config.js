@@ -1,12 +1,18 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import compression from "vite-plugin-compression";
+import viteCompression from "vite-plugin-compression";
 
 export default defineConfig({
-  plugins: [react(), compression()],
+  plugins: [
+    react(),
+    viteCompression({ algorithm: "brotliCompress" }), // sau gzip
+  ],
   publicDir: "public",
   build: {
     outDir: "dist",
+    minify: "terser",
+    target: "es2020",
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {

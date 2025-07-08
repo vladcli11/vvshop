@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node tools/export/exportImgFromFirestore.cjs",
+    "build": "vite build",
     "deploy": "npm run build && firebase deploy --only hosting",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -44,6 +44,7 @@
     "postcss": "^8.5.3",
     "rollup": "^3.29.4",
     "tailwindcss": "^3.4.17",
+    "terser": "^5.43.1",
     "vite": "^5.2.10",
     "vite-plugin-compression": "^0.5.1"
   }

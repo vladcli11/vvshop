@@ -1,8 +1,6 @@
 import { ShoppingCart } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import "swiper/css";
-import "swiper/css/pagination";
 import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";

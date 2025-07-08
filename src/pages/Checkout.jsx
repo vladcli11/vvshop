@@ -1,11 +1,11 @@
 import useCart from "../context/useCart";
 import useAuth from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
-import AuthModal from "../components/AuthModal";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import Footer from "../components/Footer";
 
 export default function Checkout() {
+  const AuthModal = lazy(() => import("../components/AuthModal"));
   const { cartItems, updateQuantity } = useCart();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -132,14 +132,12 @@ export default function Checkout() {
           </ul>
         </div>
       </div>
-
       <div className="flex justify-center">
         <div className="text-xl font-bold mt-8 w-full max-w-full sm:max-w-2xl text-center bg-gray-50 rounded-xl py-4 shadow-sm border border-gray-200">
           Subtotal:{" "}
           <span className="text-green-600">{total.toFixed(2)} lei</span>
         </div>
       </div>
-
       <div className="flex justify-center">
         <button
           onClick={handleContinue}
@@ -148,16 +146,16 @@ export default function Checkout() {
           Continuă
         </button>
       </div>
-
       {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-          initialMode="register"
-          redirectTo={null}
-        />
+        <Suspense fallback={null}>
+          <AuthModal
+            isOpen={showAuthModal}
+            onClose={() => setShowAuthModal(false)}
+            initialMode="register"
+            redirectTo={null}
+          />
+        </Suspense>
       )}
-
       <Footer />
     </div>
   );

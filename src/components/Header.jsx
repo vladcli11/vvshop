@@ -1,15 +1,29 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart, User } from "lucide-react";
 import { useState, useRef, useEffect, lazy, Suspense } from "react";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
 import useCart from "../context/useCart";
-import useAuth from "../context/useAuth";
+
+// Lazy load AccountDropdown
+const AccountDropdown = lazy(() => import("./AccountDropdown"));
 
 export default function Header({ onAuthClick }) {
-  const { currentUser } = useAuth();
   const { cartItems } = useCart();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dropdownRef = useRef(null);
-  const AccountDropdown = lazy(() => import("./AccountDropdown"));
+
+  // Ascultă autentificarea fără useAuth
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
+      setIsLoggedIn(!!user);
+      if (!user) {
+        setShowDropdown(false); // 🔥 închide dropdownul dacă user-ul a ieșit
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -23,7 +37,7 @@ export default function Header({ onAuthClick }) {
   return (
     <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl shadow-md border-b border-green-100">
       <nav className="relative flex items-center justify-between max-w-5xl mx-auto px-3 sm:px-8 h-16 sm:h-20">
-        {/* Logo mare */}
+        {/* Logo */}
         <Link to="/" className="flex items-center group" aria-label="Acasă">
           <img
             src="/img/logo.webp"
@@ -37,7 +51,7 @@ export default function Header({ onAuthClick }) {
           />
         </Link>
 
-        {/* Butoane dreapta */}
+        {/* Dreapta: Coș + Cont */}
         <div className="flex items-center gap-3 sm:gap-6">
           {/* Coș */}
           <Link
@@ -59,29 +73,32 @@ export default function Header({ onAuthClick }) {
           {/* Cont */}
           <button
             onClick={() => {
-              if (currentUser) {
+              if (isLoggedIn) {
                 setShowDropdown((prev) => !prev);
               } else {
                 onAuthClick?.();
               }
             }}
             className={`relative bg-white/80 p-3 sm:p-4 rounded-full shadow-lg border transition-all duration-200 hover:bg-green-50 hover:scale-105 ${
-              currentUser ? "border-green-400" : "border-gray-200"
+              isLoggedIn ? "border-green-400" : "border-gray-200"
             }`}
             aria-label="Autentificare / Cont"
           >
             <User
               className={`w-7 h-7 ${
-                currentUser ? "text-green-600" : "text-gray-600"
+                isLoggedIn ? "text-green-600" : "text-gray-600"
               }`}
             />
           </button>
         </div>
       </nav>
-      {/* Dropdown cont */}
-      {currentUser && showDropdown && (
-        <Suspense fallback={null}>
-          <AccountDropdown onClose={() => setShowDropdown(false)} />
+
+      {/* Dropdown cont logat */}
+      {isLoggedIn && showDropdown && (
+        <Suspense fallback={<div className="..." />}>
+          {isLoggedIn && showDropdown && (
+            <AccountDropdown onClose={() => setShowDropdown(false)} />
+          )}
         </Suspense>
       )}
     </header>

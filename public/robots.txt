@@ -1,0 +1,14 @@
+User-agent: *
+
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /cos
+Disallow: /cos/livrare
+Disallow: /succes
+Disallow: /anulare
+
+Allow: /
+
+# 🗺️ Sitemap (opțional, dar recomandat)
+Sitemap: https://vv-shop.ro/sitemap.xml

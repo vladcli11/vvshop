@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Pagini principale -->
+  <url><loc>https://vv-shop.ro/</loc><priority>1.0</priority></url>
+  <url><loc>https://vv-shop.ro/home</loc></url>
+  <url><loc>https://vv-shop.ro/apple</loc></url>
+  <url><loc>https://vv-shop.ro/samsung</loc></url>
+  <url><loc>https://vv-shop.ro/huawei</loc></url>
+
+  <!-- Pagini legale și contact -->
+  <url><loc>https://vv-shop.ro/contact</loc></url>
+  <url><loc>https://vv-shop.ro/termeni</loc></url>
+  <url><loc>https://vv-shop.ro/confidentialitate</loc></url>
+  <url><loc>https://vv-shop.ro/livrare-retur</loc></url>
+</urlset>

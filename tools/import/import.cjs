@@ -53,7 +53,7 @@ async function downloadAndConvertImage(imageUrl, outputFilePath) {
     const buffer = await res.buffer();
 
     await sharp(buffer)
-      .resize(700, 700, { fit: "cover" })
+      .resize(300, 300, { fit: "cover" })
       .toFormat("webp")
       .toFile(outputFilePath);
 

@@ -19,6 +19,21 @@ export default function Models() {
     });
   }, [slug]);
 
+  useEffect(() => {
+    if (accesorii.length > 0 && accesorii[0].imagine?.[0]) {
+      const preloadUrl = `${accesorii[0].imagine[0]}?v=${accesorii[0].id}`;
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = preloadUrl;
+      link.setAttribute("fetchpriority", "high");
+      document.head.appendChild(link);
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
+  }, [accesorii]);
+
   const handleAddToCart = (item) => {
     addToCart(item);
     setShowNotif(true);

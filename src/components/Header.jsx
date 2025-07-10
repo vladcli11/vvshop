@@ -27,8 +27,14 @@ export default function Header({ onAuthClick }) {
   useEffect(() => {
     const placeholder = document.getElementById("preload-logo");
     if (placeholder) {
-      placeholder.remove();
+      placeholder.style.display = "none";
     }
+    const timeout = setTimeout(() => {
+      const again = document.getElementById("preload-logo");
+      if (again) again.style.display = "none";
+    }, 100);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {

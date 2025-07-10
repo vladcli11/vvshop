@@ -19,7 +19,7 @@ const allowedCategories = [
   "Accesorii Telefoane si Tablete | Huse",
   "Accesorii Telefoane si Tablete | Folii Protectie",
 ];
-const publicImgPath = "D:/DropshippingV2/vv_shop_clean/public/img";
+const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
 function slugify(text) {
@@ -39,11 +39,12 @@ function extractModelSlug(modelName) {
   slug = slug
     .replace(/^apple-iphone-/, "iphone-")
     .replace(/^apple-/, "iphone-")
+    .replace(/\+/g, "plus")
     .replace(/^samsung-galaxy-/, "samsung-galaxy-")
     .replace(/^huawei-/, "huawei-");
 
-  // elimină coduri comerciale și descrieri irelevante
-  slug = slug.replace(/-[a-z]?\d{3,4}(?=[^\+]|$)/g, "");
+  // ✅ PĂSTREAZĂ + pentru modelele Plus - elimină doar coduri numerice lungi
+  slug = slug.replace(/-[a-z]?\d{4,}(?=[^\+]|$)/g, "");
   slug = slug.replace(/-(4g|5g)/g, "");
   slug = slug.replace(/-dual-sim|-ds|-duos/g, "");
 
@@ -56,7 +57,12 @@ function extractModelSlug(modelName) {
   slug = slug.replace(/-albastru.*$/, "");
   slug = slug.replace(/-transparent.*$/, "");
 
+  // ✅ Convertește 'plus' la '+' pentru consistență
+  slug = slug.replace(/-plus$/i, "+");
+
   slug = slug.replace(/--+/g, "-").replace(/-$/, "");
+
+  console.log(`🔧 extractModelSlug final output: "${slug}"`); // DEBUG
 
   return slug;
 }
@@ -137,28 +143,27 @@ https.get(feedUrl, (res) => {
         .replace(/,\s?.*$/, "")
         .trim();
 
+      console.log(`🔍 cleanName: "${cleanName}"`); // DEBUG
+
       const modelRegex =
-        /\b(iPhone\s(?:[0-9]{1,2}(?:\s?(Pro Max|Pro|Plus|Mini|Ultra))?)|Samsung Galaxy\s(?:S|A|Z Fold|Z Flip)?\s?[0-9]{1,2}(?:\s?(Ultra|Plus|FE|Lite))?|Huawei\s(?:P|Mate)?\s?[0-9]{1,2}(?:\s?(Pro|Lite|Pocket|Ultra))?)\b/i;
+        /\b(iPhone\s[0-9]{1,2}(\+| Plus)?(?:\s?(Pro Max|Pro|Mini|Ultra))?|Samsung Galaxy\s(?:S|A|Z Fold|Z Flip)?\s?[0-9]{1,2}(\+| Plus)?(?:\s?(Ultra|Plus|FE|Lite))?|Huawei\s(?:P|Mate)?\s?[0-9]{1,2}(\+| Plus)?(?:\s?(Pro|Lite|Pocket|Ultra))?)\b/i;
 
       const match = cleanName.match(modelRegex);
       if (match && match[0]) {
+        console.log(`🎯 Match găsit: "${match[0]}"`); // DEBUG
         const candidate = extractModelSlug(match[0]);
-        if (!/^[a-z]{2,}-[a-z]*[0-9]{3,}/.test(candidate)) {
-          modelSlug = candidate;
-        } else {
-          console.warn(
-            `🚫 Match invalid sau cod produs mascat: ${match[0]} (${candidate})`
-          );
-        }
+        modelSlug = candidate;
+        console.log(`✅ Model extras: ${match[0]} → ${modelSlug}`);
       } else {
         console.warn(`❓ Nu am putut extrage modelSlug din nume: ${nume}`);
       }
 
-      if (!allowedModelSlugs.has(modelSlug)) {
-        console.log(`⏭️ Ignorat: ${nume} — model necunoscut (${modelSlug})`);
+      if (!modelSlug || !allowedModelSlugs.has(modelSlug)) {
+        console.log(
+          `⏭️ Ignorat: ${nume} — model necunoscut sau modelSlug gol (${modelSlug})`
+        );
         return;
       }
-
       if (!snapshot.exists) {
         ensureDirExists(publicImgPath);
 

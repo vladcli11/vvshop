@@ -5,20 +5,20 @@ import Footer from "../components/Footer";
 // S series
 import S20 from "../assets/s20.webp";
 import S20FE from "../assets/s20fe.webp";
-import S20PLUS from "../assets/s20+.webp";
+import S20PLUS from "../assets/s20-plus.webp";
 import S20ULTRA from "../assets/s20ultra.webp";
 import S21 from "../assets/s21.webp";
 import S21FE from "../assets/s21fe.webp";
-import S21PLUS from "../assets/s21+.webp";
+import S21PLUS from "../assets/s21-plus.webp";
 import S21ULTRA from "../assets/s21ultra.webp";
 import S22 from "../assets/s22.webp";
-import S22PLUS from "../assets/s22+.webp";
+import S22PLUS from "../assets/s22-plus.webp";
 import S22ULTRA from "../assets/s22ultra.webp";
 import S23 from "../assets/s23.webp";
-import S23PLUS from "../assets/s23+.webp";
+import S23PLUS from "../assets/s23-plus.webp";
 import S23ULTRA from "../assets/s23ultra.webp";
 import S24 from "../assets/s24.webp";
-import S24PLUS from "../assets/s24+.webp";
+import S24PLUS from "../assets/s24-plus.webp";
 import S24ULTRA from "../assets/s24ultra.webp";
 import S25 from "../assets/s25.webp";
 import S25ULTRA from "../assets/s25ultra.webp";
@@ -79,7 +79,7 @@ const modele = [
   },
   {
     nume: "Samsung Galaxy S20 PLUS",
-    modelSlug: "samsung-galaxy-s20+",
+    modelSlug: "samsung-galaxy-s20-plus",
     imagine: S20PLUS,
   },
   {
@@ -95,7 +95,7 @@ const modele = [
   },
   {
     nume: "Samsung Galaxy S21 PLUS",
-    modelSlug: "samsung-galaxy-s21+",
+    modelSlug: "samsung-galaxy-s21-plus",
     imagine: S21PLUS,
   },
   {
@@ -106,7 +106,7 @@ const modele = [
   { nume: "Samsung Galaxy S22", modelSlug: "samsung-galaxy-s22", imagine: S22 },
   {
     nume: "Samsung Galaxy S22 PLUS",
-    modelSlug: "samsung-galaxy-s22+",
+    modelSlug: "samsung-galaxy-s22-plus",
     imagine: S22PLUS,
   },
   {
@@ -117,7 +117,7 @@ const modele = [
   { nume: "Samsung Galaxy S23", modelSlug: "samsung-galaxy-s23", imagine: S23 },
   {
     nume: "Samsung Galaxy S23 PLUS",
-    modelSlug: "samsung-galaxy-s23+",
+    modelSlug: "samsung-galaxy-s23-plus",
     imagine: S23PLUS,
   },
   {
@@ -128,7 +128,7 @@ const modele = [
   { nume: "Samsung Galaxy S24", modelSlug: "samsung-galaxy-s24", imagine: S24 },
   {
     nume: "Samsung Galaxy S24 PLUS",
-    modelSlug: "samsung-galaxy-s24+",
+    modelSlug: "samsung-galaxy-s24-plus",
     imagine: S24PLUS,
   },
   {

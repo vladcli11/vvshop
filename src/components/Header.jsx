@@ -25,6 +25,13 @@ export default function Header({ onAuthClick }) {
   }, []);
 
   useEffect(() => {
+    const placeholder = document.getElementById("preload-logo");
+    if (placeholder) {
+      placeholder.remove();
+    }
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
@@ -42,7 +49,7 @@ export default function Header({ onAuthClick }) {
           <img
             src="/img/logo.webp"
             alt="VVShop"
-            className="h-20 sm:h-24 w-auto object-contain drop-shadow-lg transition-transform duration-300 group-hover:scale-105"
+            className="h-20 sm:h-24 w-auto object-contain"
             loading="eager"
             fetchPriority="high"
             width={180}

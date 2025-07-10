@@ -3,40 +3,39 @@ import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 
 // S series
-import S20 from "../assets/S20.webp";
-import S20FE from "../assets/S20 FE.webp";
-import S20PLUS from "../assets/S20 PLUS.webp";
-import S20ULTRA from "../assets/S20 ULTRA.webp";
-import S21 from "../assets/S21.webp";
-import S21FE from "../assets/S21 FE.webp";
-import S21PLUS from "../assets/S21 PLUS.webp";
-import S21ULTRA from "../assets/S21 ULTRA.webp";
-import S22 from "../assets/S22.webp";
-import S22PLUS from "../assets/S22 PLUS.webp";
-import S22ULTRA from "../assets/S22 ULTRA.webp";
-import S23 from "../assets/S23.webp";
-import S23PLUS from "../assets/S23 PLUS.webp";
-import S23ULTRA from "../assets/S23 ULTRA.webp";
-import S24 from "../assets/S24.webp";
-import S24PLUS from "../assets/S24 PLUS.webp";
-import S24ULTRA from "../assets/S24 ULTRA.webp";
-import S25 from "../assets/S25.webp";
-import S25DUALSIM from "../assets/S25 DUAL SIM.webp";
-import S25ULTRA from "../assets/S25 ULTRA.webp";
+import S20 from "../assets/s20.webp";
+import S20FE from "../assets/s20fe.webp";
+import S20PLUS from "../assets/s20+.webp";
+import S20ULTRA from "../assets/s20ultra.webp";
+import S21 from "../assets/s21.webp";
+import S21FE from "../assets/s21fe.webp";
+import S21PLUS from "../assets/s21+.webp";
+import S21ULTRA from "../assets/s21ultra.webp";
+import S22 from "../assets/s22.webp";
+import S22PLUS from "../assets/s22+.webp";
+import S22ULTRA from "../assets/s22ultra.webp";
+import S23 from "../assets/s23.webp";
+import S23PLUS from "../assets/s23+.webp";
+import S23ULTRA from "../assets/s23ultra.webp";
+import S24 from "../assets/s24.webp";
+import S24PLUS from "../assets/s24+.webp";
+import S24ULTRA from "../assets/s24ultra.webp";
+import S25 from "../assets/s25.webp";
+import S25ULTRA from "../assets/s25ultra.webp";
 
 // Flip series
-import ZFLIP from "../assets/ZFLIP.webp";
-import ZFLIP3 from "../assets/ZFLIP3.webp";
-import ZFLIP4 from "../assets/ZFLIP4.webp";
-import ZFLIP5 from "../assets/ZFLIP5.webp";
-import ZFLIP6 from "../assets/ZFLIP6.webp";
+import ZFLIP from "../assets/zflip.webp";
+import ZFLIP3 from "../assets/zflip3.webp";
+import ZFLIP4 from "../assets/zflip4.webp";
+import ZFLIP5 from "../assets/zflip5.webp";
+import ZFLIP6 from "../assets/zflip6.webp";
 
 // Fold series
-import ZFOLD2 from "../assets/ZFOLD2.webp";
-import ZFOLD3 from "../assets/ZFOLD3.webp";
-import ZFOLD4 from "../assets/ZFOLD4.webp";
-import ZFOLD5 from "../assets/ZFOLD5.webp";
-import ZFOLD6 from "../assets/ZFOLD6.webp";
+import ZFOLD2 from "../assets/zfold2.webp";
+import ZFOLD3 from "../assets/zfold3.webp";
+import ZFOLD4 from "../assets/zfold4.webp";
+import ZFOLD5 from "../assets/zfold5.webp";
+import ZFOLD6 from "../assets/zfold6.webp";
 
 // A series
 import A01 from "../assets/A01.webp";
@@ -80,7 +79,7 @@ const modele = [
   },
   {
     nume: "Samsung Galaxy S20 PLUS",
-    modelSlug: "samsung-galaxy-s20-plus",
+    modelSlug: "samsung-galaxy-s20+",
     imagine: S20PLUS,
   },
   {
@@ -96,7 +95,7 @@ const modele = [
   },
   {
     nume: "Samsung Galaxy S21 PLUS",
-    modelSlug: "samsung-galaxy-s21-plus",
+    modelSlug: "samsung-galaxy-s21+",
     imagine: S21PLUS,
   },
   {
@@ -107,7 +106,7 @@ const modele = [
   { nume: "Samsung Galaxy S22", modelSlug: "samsung-galaxy-s22", imagine: S22 },
   {
     nume: "Samsung Galaxy S22 PLUS",
-    modelSlug: "samsung-galaxy-s22-plus",
+    modelSlug: "samsung-galaxy-s22+",
     imagine: S22PLUS,
   },
   {
@@ -118,7 +117,7 @@ const modele = [
   { nume: "Samsung Galaxy S23", modelSlug: "samsung-galaxy-s23", imagine: S23 },
   {
     nume: "Samsung Galaxy S23 PLUS",
-    modelSlug: "samsung-galaxy-s23-plus",
+    modelSlug: "samsung-galaxy-s23+",
     imagine: S23PLUS,
   },
   {
@@ -129,7 +128,7 @@ const modele = [
   { nume: "Samsung Galaxy S24", modelSlug: "samsung-galaxy-s24", imagine: S24 },
   {
     nume: "Samsung Galaxy S24 PLUS",
-    modelSlug: "samsung-galaxy-s24-plus",
+    modelSlug: "samsung-galaxy-s24+",
     imagine: S24PLUS,
   },
   {
@@ -138,11 +137,6 @@ const modele = [
     imagine: S24ULTRA,
   },
   { nume: "Samsung Galaxy S25", modelSlug: "samsung-galaxy-s25", imagine: S25 },
-  {
-    nume: "Samsung Galaxy S25 DUAL SIM",
-    modelSlug: "samsung-galaxy-s25-dual-sim",
-    imagine: S25DUALSIM,
-  },
   {
     nume: "Samsung Galaxy S25 ULTRA",
     modelSlug: "samsung-galaxy-s25-ultra",

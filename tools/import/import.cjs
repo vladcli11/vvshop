@@ -22,13 +22,43 @@ const allowedCategories = [
 const publicImgPath = "D:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
-function slugify(str) {
-  return str
+function slugify(text) {
+  return text
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/[^a-z0-9\s\-\+]/g, "") // ✅ păstrăm și +
+    .trim()
+    .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function extractModelSlug(modelName) {
+  let slug = slugify(modelName);
+
+  slug = slug
+    .replace(/^apple-iphone-/, "iphone-")
+    .replace(/^apple-/, "iphone-")
+    .replace(/^samsung-galaxy-/, "samsung-galaxy-")
+    .replace(/^huawei-/, "huawei-");
+
+  // elimină coduri comerciale și descrieri irelevante
+  slug = slug.replace(/-[a-z]?\d{3,4}(?=[^\+]|$)/g, "");
+  slug = slug.replace(/-(4g|5g)/g, "");
+  slug = slug.replace(/-dual-sim|-ds|-duos/g, "");
+
+  slug = slug.replace(/-sticla-securizata.*$/, "");
+  slug = slug.replace(/-full-glue.*$/, "");
+  slug = slug.replace(/-set-[0-9]+-bucati.*$/, "");
+  slug = slug.replace(/-negru.*$/, "");
+  slug = slug.replace(/-agl[0-9]{4,}/g, "");
+  slug = slug.replace(/-rosu.*$/, "");
+  slug = slug.replace(/-albastru.*$/, "");
+  slug = slug.replace(/-transparent.*$/, "");
+
+  slug = slug.replace(/--+/g, "-").replace(/-$/, "");
+
+  return slug;
 }
 
 function cleanRowKeys(row) {
@@ -112,7 +142,7 @@ https.get(feedUrl, (res) => {
 
       const match = cleanName.match(modelRegex);
       if (match && match[0]) {
-        const candidate = slugify(match[0]);
+        const candidate = extractModelSlug(match[0]);
         if (!/^[a-z]{2,}-[a-z]*[0-9]{3,}/.test(candidate)) {
           modelSlug = candidate;
         } else {

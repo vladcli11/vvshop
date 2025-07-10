@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 //import P70Ultra from "../assets/P70-ultra.webp";
 //import P70Pro from "../assets/P70-pro.webp";
 //import P70 from "../assets/P70.webp";
-import P60Pro from "../assets/Huawei-P60-Pro.webp";
-import P50ProPocket from "../assets/Huawei-P50-Pocketavif.webp";
-import P40Pro from "../assets/Huawei-P40-Pro.webp";
-import P40 from "../assets/Huawei-P40.webp";
-import P30Pro from "../assets/Huawei-P30-Pro.webp";
-import P30 from "../assets/Huawei-P30.webp";
+import P60Pro from "../assets/huaweip60pro.webp";
+import P50ProPocket from "../assets/huaweip50pocketedition.webp";
+import P40Pro from "../assets/huaweip40pro.webp";
+import P40 from "../assets/huaweip40.webp";
+import P30Pro from "../assets/huaweip30pro.webp";
+import P30 from "../assets/huaweip30.webp";
 import Footer from "../components/Footer";
 
 const modele = [

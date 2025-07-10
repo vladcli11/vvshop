@@ -4,12 +4,15 @@ import iphone16pro from "../assets/iphone16pro.webp";
 import iphone16 from "../assets/iphone16.webp";
 import iphone15promax from "../assets/iphone15promax.webp";
 import iphone15pro from "../assets/iphone15pro.webp";
+import iphone15 from "../assets/iphone15.webp";
 import iphone14promax from "../assets/iphone14promax.webp";
 import iphone14pro from "../assets/iphone14pro.webp";
 import iphone13promax from "../assets/iphone13promax.webp";
 import iphone13pro from "../assets/iphone13pro.webp";
 import iphone13 from "../assets/iphone13.webp";
 import iphone14 from "../assets/iphone14.webp";
+import iphone12promax from "../assets/iphone12promax.webp";
+import iphone12pro from "../assets/iphone12pro.webp";
 import iphone12 from "../assets/iphone12.webp";
 import Footer from "../components/Footer";
 
@@ -27,6 +30,7 @@ const modele = [
     imagine: iphone15promax,
   },
   { nume: "iPhone 15 Pro", modelSlug: "iphone-15-pro", imagine: iphone15pro },
+  { nume: "iPhone 15", modelSlug: "iphone-15", imagine: iphone15 },
   {
     nume: "iPhone 14 Pro Max",
     modelSlug: "iphone-14-pro-max",
@@ -44,8 +48,10 @@ const modele = [
   {
     nume: "iPhone 12 Pro Max",
     modelSlug: "iphone-12-pro-max",
-    imagine: iphone12,
+    imagine: iphone12promax,
   },
+  { nume: "Iphone 12 Pro", modelSlug: "iphone-12-pro", imagine: iphone12pro },
+  { nume: "iPhone 12", modelSlug: "iphone-12", imagine: iphone12 },
 ];
 
 export default function Apple() {

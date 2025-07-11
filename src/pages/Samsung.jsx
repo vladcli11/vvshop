@@ -71,91 +71,38 @@ import A73 from "../assets/A73.webp";
 
 // Adaugă badge-uri pentru generație/serie
 const modele = [
-  { nume: "Samsung Galaxy S20", modelSlug: "samsung-galaxy-s20", imagine: S20 },
-  {
-    nume: "Samsung Galaxy S20 FE",
-    modelSlug: "samsung-galaxy-s20-fe",
-    imagine: S20FE,
-  },
-  {
-    nume: "Samsung Galaxy S20 PLUS",
-    modelSlug: "samsung-galaxy-s20-plus",
-    imagine: S20PLUS,
-  },
-  {
-    nume: "Samsung Galaxy S20 ULTRA",
-    modelSlug: "samsung-galaxy-s20-ultra",
-    imagine: S20ULTRA,
-  },
-  { nume: "Samsung Galaxy S21", modelSlug: "samsung-galaxy-s21", imagine: S21 },
-  {
-    nume: "Samsung Galaxy S21 FE",
-    modelSlug: "samsung-galaxy-s21-fe",
-    imagine: S21FE,
-  },
-  {
-    nume: "Samsung Galaxy S21 PLUS",
-    modelSlug: "samsung-galaxy-s21-plus",
-    imagine: S21PLUS,
-  },
-  {
-    nume: "Samsung Galaxy S21 ULTRA",
-    modelSlug: "samsung-galaxy-s21-ultra",
-    imagine: S21ULTRA,
-  },
-  { nume: "Samsung Galaxy S22", modelSlug: "samsung-galaxy-s22", imagine: S22 },
-  {
-    nume: "Samsung Galaxy S22 PLUS",
-    modelSlug: "samsung-galaxy-s22-plus",
-    imagine: S22PLUS,
-  },
-  {
-    nume: "Samsung Galaxy S22 ULTRA",
-    modelSlug: "samsung-galaxy-s22-ultra",
-    imagine: S22ULTRA,
-  },
-  { nume: "Samsung Galaxy S23", modelSlug: "samsung-galaxy-s23", imagine: S23 },
-  {
-    nume: "Samsung Galaxy S23 PLUS",
-    modelSlug: "samsung-galaxy-s23-plus",
-    imagine: S23PLUS,
-  },
-  {
-    nume: "Samsung Galaxy S23 ULTRA",
-    modelSlug: "samsung-galaxy-s23-ultra",
-    imagine: S23ULTRA,
-  },
-  { nume: "Samsung Galaxy S24", modelSlug: "samsung-galaxy-s24", imagine: S24 },
-  {
-    nume: "Samsung Galaxy S24 PLUS",
-    modelSlug: "samsung-galaxy-s24-plus",
-    imagine: S24PLUS,
-  },
-  {
-    nume: "Samsung Galaxy S24 ULTRA",
-    modelSlug: "samsung-galaxy-s24-ultra",
-    imagine: S24ULTRA,
-  },
-  { nume: "Samsung Galaxy S25", modelSlug: "samsung-galaxy-s25", imagine: S25 },
   {
     nume: "Samsung Galaxy S25 ULTRA",
     modelSlug: "samsung-galaxy-s25-ultra",
     imagine: S25ULTRA,
   },
+  { nume: "Samsung Galaxy S25", modelSlug: "samsung-galaxy-s25", imagine: S25 },
   {
-    nume: "Samsung Galaxy Z Flip",
-    modelSlug: "samsung-galaxy-z-flip",
-    imagine: ZFLIP,
+    nume: "Samsung Galaxy S24 ULTRA",
+    modelSlug: "samsung-galaxy-s24-ultra",
+    imagine: S24ULTRA,
   },
   {
-    nume: "Samsung Galaxy Z Flip3",
-    modelSlug: "samsung-galaxy-z-flip3",
-    imagine: ZFLIP3,
+    nume: "Samsung Galaxy S24 PLUS",
+    modelSlug: "samsung-galaxy-s24-plus",
+    imagine: S24PLUS,
+  },
+  { nume: "Samsung Galaxy S24", modelSlug: "samsung-galaxy-s24", imagine: S24 },
+  {
+    nume: "Samsung Galaxy S23 ULTRA",
+    modelSlug: "samsung-galaxy-s23-ultra",
+    imagine: S23ULTRA,
   },
   {
-    nume: "Samsung Galaxy Z Flip4",
-    modelSlug: "samsung-galaxy-z-flip4",
-    imagine: ZFLIP4,
+    nume: "Samsung Galaxy S23 PLUS",
+    modelSlug: "samsung-galaxy-s23-plus",
+    imagine: S23PLUS,
+  },
+  { nume: "Samsung Galaxy S23", modelSlug: "samsung-galaxy-s23", imagine: S23 },
+  {
+    nume: "Samsung Galaxy Z Flip6",
+    modelSlug: "samsung-galaxy-z-flip6",
+    imagine: ZFLIP6,
   },
   {
     nume: "Samsung Galaxy Z Flip5",
@@ -163,24 +110,14 @@ const modele = [
     imagine: ZFLIP5,
   },
   {
-    nume: "Samsung Galaxy Z Flip6",
-    modelSlug: "samsung-galaxy-z-flip6",
-    imagine: ZFLIP6,
+    nume: "Samsung Galaxy Z Flip4",
+    modelSlug: "samsung-galaxy-z-flip4",
+    imagine: ZFLIP4,
   },
   {
-    nume: "Samsung Galaxy Z Fold2",
-    modelSlug: "samsung-galaxy-z-fold2",
-    imagine: ZFOLD2,
-  },
-  {
-    nume: "Samsung Galaxy Z Fold3",
-    modelSlug: "samsung-galaxy-z-fold3",
-    imagine: ZFOLD3,
-  },
-  {
-    nume: "Samsung Galaxy Z Fold4",
-    modelSlug: "samsung-galaxy-z-fold4",
-    imagine: ZFOLD4,
+    nume: "Samsung Galaxy Z Fold6",
+    modelSlug: "samsung-galaxy-z-fold6",
+    imagine: ZFOLD6,
   },
   {
     nume: "Samsung Galaxy Z Fold5",
@@ -188,40 +125,104 @@ const modele = [
     imagine: ZFOLD5,
   },
   {
-    nume: "Samsung Galaxy Z Fold6",
-    modelSlug: "samsung-galaxy-z-fold6",
-    imagine: ZFOLD6,
+    nume: "Samsung Galaxy Z Fold4",
+    modelSlug: "samsung-galaxy-z-fold4",
+    imagine: ZFOLD4,
   },
-  { nume: "Samsung Galaxy A01", modelSlug: "samsung-galaxy-a01", imagine: A01 },
-  { nume: "Samsung Galaxy A02", modelSlug: "samsung-galaxy-a02", imagine: A02 },
-  { nume: "Samsung Galaxy A03", modelSlug: "samsung-galaxy-a03", imagine: A03 },
-  { nume: "Samsung Galaxy A04", modelSlug: "samsung-galaxy-a04", imagine: A04 },
-  { nume: "Samsung Galaxy A05", modelSlug: "samsung-galaxy-a05", imagine: A05 },
-  { nume: "Samsung Galaxy A11", modelSlug: "samsung-galaxy-a11", imagine: A11 },
-  { nume: "Samsung Galaxy A12", modelSlug: "samsung-galaxy-a12", imagine: A12 },
-  { nume: "Samsung Galaxy A13", modelSlug: "samsung-galaxy-a13", imagine: A13 },
-  { nume: "Samsung Galaxy A14", modelSlug: "samsung-galaxy-a14", imagine: A14 },
-  { nume: "Samsung Galaxy A15", modelSlug: "samsung-galaxy-a15", imagine: A15 },
-  { nume: "Samsung Galaxy A21", modelSlug: "samsung-galaxy-a21", imagine: A21 },
-  { nume: "Samsung Galaxy A22", modelSlug: "samsung-galaxy-a22", imagine: A22 },
-  { nume: "Samsung Galaxy A23", modelSlug: "samsung-galaxy-a23", imagine: A23 },
-  { nume: "Samsung Galaxy A24", modelSlug: "samsung-galaxy-a24", imagine: A24 },
-  { nume: "Samsung Galaxy A25", modelSlug: "samsung-galaxy-a25", imagine: A25 },
-  { nume: "Samsung Galaxy A31", modelSlug: "samsung-galaxy-a31", imagine: A31 },
-  { nume: "Samsung Galaxy A32", modelSlug: "samsung-galaxy-a32", imagine: A32 },
-  { nume: "Samsung Galaxy A33", modelSlug: "samsung-galaxy-a33", imagine: A33 },
-  { nume: "Samsung Galaxy A34", modelSlug: "samsung-galaxy-a34", imagine: A34 },
-  { nume: "Samsung Galaxy A35", modelSlug: "samsung-galaxy-a35", imagine: A35 },
-  { nume: "Samsung Galaxy A41", modelSlug: "samsung-galaxy-a41", imagine: A41 },
-  { nume: "Samsung Galaxy A42", modelSlug: "samsung-galaxy-a42", imagine: A42 },
-  { nume: "Samsung Galaxy A51", modelSlug: "samsung-galaxy-a51", imagine: A51 },
-  { nume: "Samsung Galaxy A52", modelSlug: "samsung-galaxy-a52", imagine: A52 },
-  { nume: "Samsung Galaxy A53", modelSlug: "samsung-galaxy-a53", imagine: A53 },
-  { nume: "Samsung Galaxy A54", modelSlug: "samsung-galaxy-a54", imagine: A54 },
-  { nume: "Samsung Galaxy A55", modelSlug: "samsung-galaxy-a55", imagine: A55 },
-  { nume: "Samsung Galaxy A71", modelSlug: "samsung-galaxy-a71", imagine: A71 },
-  { nume: "Samsung Galaxy A72", modelSlug: "samsung-galaxy-a72", imagine: A72 },
+  {
+    nume: "Samsung Galaxy S22 ULTRA",
+    modelSlug: "samsung-galaxy-s22-ultra",
+    imagine: S22ULTRA,
+  },
+  {
+    nume: "Samsung Galaxy S22 PLUS",
+    modelSlug: "samsung-galaxy-s22-plus",
+    imagine: S22PLUS,
+  },
+  { nume: "Samsung Galaxy S22", modelSlug: "samsung-galaxy-s22", imagine: S22 },
+  {
+    nume: "Samsung Galaxy S21 ULTRA",
+    modelSlug: "samsung-galaxy-s21-ultra",
+    imagine: S21ULTRA,
+  },
+  {
+    nume: "Samsung Galaxy S21 PLUS",
+    modelSlug: "samsung-galaxy-s21-plus",
+    imagine: S21PLUS,
+  },
+  {
+    nume: "Samsung Galaxy S21 FE",
+    modelSlug: "samsung-galaxy-s21-fe",
+    imagine: S21FE,
+  },
+  { nume: "Samsung Galaxy S21", modelSlug: "samsung-galaxy-s21", imagine: S21 },
+  {
+    nume: "Samsung Galaxy Z Flip3",
+    modelSlug: "samsung-galaxy-z-flip3",
+    imagine: ZFLIP3,
+  },
+  {
+    nume: "Samsung Galaxy Z Flip",
+    modelSlug: "samsung-galaxy-z-flip",
+    imagine: ZFLIP,
+  },
+  {
+    nume: "Samsung Galaxy Z Fold3",
+    modelSlug: "samsung-galaxy-z-fold3",
+    imagine: ZFOLD3,
+  },
+  {
+    nume: "Samsung Galaxy Z Fold2",
+    modelSlug: "samsung-galaxy-z-fold2",
+    imagine: ZFOLD2,
+  },
+  {
+    nume: "Samsung Galaxy S20 ULTRA",
+    modelSlug: "samsung-galaxy-s20-ultra",
+    imagine: S20ULTRA,
+  },
+  {
+    nume: "Samsung Galaxy S20 PLUS",
+    modelSlug: "samsung-galaxy-s20-plus",
+    imagine: S20PLUS,
+  },
+  { nume: "Samsung Galaxy S20", modelSlug: "samsung-galaxy-s20", imagine: S20 },
+  {
+    nume: "Samsung Galaxy S20 FE",
+    modelSlug: "samsung-galaxy-s20-fe",
+    imagine: S20FE,
+  },
+
   { nume: "Samsung Galaxy A73", modelSlug: "samsung-galaxy-a73", imagine: A73 },
+  { nume: "Samsung Galaxy A72", modelSlug: "samsung-galaxy-a72", imagine: A72 },
+  { nume: "Samsung Galaxy A71", modelSlug: "samsung-galaxy-a71", imagine: A71 },
+  { nume: "Samsung Galaxy A55", modelSlug: "samsung-galaxy-a55", imagine: A55 },
+  { nume: "Samsung Galaxy A54", modelSlug: "samsung-galaxy-a54", imagine: A54 },
+  { nume: "Samsung Galaxy A53", modelSlug: "samsung-galaxy-a53", imagine: A53 },
+  { nume: "Samsung Galaxy A52", modelSlug: "samsung-galaxy-a52", imagine: A52 },
+  { nume: "Samsung Galaxy A51", modelSlug: "samsung-galaxy-a51", imagine: A51 },
+  { nume: "Samsung Galaxy A42", modelSlug: "samsung-galaxy-a42", imagine: A42 },
+  { nume: "Samsung Galaxy A41", modelSlug: "samsung-galaxy-a41", imagine: A41 },
+  { nume: "Samsung Galaxy A35", modelSlug: "samsung-galaxy-a35", imagine: A35 },
+  { nume: "Samsung Galaxy A34", modelSlug: "samsung-galaxy-a34", imagine: A34 },
+  { nume: "Samsung Galaxy A33", modelSlug: "samsung-galaxy-a33", imagine: A33 },
+  { nume: "Samsung Galaxy A32", modelSlug: "samsung-galaxy-a32", imagine: A32 },
+  { nume: "Samsung Galaxy A31", modelSlug: "samsung-galaxy-a31", imagine: A31 },
+  { nume: "Samsung Galaxy A25", modelSlug: "samsung-galaxy-a25", imagine: A25 },
+  { nume: "Samsung Galaxy A24", modelSlug: "samsung-galaxy-a24", imagine: A24 },
+  { nume: "Samsung Galaxy A23", modelSlug: "samsung-galaxy-a23", imagine: A23 },
+  { nume: "Samsung Galaxy A22", modelSlug: "samsung-galaxy-a22", imagine: A22 },
+  { nume: "Samsung Galaxy A21", modelSlug: "samsung-galaxy-a21", imagine: A21 },
+  { nume: "Samsung Galaxy A15", modelSlug: "samsung-galaxy-a15", imagine: A15 },
+  { nume: "Samsung Galaxy A14", modelSlug: "samsung-galaxy-a14", imagine: A14 },
+  { nume: "Samsung Galaxy A13", modelSlug: "samsung-galaxy-a13", imagine: A13 },
+  { nume: "Samsung Galaxy A12", modelSlug: "samsung-galaxy-a12", imagine: A12 },
+  { nume: "Samsung Galaxy A11", modelSlug: "samsung-galaxy-a11", imagine: A11 },
+  { nume: "Samsung Galaxy A05", modelSlug: "samsung-galaxy-a05", imagine: A05 },
+  { nume: "Samsung Galaxy A04", modelSlug: "samsung-galaxy-a04", imagine: A04 },
+  { nume: "Samsung Galaxy A03", modelSlug: "samsung-galaxy-a03", imagine: A03 },
+  { nume: "Samsung Galaxy A02", modelSlug: "samsung-galaxy-a02", imagine: A02 },
+  { nume: "Samsung Galaxy A01", modelSlug: "samsung-galaxy-a01", imagine: A01 },
 ];
 
 export default function Samsung() {
@@ -243,26 +244,6 @@ export default function Samsung() {
                 before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-blue-200/30 before:to-green-200/20 before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300"
               style={{ perspective: 800 }}
             >
-              {/* Badge generație/serie */}
-              {model.gen && (
-                <span
-                  className={`absolute top-3 left-3 z-10 px-3 py-1 rounded-full text-xs font-bold shadow-md
-                  ${
-                    model.gen === "Nou"
-                      ? "bg-gradient-to-r from-blue-400 to-green-400 text-white"
-                      : model.gen === "Flip"
-                      ? "bg-gradient-to-r from-pink-400 to-blue-400 text-white"
-                      : model.gen === "Fold"
-                      ? "bg-gradient-to-r from-yellow-400 to-green-400 text-white"
-                      : model.gen === "A Series"
-                      ? "bg-gradient-to-r from-green-400 to-blue-400 text-white"
-                      : "bg-blue-50 text-blue-700 border border-blue-200"
-                  }
-                `}
-                >
-                  {model.gen}
-                </span>
-              )}
               {/* Imagine */}
               <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white transition-all duration-300">
                 <img

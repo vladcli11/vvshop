@@ -1,4 +1,4 @@
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, BadgeDollarSign } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useParams } from "react-router-dom";
@@ -44,30 +44,49 @@ export default function Models() {
   };
 
   return (
-    <div className="min-h-screen px-0 pb-0 bg-gradient-to-br from-green-50 via-white to-blue-50 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative overflow-x-hidden">
       {/* Efecte bokeh și lumină */}
-      <div className="fixed inset-0 z-[-1] pointer-events-none">
-        <div className="absolute top-10 left-1/4 w-72 h-72 bg-green-400/40 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
-      </div>
 
       {/* Notificare adăugare în coș */}
       {showNotif && (
-        <div className="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 bg-white/90 backdrop-blur-lg border border-green-200 shadow-2xl rounded-2xl flex items-center gap-3 px-6 py-3 max-w-[90vw] sm:max-w-md text-green-700 font-semibold text-base sm:text-lg animate-fade-in-up">
-          <svg
-            className="w-6 h-6 text-green-600 flex-shrink-0"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          <span>Produsul a fost adăugat în coș!</span>
+        <div
+          className="fixed bottom-4 left-4 right-4 sm:bottom-4 sm:right-4 sm:left-auto sm:w-80 z-50 
+    bg-gradient-to-r from-emerald-500 to-blue-600 
+    text-white rounded-xl shadow-2xl 
+    transform transition-all duration-500 ease-out
+    animate-slide-up-bounce"
+        >
+          <div className="flex items-center gap-3 p-4">
+            {/* Icon animat */}
+            <div className="flex-shrink-0 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center animate-bounce">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+
+            {/* Conținut */}
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-base sm:text-lg">Succes! 🎉</p>
+              <p className="text-sm text-white/90 truncate">
+                Produsul a fost adăugat în coș
+              </p>
+            </div>
+
+            {/* Progress bar animat */}
+            <div className="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl overflow-hidden">
+              <div className="h-full bg-white/60 rounded-b-2xl animate-progress-bar w-full"></div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -76,7 +95,7 @@ export default function Models() {
         <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-40 bg-gradient-to-b from-green-200/30 via-white/0 to-transparent blur-2xl opacity-70 z-0" />
 
         <main className="relative z-10 pb-36">
-          <div className="grid max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4 min-h-[700px]">
+          <div className="grid max-w-6xl grid-cols-2 gap-3 mx-auto px-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center pt-4 min-h-[700px]">
             {accesorii.length === 0 ? (
               <p className="col-span-full text-center text-gray-500 mt-10 text-lg font-medium animate-fade-in">
                 Momentan nu există accesorii disponibile.
@@ -86,56 +105,53 @@ export default function Models() {
                 <div
                   key={item.id}
                   className="group flex flex-col items-center justify-between w-full h-full p-4 
-            bg-white border border-green-100 rounded-3xl shadow-xl 
-            hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 
-            relative overflow-hidden animate-fade-in-up
-            hover:scale-[1.03] hover:border-green-300"
+    bg-white rounded-sm shadow-lg
+    hover:shadow-2xl transition-all duration-300 
+    relative overflow-hidden animate-fade-in-up"
                 >
                   {/* Accent decorativ */}
                   <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-300/40 to-blue-200/10 rounded-full blur-2xl opacity-60 z-0" />
 
-                  {/* Zona clickable: imagine + titlu */}
+                  {/* Imagine clickabilă */}
                   <div
-                    className="flex flex-col items-center w-full cursor-pointer z-10"
+                    className="relative w-full pt-[100%] overflow-hidden bg-white transition-all duration-300 cursor-pointer z-10"
                     onClick={() =>
                       (window.location.href = `/produs/${item.slug}`)
                     }
                   >
-                    <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white transition-all duration-300">
-                      <img
-                        src={`${item.imagine[0]}?v=${item.id}`}
-                        sizes="(max-width: 640px) 90vw, 300px"
-                        alt={item.nume}
-                        loading={idx === 0 ? "eager" : "lazy"}
-                        fetchPriority={idx === 0 ? "high" : "auto"}
-                        width="300"
-                        height="300"
-                        className="absolute inset-0 w-full h-full object-contain"
-                      />
-                    </div>
-
-                    <h2 className="mt-1 text-xs sm:text-sm font-extrabold text-center text-black tracking-tight drop-shadow transition-all duration-200">
-                      {item.nume}
-                    </h2>
+                    <img
+                      src={`${item.imagine[0]}?v=${item.id}`}
+                      sizes="(max-width: 640px) 90vw, 300px"
+                      alt={item.nume}
+                      loading={idx === 0 ? "eager" : "lazy"}
+                      fetchPriority={idx === 0 ? "high" : "auto"}
+                      width="300"
+                      height="300"
+                      className="absolute inset-0 w-full h-full object-contain"
+                    />
                   </div>
 
-                  {/* Prețul */}
-                  <p className="mt-1 text-sm font-semibold text-green-600 border border-green-200 rounded-full px-3 py-1 shadow-sm">
-                    {item.pret.toFixed(2)} lei
-                  </p>
+                  {/* Titlu NON-clickabil */}
+                  <h2 className="mb-1 text-xs sm:text-sm font-bold text-center text-black h-24 flex items-center justify-center z-10">
+                    {item.nume}
+                  </h2>
 
-                  {/* Butonul */}
+                  <div className="bg-gray-900 text-white px-3 py-2 rounded-sm font-bold text-sm shadow-lg flex items-center justify-center gap-1 w-full">
+                    <BadgeDollarSign className="w-4 h-4 text-yellow-400" />
+                    {item.pret.toFixed(2)} LEI
+                  </div>
+
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleAddToCart(item);
                     }}
-                    className="flex items-center justify-center w-full gap-2 px-3 py-2 mt-2
-              text-sm sm:text-base font-semibold text-white
-              bg-gradient-to-r from-orange-400 to-orange-500
-              rounded-xl shadow-md
-              hover:from-orange-500 hover:to-orange-600
-              hover:scale-105 transition-all"
+                    className="flex items-center justify-center w-full gap-2 px-3 py-2 mt-1
+      text-sm sm:text-base font-semibold text-white
+      bg-gradient-to-r from-orange-400 to-orange-500
+      rounded-md shadow-md
+      hover:from-orange-500 hover:to-orange-600
+      transition-all"
                   >
                     <ShoppingCart className="w-5 h-7" />
                     Adaugă în coș

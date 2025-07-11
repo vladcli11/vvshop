@@ -1,4 +1,10 @@
-import { ShoppingCart, Tag } from "lucide-react";
+import {
+  ShoppingCart,
+  Tag,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useParams } from "react-router-dom";
@@ -8,6 +14,7 @@ import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
 
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
+  const [sortOrder, setSortOrder] = useState("default"); // 'default', 'asc', 'desc'
   const { addToCart } = useCart();
   const [showNotif, setShowNotif] = useState(false);
   const notifTimeout = useRef(null);
@@ -33,6 +40,31 @@ export default function Models() {
       };
     }
   }, [accesorii]);
+
+  // Funcția de sortare
+  const sortedAccesorii = [...accesorii].sort((a, b) => {
+    if (sortOrder === "asc") return a.pret - b.pret;
+    if (sortOrder === "desc") return b.pret - a.pret;
+    return 0; // default order
+  });
+
+  const handleSort = () => {
+    if (sortOrder === "default") setSortOrder("asc");
+    else if (sortOrder === "asc") setSortOrder("desc");
+    else setSortOrder("default");
+  };
+
+  const getSortIcon = () => {
+    if (sortOrder === "asc") return <ArrowUp className="w-4 h-4" />;
+    if (sortOrder === "desc") return <ArrowDown className="w-4 h-4" />;
+    return <ArrowUpDown className="w-4 h-4" />;
+  };
+
+  const getSortText = () => {
+    if (sortOrder === "asc") return "Preț crescător";
+    if (sortOrder === "desc") return "Preț descrescător";
+    return "Sortează după preț";
+  };
 
   const handleAddToCart = (item) => {
     addToCart(item);
@@ -95,13 +127,37 @@ export default function Models() {
         <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-40 bg-gradient-to-b from-green-200/30 via-white/0 to-transparent blur-2xl opacity-70 z-0" />
 
         <main className="relative z-10 pb-36">
-          <div className="grid max-w-6xl grid-cols-2 gap-3 mx-auto px-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center pt-4 min-h-[700px]">
+          {/* Buton de sortare */}
+          {accesorii.length > 0 && (
+            <div className="max-w-6xl mx-auto px-1 pt-2">
+              <button
+                onClick={handleSort}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm hover:shadow-md hover:bg-white transition-all duration-200 text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                <div
+                  className={`p-1.5 rounded-sm transition-colors ${
+                    sortOrder === "asc"
+                      ? "bg-green-100 text-green-600"
+                      : sortOrder === "desc"
+                      ? "bg-red-100 text-red-600"
+                      : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  {getSortIcon()}
+                </div>
+                <span className="hidden sm:inline">{getSortText()}</span>
+                <span className="sm:hidden">Sortează</span>
+              </button>
+            </div>
+          )}
+
+          <div className="grid max-w-6xl grid-cols-2 gap-3 mx-auto px-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center pt-2 min-h-[700px]">
             {accesorii.length === 0 ? (
               <p className="col-span-full text-center text-gray-500 mt-10 text-lg font-medium animate-fade-in">
                 Momentan nu există accesorii disponibile.
               </p>
             ) : (
-              accesorii.map((item, idx) => (
+              sortedAccesorii.map((item, idx) => (
                 <div
                   key={item.id}
                   className="group flex flex-col items-center justify-between w-full h-full p-4 

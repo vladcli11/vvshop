@@ -57,20 +57,13 @@ const modele = [
 export default function Apple() {
   return (
     <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-green-100 via-white to-blue-100 relative overflow-x-hidden">
-      {/* Efecte bokeh pentru profunzime */}
-      <div className="fixed inset-0 z-[-1] pointer-events-none">
-        <div className="absolute top-10 left-1/4 w-72 h-72 bg-green-200/30 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
-      </div>
       <div className="relative z-10">
         <div className="grid w-full max-w-5xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
               key={model.modelSlug}
               to={`/apple/${model.modelSlug}`}
-              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-green-100 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 backdrop-blur-xl
-                hover:scale-[1.03] hover:border-green-300 hover:bg-white/90
-                before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-green-200/30 before:to-blue-200/20 before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300"
+              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300"
               style={{ perspective: 800 }}
             >
               {/* Imagine */}

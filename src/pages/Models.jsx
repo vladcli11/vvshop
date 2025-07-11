@@ -1,4 +1,4 @@
-import { ShoppingCart, BadgeDollarSign } from "lucide-react";
+import { ShoppingCart, Tag } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useParams } from "react-router-dom";
@@ -137,7 +137,7 @@ export default function Models() {
                   </h2>
 
                   <div className="bg-gray-900 text-white px-3 py-2 rounded-sm font-bold text-sm shadow-lg flex items-center justify-center gap-1 w-full">
-                    <BadgeDollarSign className="w-4 h-4 text-yellow-400" />
+                    <Tag className="w-4 h-4 text-yellow-400" />
                     {item.pret.toFixed(2)} LEI
                   </div>
 

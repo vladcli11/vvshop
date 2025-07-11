@@ -44,7 +44,7 @@ export default function Models() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
       {/* Efecte bokeh și lumină */}
 
       {/* Notificare adăugare în coș */}

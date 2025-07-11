@@ -56,18 +56,18 @@ const modele = [
 
 export default function Apple() {
   return (
-    <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-green-100 via-white to-blue-100 relative overflow-x-hidden">
+    <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
       <div className="relative z-10">
-        <div className="grid w-full max-w-5xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
+        <div className="grid w-full max-w-5xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
               key={model.modelSlug}
               to={`/apple/${model.modelSlug}`}
-              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300"
+              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-sm shadow-lg hover:shadow-2xl transition-all duration-300"
               style={{ perspective: 800 }}
             >
               {/* Imagine */}
-              <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white transition-all duration-300">
+              <div className="relative w-full pt-[100%] overflow-hidden bg-white transition-all duration-300">
                 <img
                   src={model.imagine}
                   alt={model.nume}
@@ -81,11 +81,9 @@ export default function Apple() {
                 />
               </div>
               {/* Titlu */}
-              <span className="mt-3 text-base sm:text-lg font-bold text-center text-black">
+              <h3 className="mt-3 pt-3 border-t border-gray-200 text-sm sm:text-base font-medium text-center text-gray-700 w-full">
                 {model.nume}
-              </span>
-              {/* Glow la hover */}
-              <div className="absolute -inset-1 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 z-0 bg-gradient-to-br from-green-300/30 via-white/0 to-blue-300/30 blur-lg" />
+              </h3>
             </Link>
           ))}
         </div>

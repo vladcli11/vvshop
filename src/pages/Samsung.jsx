@@ -227,21 +227,14 @@ const modele = [
 
 export default function Samsung() {
   return (
-    <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-blue-100 via-white to-green-100 relative overflow-x-hidden">
-      {/* Efecte bokeh pentru profunzime */}
-      <div className="fixed inset-0 z-[-1] pointer-events-none">
-        <div className="absolute top-10 left-1/4 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-green-200/30 rounded-full blur-3xl animate-pulse-slow" />
-      </div>
+    <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
       <div className="relative z-10">
-        <div className="grid w-full max-w-6xl grid-cols-2 gap-5 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
+        <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model) => (
             <Link
               key={model.modelSlug}
               to={`/samsung/${model.modelSlug}`}
-              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-blue-100 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 backdrop-blur-xl
-                hover:scale-[1.03] hover:border-blue-300 hover:bg-white/90
-                before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-blue-200/30 before:to-green-200/20 before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300"
+              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-sm shadow-lg hover:shadow-2xl transition-all duration-300"
               style={{ perspective: 800 }}
             >
               {/* Imagine */}
@@ -259,11 +252,9 @@ export default function Samsung() {
                 />
               </div>
               {/* Titlu */}
-              <span className="mt-3 text-base sm:text-lg font-bold text-center text-black">
+              <h3 className="mt-3 pt-3 border-t border-gray-200 text-sm sm:text-base font-medium text-center text-gray-700 w-full">
                 {model.nume}
-              </span>
-              {/* Glow la hover */}
-              <div className="absolute -inset-1 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 z-0 bg-gradient-to-br from-blue-300/30 via-white/0 to-green-300/30 blur-lg" />
+              </h3>
             </Link>
           ))}
         </div>

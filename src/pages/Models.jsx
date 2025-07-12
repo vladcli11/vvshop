@@ -17,7 +17,7 @@ import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
   const [sortOrder, setSortOrder] = useState("default"); // 'default', 'asc', 'desc'
-  const [tipProdus, setTipProdus] = useState("folie"); // default: folii
+  const [tipProdus, setTipProdus] = useState(""); // default: folii
   const { addToCart } = useCart();
   const [showNotif, setShowNotif] = useState(false);
   const notifTimeout = useRef(null);
@@ -45,9 +45,9 @@ export default function Models() {
   }, [accesorii]);
 
   // Filtrare după tipProdus
-  const accesoriiFiltrate = accesorii.filter(
-    (item) => item.tipProdus === tipProdus
-  );
+  const accesoriiFiltrate = tipProdus
+    ? accesorii.filter((item) => item.tipProdus === tipProdus)
+    : accesorii;
 
   // Funcția de sortare
   const sortedAccesorii = [...accesoriiFiltrate].sort((a, b) => {
@@ -66,12 +66,6 @@ export default function Models() {
     if (sortOrder === "asc") return <ArrowUp className="w-4 h-4" />;
     if (sortOrder === "desc") return <ArrowDown className="w-4 h-4" />;
     return <ArrowUpDown className="w-4 h-4" />;
-  };
-
-  const getSortText = () => {
-    if (sortOrder === "asc") return "Preț crescător";
-    if (sortOrder === "desc") return "Preț descrescător";
-    return "Sortează după preț";
   };
 
   const handleAddToCart = (item) => {
@@ -140,14 +134,16 @@ export default function Models() {
             <div className="max-w-6xl mx-auto px-1 pt-2 flex flex-wrap gap-2 items-center">
               <div className="flex gap-1 items-center">
                 <button
-                  onClick={() => setTipProdus("folie")}
+                  onClick={() =>
+                    setTipProdus(tipProdus === "folie" ? "" : "folie")
+                  }
                   className={`flex flex-col items-center px-2 py-1 rounded-lg font-semibold border text-xs transition-all duration-200
-      ${
-        tipProdus === "folie"
-          ? "bg-blue-500 text-white border-blue-600 shadow scale-105"
-          : "bg-white/80 text-blue-700 border-blue-200 hover:bg-blue-50"
-      }
-    `}
+    ${
+      tipProdus === "folie"
+        ? "bg-blue-500 text-white border-blue-600 shadow scale-105"
+        : "bg-white/80 text-blue-700 border-blue-200 hover:bg-blue-50"
+    }
+  `}
                   style={{ minWidth: 56 }}
                 >
                   <Shield
@@ -158,14 +154,16 @@ export default function Models() {
                   <span className="leading-tight">Folii</span>
                 </button>
                 <button
-                  onClick={() => setTipProdus("husa")}
+                  onClick={() =>
+                    setTipProdus(tipProdus === "husa" ? "" : "husa")
+                  }
                   className={`flex flex-col items-center px-2 py-1 rounded-lg font-semibold border text-xs transition-all duration-200
-      ${
-        tipProdus === "husa"
-          ? "bg-green-500 text-white border-green-600 shadow scale-105"
-          : "bg-white/80 text-green-700 border-green-200 hover:bg-green-50"
-      }
-    `}
+    ${
+      tipProdus === "husa"
+        ? "bg-green-500 text-white border-green-600 shadow scale-105"
+        : "bg-white/80 text-green-700 border-green-200 hover:bg-green-50"
+    }
+  `}
                   style={{ minWidth: 56 }}
                 >
                   <Smartphone

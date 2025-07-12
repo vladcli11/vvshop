@@ -225,7 +225,7 @@ export default function ProductPage() {
                     <Hash className="w-5 h-5 text-blue-600" />
                     <div>
                       <span className="text-sm text-blue-600 font-medium">
-                        Cod produs:
+                        Cod :
                       </span>
                       <span className="font-mono font-bold text-blue-800">
                         {product.cod}

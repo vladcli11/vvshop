@@ -6,7 +6,14 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import useCart from "../context/useCart";
-import { ShoppingCart, Star, Shield, Truck, ArrowLeft } from "lucide-react";
+import {
+  ShoppingCart,
+  Star,
+  Shield,
+  Truck,
+  ArrowLeft,
+  Hash,
+} from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
@@ -211,6 +218,21 @@ export default function ProductPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Cod produs */}
+                {product.cod && (
+                  <div className="flex items-center gap-2 mb-6 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                    <Hash className="w-5 h-5 text-blue-600" />
+                    <div>
+                      <span className="text-sm text-blue-600 font-medium">
+                        Cod produs:
+                      </span>
+                      <span className="font-mono font-bold text-blue-800">
+                        {product.cod}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Buton adaugă în coș */}
                 <div className="mt-auto">

@@ -17,7 +17,7 @@ fs.readdirSync(dir).forEach(async (file) => {
 
     try {
       await sharp(inputPath)
-        .resize(700, 700, { fit: "cover" }) // sau "contain" dacă vrei padding
+        .resize(300, 300, { fit: "cover" }) // sau "contain" dacă vrei padding
         .toFormat("webp")
         .toFile(outputPath);
       console.log(`✅ ${file} -> ${name}.webp`);

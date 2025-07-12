@@ -4,6 +4,8 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Shield,
+  Smartphone,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
@@ -15,6 +17,7 @@ import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
   const [sortOrder, setSortOrder] = useState("default"); // 'default', 'asc', 'desc'
+  const [tipProdus, setTipProdus] = useState("folie"); // default: folii
   const { addToCart } = useCart();
   const [showNotif, setShowNotif] = useState(false);
   const notifTimeout = useRef(null);
@@ -41,8 +44,13 @@ export default function Models() {
     }
   }, [accesorii]);
 
+  // Filtrare după tipProdus
+  const accesoriiFiltrate = accesorii.filter(
+    (item) => item.tipProdus === tipProdus
+  );
+
   // Funcția de sortare
-  const sortedAccesorii = [...accesorii].sort((a, b) => {
+  const sortedAccesorii = [...accesoriiFiltrate].sort((a, b) => {
     if (sortOrder === "asc") return a.pret - b.pret;
     if (sortOrder === "desc") return b.pret - a.pret;
     return 0; // default order
@@ -127,32 +135,72 @@ export default function Models() {
         <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-40 bg-gradient-to-b from-green-200/30 via-white/0 to-transparent blur-2xl opacity-70 z-0" />
 
         <main className="relative z-10 pb-36">
-          {/* Buton de sortare */}
+          {/* Butoane de filtrare și sortare */}
           {accesorii.length > 0 && (
-            <div className="max-w-6xl mx-auto px-1 pt-2">
-              <button
-                onClick={handleSort}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm hover:shadow-md hover:bg-white transition-all duration-200 text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                <div
-                  className={`p-1.5 rounded-sm transition-colors ${
-                    sortOrder === "asc"
-                      ? "bg-green-100 text-green-600"
-                      : sortOrder === "desc"
-                      ? "bg-red-100 text-red-600"
-                      : "bg-gray-100 text-gray-500"
-                  }`}
+            <div className="max-w-6xl mx-auto px-1 pt-2 flex flex-wrap gap-2 items-center">
+              <div className="flex gap-1 items-center">
+                <button
+                  onClick={() => setTipProdus("folie")}
+                  className={`flex flex-col items-center px-2 py-1 rounded-lg font-semibold border text-xs transition-all duration-200
+      ${
+        tipProdus === "folie"
+          ? "bg-blue-500 text-white border-blue-600 shadow scale-105"
+          : "bg-white/80 text-blue-700 border-blue-200 hover:bg-blue-50"
+      }
+    `}
+                  style={{ minWidth: 56 }}
                 >
-                  {getSortIcon()}
-                </div>
-                <span className="hidden sm:inline">{getSortText()}</span>
-                <span className="sm:hidden">Sortează</span>
-              </button>
+                  <Shield
+                    className={`w-5 h-5 mb-0.5 ${
+                      tipProdus === "folie" ? "text-white" : "text-blue-500"
+                    }`}
+                  />
+                  <span className="leading-tight">Folii</span>
+                </button>
+                <button
+                  onClick={() => setTipProdus("husa")}
+                  className={`flex flex-col items-center px-2 py-1 rounded-lg font-semibold border text-xs transition-all duration-200
+      ${
+        tipProdus === "husa"
+          ? "bg-green-500 text-white border-green-600 shadow scale-105"
+          : "bg-white/80 text-green-700 border-green-200 hover:bg-green-50"
+      }
+    `}
+                  style={{ minWidth: 56 }}
+                >
+                  <Smartphone
+                    className={`w-5 h-5 mb-0.5 ${
+                      tipProdus === "husa" ? "text-white" : "text-green-500"
+                    }`}
+                  />
+                  <span className="leading-tight">Huse</span>
+                </button>
+                <button
+                  onClick={handleSort}
+                  className={`flex flex-col items-center px-2 py-1 rounded-lg font-semibold border text-xs transition-all duration-200
+      bg-white/80 text-gray-700 border-gray-200 hover:bg-gray-50
+      ${sortOrder !== "default" ? "shadow scale-105" : ""}
+    `}
+                  style={{ minWidth: 56 }}
+                >
+                  <span className="flex items-center justify-center mb-0.5">
+                    {getSortIcon()}
+                  </span>
+                  <span className="leading-tight sm:inline hidden">
+                    {sortOrder === "asc"
+                      ? "Crescător"
+                      : sortOrder === "desc"
+                      ? "Descrescător"
+                      : "Sortează"}
+                  </span>
+                  <span className="leading-tight sm:hidden block">Sortare</span>
+                </button>
+              </div>
             </div>
           )}
 
           <div className="grid max-w-6xl grid-cols-2 gap-3 mx-auto px-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center pt-2 min-h-[700px]">
-            {accesorii.length === 0 ? (
+            {sortedAccesorii.length === 0 ? (
               <p className="col-span-full text-center text-gray-500 mt-10 text-lg font-medium animate-fade-in">
                 Momentan nu există accesorii disponibile.
               </p>

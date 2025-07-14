@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import viteCompression from "vite-plugin-compression";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
   plugins: [
@@ -14,6 +15,15 @@ export default defineConfig({
     target: "es2020",
     sourcemap: false,
     rollupOptions: {
+      plugins: [
+        visualizer({
+          filename: "bundle-stats.html",
+          open: true,
+          gzipSize: true,
+          brotliSize: true,
+          template: "treemap", // sau "sunburst"
+        }),
+      ],
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {

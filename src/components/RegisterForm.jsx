@@ -41,13 +41,10 @@ export default function RegisterForm({ onClose, redirectTo = "/home" }) {
   return (
     <form
       onSubmit={handleRegister}
-      className="flex flex-col gap-5 max-w-sm mx-auto mt-4 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-green-100 p-6 animate-fade-in-up"
+      className="flex flex-col gap-5 max-w-sm mx-auto mt-4 bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 p-6 animate-fade-in-up"
     >
-      <h2 className="text-2xl font-bold text-green-700 text-center mb-2 tracking-wide">
-        Creează un cont nou
-      </h2>
-      <div className="flex items-center bg-green-50 rounded-lg px-3 py-2 border border-green-200 focus-within:ring-2 focus-within:ring-green-400 transition">
-        <Mail className="w-5 h-5 text-green-500 mr-2" />
+      <div className="flex items-center bg-white rounded-lg px-3 py-2 border border-orange-200 focus-within:ring-2 focus-within:ring-orange-400 transition">
+        <Mail className="w-5 h-5 text-orange-500 mr-2" />
         <input
           type="email"
           placeholder="Email"
@@ -57,8 +54,8 @@ export default function RegisterForm({ onClose, redirectTo = "/home" }) {
           required
         />
       </div>
-      <div className="flex items-center bg-green-50 rounded-lg px-3 py-2 border border-green-200 focus-within:ring-2 focus-within:ring-green-400 transition">
-        <Lock className="w-5 h-5 text-green-500 mr-2" />
+      <div className="flex items-center bg-white rounded-lg px-3 py-2 border border-orange-200 focus-within:ring-2 focus-within:ring-orange-400 transition">
+        <Lock className="w-5 h-5 text-orange-500 mr-2" />
         <input
           type="password"
           placeholder="Parolă"
@@ -80,7 +77,7 @@ export default function RegisterForm({ onClose, redirectTo = "/home" }) {
       )}
       <button
         type="submit"
-        className="bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl font-semibold text-lg shadow hover:from-green-600 hover:to-green-700 transition-all tracking-wide mt-2"
+        className="bg-gradient-to-r from-orange-400 to-orange-500 text-white py-3 rounded-xl font-semibold text-lg shadow hover:from-orange-500 hover:to-orange-600 transition-all tracking-wide mt-2"
       >
         Creează cont
       </button>

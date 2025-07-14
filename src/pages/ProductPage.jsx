@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, lazy, Suspense } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { LazyLoadImage } from "react-lazy-load-image-component";
@@ -14,7 +13,12 @@ import {
   ArrowLeft,
   Hash,
 } from "lucide-react";
-import { Swiper, SwiperSlide } from "swiper/react";
+const Swiper = lazy(() =>
+  import("swiper/react").then((m) => ({ default: m.Swiper }))
+);
+const SwiperSlide = lazy(() =>
+  import("swiper/react").then((m) => ({ default: m.SwiperSlide }))
+);
 import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -113,40 +117,48 @@ export default function ProductPage() {
           {/* Galerie Swiper */}
           <div className="w-full lg:w-1/2">
             <div className="bg-white rounded-3xl shadow-xl p-6 border border-green-100">
-              <Swiper
-                modules={[Pagination, Navigation]}
-                pagination={{
-                  clickable: true,
-                  bulletClass: "swiper-pagination-bullet !bg-green-400",
-                  bulletActiveClass:
-                    "swiper-pagination-bullet-active !bg-green-600",
-                }}
-                navigation={{
-                  nextEl: ".swiper-button-next",
-                  prevEl: ".swiper-button-prev",
-                }}
-                lazy={{ loadPrevNext: true }}
-                spaceBetween={20}
-                slidesPerView={1}
-                className="rounded-2xl overflow-hidden"
+              <Suspense
+                fallback={
+                  <div className="h-[400px] flex items-center justify-center text-gray-500">
+                    Se încarcă galeria...
+                  </div>
+                }
               >
-                {product.imagine?.map((url, index) => (
-                  <SwiperSlide key={index}>
-                    <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden">
-                      <LazyLoadImage
-                        key={url}
-                        src={`${url}?v=${product.id}`}
-                        alt={`${product.nume} imagine ${index + 1}`}
-                        loading={index === 0 ? "eager" : "lazy"}
-                        fetchPriority={index === 0 ? "high" : "auto"}
-                        width="600"
-                        effect="blur"
-                        className="w-full h-[400px] object-contain p-6"
-                      />
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+                <Swiper
+                  modules={[Pagination, Navigation]}
+                  pagination={{
+                    clickable: true,
+                    bulletClass: "swiper-pagination-bullet !bg-green-400",
+                    bulletActiveClass:
+                      "swiper-pagination-bullet-active !bg-green-600",
+                  }}
+                  navigation={{
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                  }}
+                  lazy={{ loadPrevNext: true }}
+                  spaceBetween={20}
+                  slidesPerView={1}
+                  className="rounded-2xl overflow-hidden"
+                >
+                  {product.imagine?.map((url, index) => (
+                    <SwiperSlide key={index}>
+                      <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden">
+                        <LazyLoadImage
+                          key={url}
+                          src={`${url}?v=${product.id}`}
+                          alt={`${product.nume} imagine ${index + 1}`}
+                          loading={index === 0 ? "eager" : "lazy"}
+                          fetchPriority={index === 0 ? "high" : "auto"}
+                          width="600"
+                          effect="blur"
+                          className="w-full h-[400px] object-contain p-6"
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </Suspense>
             </div>
           </div>
 
@@ -225,7 +237,7 @@ export default function ProductPage() {
                     <Hash className="w-5 h-5 text-blue-600" />
                     <div>
                       <span className="text-sm text-blue-600 font-medium">
-                        Cod produs:
+                        Cod :
                       </span>
                       <span className="font-mono font-bold text-blue-800">
                         {product.cod}

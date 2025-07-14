@@ -71,10 +71,10 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
   return (
     <form
       onSubmit={handleLogin}
-      className="flex flex-col gap-5 max-w-sm mx-auto mt-4 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-green-100 p-6 animate-fade-in-up"
+      className="flex flex-col gap-5 max-w-sm mx-auto mt-4 bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 p-6 animate-fade-in-up"
     >
-      <div className="flex items-center bg-green-50 rounded-lg px-3 py-2 border border-green-200 focus-within:ring-2 focus-within:ring-green-400 transition">
-        <Mail className="w-5 h-5 text-green-500 mr-2" />
+      <div className="flex items-center bg-white rounded-lg px-3 py-2 border border-orange-200 focus-within:ring-2 focus-within:ring-orange-400 transition">
+        <Mail className="w-5 h-5 text-orange-500 mr-2" />
         <input
           type="email"
           id="email"
@@ -86,8 +86,8 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
           required
         />
       </div>
-      <div className="flex items-center bg-green-50 rounded-lg px-3 py-2 border border-green-200 focus-within:ring-2 focus-within:ring-green-400 transition">
-        <Lock className="w-5 h-5 text-green-500 mr-2" />
+      <div className="flex items-center bg-white rounded-lg px-3 py-2 border border-orange-200 focus-within:ring-2 focus-within:ring-orange-400 transition">
+        <Lock className="w-5 h-5 text-orange-500 mr-2" />
         <input
           type="password"
           id="password"
@@ -106,7 +106,7 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
       )}
       <button
         type="submit"
-        className="bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl font-semibold text-lg shadow hover:from-green-600 hover:to-green-700 transition-all tracking-wide mt-2"
+        className="bg-gradient-to-r from-orange-400 to-orange-500 text-white py-3 rounded-xl font-semibold text-lg shadow hover:from-orange-500 hover:to-orange-600 transition-all tracking-wide mt-2"
       >
         Conectează-te
       </button>
@@ -114,7 +114,7 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
       <button
         type="button"
         onClick={loginWithGoogle}
-        className="flex items-center justify-center w-full gap-3 px-4 py-3 mt-1 rounded-xl font-semibold text-base shadow bg-gradient-to-r from-[#4285F4] via-[#34A853] to-[#FBBC05] text-white hover:brightness-110 transition-all"
+        className="flex items-center justify-center w-full gap-3 px-4 py-3 mt-1 rounded-xl font-semibold text-base shadow bg-gray-900 text-white hover:bg-gray-800 transition-all"
       >
         <img
           src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"

@@ -59,7 +59,7 @@ export default function Apple() {
     <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
       <div className="relative z-10">
         <div className="grid w-full max-w-5xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
-          {modele.map((model) => (
+          {modele.map((model, idx) => (
             <Link
               key={model.modelSlug}
               to={`/apple/${model.modelSlug}`}
@@ -72,8 +72,8 @@ export default function Apple() {
                   src={model.imagine}
                   alt={model.nume}
                   sizes="(max-width: 640px) 90vw, 300px"
-                  loading="eager"
-                  fetchPriority="high"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  fetchPriority={idx === 0 ? "high" : undefined}
                   width="300"
                   height="300"
                   className="absolute inset-0 w-full h-full object-contain"

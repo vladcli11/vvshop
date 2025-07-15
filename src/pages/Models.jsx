@@ -36,7 +36,7 @@ export default function Models() {
       link.rel = "preload";
       link.as = "image";
       link.href = preloadUrl;
-      link.setAttribute("fetchpriority", "high");
+      link.setAttribute("fetchPriority", "high");
       document.head.appendChild(link);
       return () => {
         document.head.removeChild(link);
@@ -131,7 +131,7 @@ export default function Models() {
         <main className="relative z-10 pb-36">
           {/* Butoane de filtrare și sortare */}
           {accesorii.length > 0 && (
-            <div className="max-w-6xl mx-auto px-1 pt-2 flex flex-wrap gap-2 items-center">
+            <div className="w-full max-w-6xl mx-auto px-4 pt-2 sm:pt-4">
               <div className="flex gap-1 items-center">
                 <button
                   onClick={() =>

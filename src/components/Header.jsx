@@ -21,16 +21,6 @@ export default function Header({ onAuthClick }) {
   }, []);
 
   useEffect(() => {
-    const placeholder = document.getElementById("preload-logo");
-    if (placeholder) placeholder.style.display = "none";
-    const timeout = setTimeout(() => {
-      const again = document.getElementById("preload-logo");
-      if (again) again.style.display = "none";
-    }, 100);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
@@ -41,19 +31,23 @@ export default function Header({ onAuthClick }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-green-100">
+    <header className="sticky top-0 z-50 bg-white/70 border-b border-gray-100">
       <nav className="relative flex items-center justify-between max-w-5xl mx-auto px-3 sm:px-8 h-16 sm:h-20">
         {/* Logo */}
-        <Link to="/" className="flex items-center group" aria-label="Acasă">
+        <Link
+          to="/"
+          className="h-20 sm:h-24 w-[180px] flex items-center justify-center"
+          aria-label="Acasă"
+        >
           <img
             src="/img/logo.webp"
             alt="VVShop"
-            className="h-20 sm:h-24 w-auto object-contain"
-            loading="eager"
-            fetchPriority="high"
             width={180}
             height={96}
-            style={{ filter: "drop-shadow(0 4px 12px #22c55e22)" }}
+            fetchPriority="high"
+            loading="eager"
+            className="h-full w-auto object-contain"
+            style={{ maxHeight: "100%" }}
           />
         </Link>
 
@@ -75,7 +69,7 @@ export default function Header({ onAuthClick }) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-shopping-cart-icon lucide-shopping-cart"
+              className="lucide lucide-shopping-cart-icon lucide-shopping-cart w-7 h-7"
             >
               <circle cx="8" cy="21" r="1" />
               <circle cx="19" cy="21" r="1" />
@@ -132,7 +126,7 @@ export default function Header({ onAuthClick }) {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-user-round-icon lucide-user-round"
+                className="lucide lucide-user-round-icon lucide-user-round w-7 h-7"
               >
                 <circle cx="12" cy="8" r="5" />
                 <path d="M20 21a8 8 0 0 0-16 0" />

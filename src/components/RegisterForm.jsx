@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 
@@ -17,7 +15,27 @@ export default function RegisterForm({ onClose, redirectTo = "/home" }) {
     setSuccess("");
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const { getAuth, createUserWithEmailAndPassword } = await import(
+        "firebase/auth"
+      );
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // Importă Firestore dinamic
+      const { getFirestore, doc, setDoc } = await import("firebase/firestore");
+      const db = getFirestore();
+
+      // Creează documentul userului în Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        role: "user", // sau orice altceva vrei să salvezi
+      });
+
       setSuccess("Cont creat cu succes! Te poți autentifica.");
       if (redirectTo) {
         navigate(redirectTo);

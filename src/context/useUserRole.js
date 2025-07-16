@@ -1,7 +1,5 @@
 // context/useUserRole.js
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
 import useAuth from "./useAuth";
 
 export default function useUserRole() {
@@ -16,8 +14,11 @@ export default function useUserRole() {
         setLoading(false);
         return;
       }
-
       try {
+        const { getFirestore, doc, getDoc } = await import(
+          "firebase/firestore"
+        );
+        const db = getFirestore();
         const ref = doc(db, "users", currentUser.uid);
         const snap = await getDoc(ref);
         if (snap.exists()) {

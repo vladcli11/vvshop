@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 import useCart from "../context/useCart";
-import { db } from "../firebase/firebase-config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-
 import useAuth from "../context/useAuth";
 import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
 
@@ -88,6 +84,11 @@ export default function Delivery() {
 
     // Total final = produse + transport, apoi se aplică discountul
     const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
+
+    const { getFirestore, collection, addDoc, serverTimestamp } = await import(
+      "firebase/firestore"
+    );
+    const db = getFirestore();
 
     if (form.plata === "card") {
       const { loadStripe } = await import("@stripe/stripe-js");

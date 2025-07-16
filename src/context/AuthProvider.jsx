@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/firebase-config";
 import AuthContext from "./AuthContext";
 
 export default function AuthProvider({ children }) {
@@ -8,12 +6,17 @@ export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
+    let unsubscribe;
+    // Importă Firebase doar când componenta se montează
+    import("../firebase/firebase-config").then(({ auth }) => {
+      import("firebase/auth").then(({ onAuthStateChanged }) => {
+        unsubscribe = onAuthStateChanged(auth, (user) => {
+          setCurrentUser(user);
+          setLoading(false);
+        });
+      });
     });
-
-    return unsubscribe;
+    return () => unsubscribe && unsubscribe();
   }, []);
 
   return (

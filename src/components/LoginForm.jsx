@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
-import { auth, db } from "../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { Mail, Lock } from "lucide-react";
 
 export default function LoginForm({ onClose, redirectTo = "/home" }) {
@@ -17,6 +10,15 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
 
   const loginWithGoogle = async () => {
     try {
+      const { GoogleAuthProvider, signInWithPopup, getAuth } = await import(
+        "firebase/auth"
+      );
+      const { doc, getDoc, setDoc, getFirestore } = await import(
+        "firebase/firestore"
+      );
+      const auth = getAuth();
+      const db = getFirestore();
+
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
@@ -46,6 +48,10 @@ export default function LoginForm({ onClose, redirectTo = "/home" }) {
     setError("");
 
     try {
+      const { getAuth, signInWithEmailAndPassword } = await import(
+        "firebase/auth"
+      );
+      const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
       if (redirectTo) {
         navigate(redirectTo);

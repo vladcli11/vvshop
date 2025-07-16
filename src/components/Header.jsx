@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState, useRef, useEffect, lazy, Suspense } from "react";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { useState, lazy, Suspense } from "react";
 import useCart from "../context/useCart";
 
 // Lazy load AccountDropdown
@@ -9,26 +8,30 @@ const AccountDropdown = lazy(() => import("./AccountDropdown"));
 export default function Header({ onAuthClick }) {
   const { cartItems } = useCart();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const dropdownRef = useRef(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(null); // null = necunoscut, true/false = știm
+  const [checkingAuth, setCheckingAuth] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
-      setIsLoggedIn(!!user);
-      if (!user) setShowDropdown(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const handleAccountClick = async () => {
+    if (isLoggedIn === null && !checkingAuth) {
+      setCheckingAuth(true);
+      // Importă Firebase Auth doar la click
+      const { onAuthStateChanged, getAuth } = await import("firebase/auth");
+      onAuthStateChanged(
+        getAuth(),
+        (user) => {
+          setIsLoggedIn(!!user);
+          setShowDropdown(!!user);
+          setCheckingAuth(false);
+          if (!user) onAuthClick?.();
+        },
+        { onlyOnce: true }
+      );
+    } else if (isLoggedIn) {
+      setShowDropdown((prev) => !prev);
+    } else {
+      onAuthClick?.();
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/70 border-b border-gray-100">
@@ -86,13 +89,7 @@ export default function Header({ onAuthClick }) {
           </Link>
           {/* Cont */}
           <button
-            onClick={() => {
-              if (isLoggedIn) {
-                setShowDropdown((prev) => !prev);
-              } else {
-                onAuthClick?.();
-              }
-            }}
+            onClick={handleAccountClick}
             className={`relative bg-white/80 p-3 sm:p-4 rounded-full shadow-lg border  transition-none`}
             aria-label="Autentificare / Cont"
           >

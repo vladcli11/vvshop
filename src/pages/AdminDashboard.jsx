@@ -1,19 +1,7 @@
 // pages/AdminDashboard.jsx
-import {
-  collection,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  updateDoc,
-} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
 import useUserRole from "../context/useUserRole";
-import { db } from "../firebase/firebase-config";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "../firebase/firebase-config";
 
 export default function AdminDashboard() {
   const { role, loading } = useUserRole();
@@ -21,6 +9,10 @@ export default function AdminDashboard() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
+      const { doc, updateDoc, getFirestore } = await import(
+        "firebase/firestore"
+      );
+      const db = getFirestore();
       const orderRef = doc(db, "comenzi", orderId);
       await updateDoc(orderRef, { status: newStatus });
       setOrders((prev) =>
@@ -34,6 +26,10 @@ export default function AdminDashboard() {
 
   const genereazaAwb = async (order) => {
     try {
+      const { httpsCallable, getFunctions } = await import(
+        "firebase/functions"
+      );
+      const functions = getFunctions();
       const genereazaAwb = httpsCallable(functions, "generateAwb");
       const service = order.metodaLivrare === "easybox" ? 15 : 7;
 
@@ -66,8 +62,11 @@ export default function AdminDashboard() {
       console.log("📦 Payload AWB (Admin):", payload);
 
       const awbResponse = await genereazaAwb(payload);
-
       if (awbResponse.data.success) {
+        const { doc, updateDoc, getFirestore } = await import(
+          "firebase/firestore"
+        );
+        const db = getFirestore();
         await updateDoc(doc(db, "comenzi", order.id), {
           awb: awbResponse.data.awbNumber,
         });
@@ -91,6 +90,10 @@ export default function AdminDashboard() {
 
   const descarcaEticheta = async (awb) => {
     try {
+      const { httpsCallable, getFunctions } = await import(
+        "firebase/functions"
+      );
+      const functions = getFunctions();
       const saveAwbLabel = httpsCallable(functions, "saveAwbLabel");
       const result = await saveAwbLabel({ awbNumber: awb });
       if (result.data.success) {
@@ -106,6 +109,9 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      const { collection, getDocs, orderBy, query, getFirestore } =
+        await import("firebase/firestore");
+      const db = getFirestore();
       const q = query(collection(db, "comenzi"), orderBy("data", "desc"));
       const snap = await getDocs(q);
       const list = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));

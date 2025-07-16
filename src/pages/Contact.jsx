@@ -1,9 +1,6 @@
 // src/pages/Contact.jsx
 import { useState } from "react";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { db } from "../firebase/firebase-config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import useAuth from "../context/useAuth";
 
 export default function Contact() {
@@ -33,6 +30,11 @@ export default function Contact() {
     }
 
     try {
+      // Importă Firestore doar la submit
+      const { getFirestore, collection, addDoc, serverTimestamp } =
+        await import("firebase/firestore");
+      const db = getFirestore();
+
       await addDoc(collection(db, "mesaje_contact"), {
         ...form,
         uid: currentUser?.uid || null,

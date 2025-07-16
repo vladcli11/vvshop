@@ -1,14 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
 import useAuth from "../context/useAuth";
 import Footer from "../components/Footer";
 import StatusBadge from "../components/StatusBadge";
@@ -31,6 +21,11 @@ export default function UserOrders() {
       if (!currentUser) return;
 
       try {
+        const { collection, query, where, orderBy, getDocs, updateDoc, doc } =
+          await import("firebase/firestore");
+        const { getFirestore } = await import("firebase/firestore");
+        const db = getFirestore();
+
         const q = query(
           collection(db, "comenzi"),
           where("uid", "==", currentUser.uid),

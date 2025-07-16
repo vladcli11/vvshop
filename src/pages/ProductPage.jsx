@@ -1,8 +1,6 @@
 import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useEffect, useState, useRef, lazy, Suspense } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import useCart from "../context/useCart";
 import {
@@ -35,6 +33,10 @@ export default function ProductPage() {
 
   useEffect(() => {
     const fetchProduct = async () => {
+      const { getFirestore, collection, query, where, getDocs } = await import(
+        "firebase/firestore"
+      );
+      const db = getFirestore();
       const q = query(collection(db, "products"), where("slug", "==", slug));
       const snap = await getDocs(q);
       if (!snap.empty) {

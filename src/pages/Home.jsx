@@ -31,17 +31,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100 pb-10">
       <main className="flex flex-col items-center">
-        <div className="w-full px-3 sm:px-6 mb-4">
-          <div className="max-w-full mx-2 sm:mx-80 flex items-center justify-center gap-4 rounded-sm border border-gray-400 bg-gray-100 px-4 py-1 sm:py-3 shadow-sm sm:shadow-md">
-            <p className="text-base sm:text-xl text-gray-900 font-medium text-center">
-              Livrare gratuită la comenzile de peste{" "}
-              <span className="text-orange-600 font-bold text-xl sm:text-2xl inline-flex gap-3">
-                50 LEI
-                <TruckIcon className="w-6 h-6" />
-              </span>
-            </p>
-          </div>
-        </div>
         {/* Grilă branduri */}
         <div className="grid grid-cols-1 gap-2 w-full max-w-md px-4 justify-items-center">
           {[

@@ -68,18 +68,15 @@ export default function Models() {
     const node = sentinelRef.current;
     if (!node) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((prev) => prev + 1);
-        }
-      },
-      { threshold: 1 }
-    );
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prev) => prev + 1);
+      }
+    });
 
     observer.observe(node);
     return () => {
-      observer.unobserve(node);
+      observer.unobserve(node); // Cleanup corect pe același nod
     };
   }, [currentItems.length]);
 

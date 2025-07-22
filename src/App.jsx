@@ -51,7 +51,7 @@ export default function App() {
         }}
       />
 
-      <main className="pt-4 min-h-[80vh]">
+      <main className="min-h-[80vh]">
         <Suspense
           fallback={
             <div className="p-4 text-center text-gray-500">

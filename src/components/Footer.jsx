@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-200 mt-10 pb-4 pt-2 px-3 text-center text-gray-600 text-sm">
+    <footer className="bg-[#fb8500] border-t border-gray-200 mt-10 pb-4 pt-2 px-3 text-center text-gray-600 text-sm">
       <div className="max-w-5xl mx-auto space-y-4">
         {/* Info firmă */}
         <div className="space-y-1 text-center leading-tight">

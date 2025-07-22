@@ -14,7 +14,11 @@ export async function fetchAccessoriesByModel(slug) {
     return sortByTipAndName(items);
   }
 
-  const q = query(collection(db, "products"), where("modelSlug", "==", slug));
+  const q = query(
+    collection(db, "products"),
+    where("modelSlug", "==", slug),
+    where("activ", "==", true)
+  );
 
   const snapshot = await getDocs(q);
   const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));

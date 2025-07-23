@@ -81,7 +81,7 @@ export default function Apple() {
                 />
               </div>
               {/* Titlu */}
-              <h3 className="mt-3 pt-3 border-t border-gray-200 text-sm sm:text-base font-medium text-center text-gray-700 w-full">
+              <h3 className="mt-3 pt-3 border-t border-gray-200 text-sm sm:text-base font-medium text-center text-[#1F2937] w-full">
                 {model.nume}
               </h3>
             </Link>

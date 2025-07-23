@@ -29,7 +29,7 @@ function TruckIcon() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#8ecae6] pb-10">
+    <div className="min-h-screen bg-gradient-to-b from-bg-gray-50 to bg-gray-100 pb-10">
       <main className="flex flex-col items-center">
         {/* Grilă branduri */}
         <div className="grid grid-cols-1 gap-2 w-full max-w-md px-4 justify-items-center mt-4">
@@ -41,7 +41,7 @@ export default function Home() {
             <Link
               key={name}
               to={to}
-              className="group relative bg-[#219ebc] backdrop-blur-md border border-gray-200 rounded-sm shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] flex flex-col items-center p-6 w-[360px] sm:w-[400px] md:w-[460px]"
+              className="group relative bg-gray-50 backdrop-blur-md border border-gray-200 rounded-sm shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] flex flex-col items-center p-6 w-[360px] sm:w-[400px] md:w-[460px]"
             >
               {/* HALO */}
               <div className="relative flex items-center justify-center">
@@ -58,7 +58,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <span className="mt-2 text-2xl sm:text-2xl font-semibold text-gray-800 text-center">
+              <span className="mt-2 text-2xl sm:text-2xl font-semibold text-[#1F2937] text-center">
                 {name}
               </span>
             </Link>

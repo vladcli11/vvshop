@@ -21,8 +21,7 @@ export default function Header({ onAuthClick }) {
   };
 
   return (
-    <header className="relative top-0 z-50 bg-[#fb8500] border-b border-gray-300">
-      {" "}
+    <header className="relative top-0 z-50 bg-white">
       <nav className="relative flex items-center justify-between max-w-5xl mx-auto px-3 sm:px-8 h-20 sm:h-24">
         {/* Logo */}
         <Link
@@ -46,10 +45,10 @@ export default function Header({ onAuthClick }) {
         {/* Dreapta: Coș + Cont */}
         <div className="flex items-center gap-3 sm:gap-6">
           {/* Coș */}
-          <div className="border border-gray-100 rounded-full">
+          <div className="border-separate border-gray-100 rounded-full">
             <Link
               to="/cos"
-              className="relative bg-white text-gray-700 p-3 sm:p-4 rounded-full shadow-lg border-2 border-white transition-none flex"
+              className="relative bg-white text-gray-900 p-3 sm:p-4 rounded-full shadow-lg border-1 border-gray-200 transition-none flex"
               aria-label="Coș de cumpărături"
             >
               <svg
@@ -69,7 +68,7 @@ export default function Header({ onAuthClick }) {
                 <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
               </svg>
               {cartItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gradient-to-tr from-red-400 to-red-500 text-white text-xs w-7 h-7 flex items-center justify-center rounded-full border-2 border-white shadow">
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-sm w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow">
                   {cartItems.reduce(
                     (total, item) => total + (item.quantity || 1),
                     0
@@ -79,10 +78,10 @@ export default function Header({ onAuthClick }) {
             </Link>
           </div>
           {/* Cont */}
-          <div className="border border-gray-100 rounded-full">
+          <div className="border-separate border-gray-100 rounded-full">
             <button
               onClick={handleAccountClick}
-              className="relative bg-white p-3 sm:p-4 rounded-full shadow-lg border-2 border-white transition-none flex"
+              className="relative bg-white p-3 sm:p-4 rounded-full shadow-2xl border-2 border-white transition-none flex"
               aria-label="Autentificare / Cont"
             >
               {isLoggedIn ? (
@@ -97,7 +96,7 @@ export default function Header({ onAuthClick }) {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-user-round-icon lucide-user-round w-7 h-7"
+                  className="lucide lucide-user-round-icon lucide-user-round w-7 h-7 text-teal-500"
                 >
                   <circle cx="12" cy="8" r="5" />
                   <path d="M20 21a8 8 0 0 0-16 0" />
@@ -114,7 +113,7 @@ export default function Header({ onAuthClick }) {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-user-round-icon lucide-user-round w-7 h-7"
+                  className="lucide lucide-user-round-icon lucide-user-round w-7 h-7 text-gray-900"
                 >
                   <circle cx="12" cy="8" r="5" />
                   <path d="M20 21a8 8 0 0 0-16 0" />
@@ -124,6 +123,7 @@ export default function Header({ onAuthClick }) {
           </div>
         </div>
       </nav>
+      <div className="w-full h-1 bg-gradient-to-r from-green-500 via-teal-400 to-blue-500" />
       {/* Dropdown cont logat */}
       {isLoggedIn && showDropdown && (
         <Suspense fallback={<div className="..." />}>

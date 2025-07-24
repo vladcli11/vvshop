@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProductPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
-  const [showNotif, setShowNotif] = useState(false);
+  const [setShowNotif] = useState(false);
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const notifTimeout = useRef(null);
@@ -61,11 +61,11 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-        <div className="flex items-center justify-center h-[400px]">
+      <div className="min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center h-[300px] sm:h-[400px]">
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
-            <p className="text-lg text-gray-600 font-medium">
+            <div className="w-12 h-12 mx-auto mb-4 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
+            <p className="text-base sm:text-lg text-gray-600 font-medium flex items-center">
               Se încarcă produsul...
             </p>
           </div>
@@ -76,52 +76,26 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative overflow-x-hidden">
-      {/* Efecte de fundal */}
-      <div className="fixed inset-0 z-[-1] pointer-events-none">
-        <div className="absolute top-20 left-1/4 w-72 h-72 bg-green-400/30 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-blue-200/20 rounded-full blur-3xl animate-pulse-slow" />
-      </div>
-
-      {/* Notificare */}
-      {showNotif && (
-        <div className="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-lg border border-green-200 shadow-2xl rounded-2xl flex items-center gap-3 px-6 py-3 max-w-[90vw] sm:max-w-md text-green-700 font-semibold text-base sm:text-lg animate-fade-in-up">
-          <svg
-            className="w-6 h-6 text-green-600 flex-shrink-0"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          <span>Produsul a fost adăugat în coș!</span>
-        </div>
-      )}
-
-      <div className="px-4 sm:px-6 pb-6 relative z-10">
+    <div className="min-h-screen bg-gray-100 relative overflow-x-hidden">
+      <div className="px-2 sm:px-6 pb-6 relative z-10">
         {/* Buton înapoi */}
-        <div className="max-w-6xl mx-auto pt-6 mb-6">
+        <div className="max-w-3xl mx-auto pt-4 mb-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors duration-200 font-medium"
+            className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors duration-200 font-medium text-sm sm:text-base"
           >
             <ArrowLeft className="w-5 h-5" />
             Înapoi
           </button>
         </div>
 
-        <div className="flex flex-col max-w-6xl gap-10 mx-auto lg:flex-row">
+        <div className="flex flex-col max-w-3xl gap-6 mx-auto lg:flex-row lg:max-w-6xl">
           {/* Galerie Swiper */}
           <div className="w-full lg:w-1/2">
-            <div className="bg-white rounded-3xl shadow-xl p-6 border border-green-100">
+            <div className="bg-white rounded-2xl shadow-md p-3 sm:p-6 border border-green-100">
               <Suspense
                 fallback={
-                  <div className="h-[400px] flex items-center justify-center text-gray-500">
+                  <div className="h-[220px] sm:h-[400px] flex items-center justify-center text-gray-500">
                     Se încarcă galeria...
                   </div>
                 }
@@ -139,22 +113,22 @@ export default function ProductPage() {
                     prevEl: ".swiper-button-prev",
                   }}
                   lazy={{ loadPrevNext: true }}
-                  spaceBetween={20}
+                  spaceBetween={12}
                   slidesPerView={1}
-                  className="rounded-2xl overflow-hidden"
+                  className="rounded-xl overflow-hidden"
                 >
                   {product.imagine?.map((url, index) => (
                     <SwiperSlide key={index}>
-                      <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden">
+                      <div className="relative bg-white rounded-sm overflow-hidden">
                         <LazyLoadImage
                           key={url}
                           src={`${url}?v=${product.id}`}
                           alt={`${product.nume} imagine ${index + 1}`}
                           loading={index === 0 ? "eager" : "lazy"}
                           fetchPriority={index === 0 ? "high" : "auto"}
-                          width="600"
+                          width="400"
                           effect="blur"
-                          className="w-full h-[400px] object-contain p-6"
+                          className="w-full h-[220px] sm:h-[320px] md:h-[400px] object-contain p-3 sm:p-6"
                         />
                       </div>
                     </SwiperSlide>
@@ -166,47 +140,50 @@ export default function ProductPage() {
 
           {/* Detalii produs */}
           <div className="w-full lg:w-1/2">
-            <div className="bg-white rounded-3xl shadow-xl p-8 border border-green-100 h-full">
+            <div className="bg-white rounded-2xl shadow-md p-4 sm:p-8 border border-green-100 h-full">
               <div className="flex flex-col h-full">
                 {/* Titlu produs */}
-                <h1 className="text-3xl font-bold text-gray-800 mb-4 leading-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-4 leading-tight">
                   {product.nume}
                 </h1>
 
                 {/* Preț */}
-                <div className="mb-6">
-                  <p className="text-4xl font-bold text-green-600 mb-2">
+                <div className="mb-4 sm:mb-6">
+                  <p className="text-2xl sm:text-4xl font-bold text-green-600 mb-1 sm:mb-2">
                     {product.pret.toFixed(2)} lei
                   </p>
-                  <p className="text-sm text-gray-500 flex items-center gap-1">
+                  <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
                     <Shield className="w-4 h-4" />
                     TVA inclus
                   </p>
                 </div>
 
                 {/* Rating (fake pentru demo) */}
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-4 sm:mb-6">
                   <div className="flex text-yellow-400">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-current" />
+                      <Star
+                        key={i}
+                        className="w-4 h-4 sm:w-5 sm:h-5 fill-current"
+                      />
                     ))}
                   </div>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-xs sm:text-sm text-gray-600">
                     (4.9) • 127 recenzii
                   </span>
                 </div>
 
                 {/* Compatibilitate */}
                 {Array.isArray(product.models) && product.models.length > 0 && (
-                  <div className="mb-6">
-                    <p className="text-lg font-semibold text-gray-700 mb-3">
+                  <div className="mb-4 sm:mb-6">
+                    <p className="text-base sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-3">
                       Compatibilitate:
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {product.models.map((model, idx) => (
                         <span
                           key={idx}
-                          className="px-3 py-2 text-sm bg-gradient-to-r from-green-100 to-green-200 text-green-700 rounded-full border border-green-300 font-medium"
+                          className="px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm bg-gradient-to-r from-green-100 to-green-200 text-green-700 rounded-full border border-green-300 font-medium"
                         >
                           {model}
                         </span>
@@ -216,17 +193,17 @@ export default function ProductPage() {
                 )}
 
                 {/* Avantaje */}
-                <div className="mb-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl border border-green-100">
-                      <Truck className="w-5 h-5 text-green-600" />
-                      <span className="text-sm text-green-700 font-medium">
+                <div className="mb-6 sm:mb-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-green-50 rounded-xl border border-green-100">
+                      <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                      <span className="text-xs sm:text-sm text-green-700 font-medium">
                         Livrare gratuită
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                      <Shield className="w-5 h-5 text-blue-600" />
-                      <span className="text-sm text-blue-700 font-medium">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-blue-50 rounded-xl border border-blue-100">
+                      <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                      <span className="text-xs sm:text-sm text-blue-700 font-medium">
                         Garanție 2 ani
                       </span>
                     </div>
@@ -235,10 +212,10 @@ export default function ProductPage() {
 
                 {/* Cod produs */}
                 {product.cod && (
-                  <div className="flex items-center gap-2 mb-6 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                    <Hash className="w-5 h-5 text-blue-600" />
+                  <div className="flex items-center gap-2 mb-4 sm:mb-6 p-2 sm:p-3 bg-blue-50 rounded-xl border border-blue-100">
+                    <Hash className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                     <div>
-                      <span className="text-sm text-blue-600 font-medium">
+                      <span className="text-xs sm:text-sm text-blue-600 font-medium">
                         Cod :
                       </span>
                       <span className="font-mono font-bold text-blue-800">
@@ -252,9 +229,9 @@ export default function ProductPage() {
                 <div className="mt-auto">
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="w-full flex items-center justify-center gap-3 py-4 text-lg font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 transition-all duration-200"
+                    className="w-full flex items-center justify-center gap-2 sm:gap-3 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl sm:rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 transition-all duration-200"
                   >
-                    <ShoppingCart className="w-6 h-6" />
+                    <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
                     Adaugă în coș
                   </button>
                 </div>
@@ -264,16 +241,18 @@ export default function ProductPage() {
         </div>
 
         {/* Descriere lungă */}
-        <div className="max-w-6xl mx-auto mt-10">
-          <div className="bg-white rounded-3xl shadow-xl p-8 border border-green-100">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">i</span>
+        <div className="max-w-3xl mx-auto mt-6 sm:mt-10">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-md p-4 sm:p-8 border border-green-100">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-2">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xs sm:text-sm">
+                  i
+                </span>
               </div>
               Descriere produs
             </h2>
-            <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">
+            <div className="prose prose-sm sm:prose-lg max-w-none">
+              <p className="text-gray-700 leading-relaxed text-base sm:text-lg whitespace-pre-wrap">
                 {product.descriere ||
                   "Acest produs oferă protecție completă și un aspect elegant. Fabricat din materiale de calitate superioară, compatibil perfect cu modelele listate mai sus. Designul său modern și funcțional îl face perfect pentru utilizarea zilnică."}
               </p>

@@ -15,6 +15,9 @@ export default function UserOrders() {
   const [orders, setOrders] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [referralCode, setReferralCode] = useState(null);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -60,6 +63,27 @@ export default function UserOrders() {
     fetchOrders();
   }, [currentUser]);
 
+  const handleGenerateReferral = async () => {
+    try {
+      const { getFunctions, httpsCallable } = await import(
+        "firebase/functions"
+      );
+      const functions = getFunctions();
+      const generateReferral = httpsCallable(functions, "generateReferralCode");
+      const result = await generateReferral();
+      setReferralCode(result.data.code);
+    } catch (err) {
+      console.error("❌ Eroare referral:", err.message);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(referralCode).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 1500);
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white px-6 pb-10 pt-6">
       <div className="max-w-3xl mx-auto mb-6">
@@ -70,6 +94,51 @@ export default function UserOrders() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
             Comenzile mele
           </h1>
+          <div className="text-center -mt-4 mb-8">
+            <button
+              onClick={() => {
+                setShowReferralModal(true);
+                handleGenerateReferral();
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm sm:text-base shadow-sm active:scale-95 transition"
+            >
+              Generează cod referral
+            </button>
+          </div>
+          {showReferralModal && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+              <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full relative">
+                <button
+                  onClick={() => setShowReferralModal(false)}
+                  className="absolute top-2 right-3 text-xl text-gray-400 hover:text-red-500"
+                >
+                  ×
+                </button>
+
+                <h2 className="text-lg font-bold text-gray-800 mb-4 text-center">
+                  Codul tău referral
+                </h2>
+
+                {referralCode ? (
+                  <div className="flex flex-col items-center">
+                    <div className="bg-gray-100 border text-gray-700 px-4 py-2 rounded-lg font-mono text-sm">
+                      {referralCode}
+                    </div>
+                    <button
+                      onClick={copyToClipboard}
+                      className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                    >
+                      {copySuccess ? "Copiat!" : "Copiază codul"}
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center">
+                    Se generează codul...
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
         <p className="text-center text-sm text-gray-500">
           Ai {orders.length} comandă{orders.length === 1 ? "" : "ri"}{" "}

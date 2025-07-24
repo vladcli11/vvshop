@@ -33,7 +33,7 @@ export default function Header({ onAuthClick }) {
           <img
             src="/img/logo.webp"
             alt="VVShop"
-            width={180}
+            width={120}
             height={96}
             fetchPriority="high"
             loading="eager"

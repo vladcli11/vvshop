@@ -7,14 +7,14 @@ admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 const db = admin.firestore();
 
 const OUTPUT_PATH = path.join(__dirname, "duplicatesToImport.json");
-
+// Normalizez denumirea produsului pentru a putea extrage modelSlug corect e.g : Husa Apple Iphone 14 Pro max -> iphone-14-pro-max
 function slugify(text) {
   return text
     .toLowerCase()
     .replace(/[ăâîșț]/g, (c) => ({ ă: "a", â: "a", î: "i", ș: "s", ț: "t" }[c]))
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s\-\+]/g, "") // 🔥 păstrăm `+`
+    .replace(/[^a-z0-9\s\-\+]/g, "")
     .trim()
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
@@ -28,12 +28,12 @@ function extractModelSlug(modelName) {
   slug = slug.replace(/^samsung-galaxy-/, "samsung-galaxy-");
   slug = slug.replace(/^huawei-/, "huawei-");
 
-  // elimină coduri comerciale
-  slug = slug.replace(/-[a-z]?\d{3,4}/g, ""); // ex: -a245, -s911, etc.
+  // elimina cuvinte din denumire
+
+  slug = slug.replace(/-[a-z]?\d{3,4}/g, "");
   slug = slug.replace(/-(4g|5g)/g, "");
   slug = slug.replace(/-duos|-ds|-dual-sim/g, "");
 
-  // elimină descrieri comerciale
   slug = slug.replace(/-sticla-securizata.*$/, "");
   slug = slug.replace(/-full-glue.*$/, "");
   slug = slug.replace(/-set-[0-9]+-bucati.*$/, "");
@@ -60,7 +60,7 @@ function extractModels(nume) {
 
   const prefix = matchPrefix[0];
   const part = nume.split("pentru")[1] || "";
-  const clean = part.split(",")[0]; // eliminăm descrieri
+  const clean = part.split(",")[0];
 
   const models = clean
     .split("/")
@@ -103,7 +103,7 @@ async function generateDuplicates() {
     };
 
     duplicates.push(duplicate);
-    console.log(`🟢 Detectat duplicat: ${newSlug}`);
+    console.log(`Detectat duplicat: ${newSlug}`);
   });
 
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(duplicates, null, 2), "utf8");
@@ -113,5 +113,5 @@ async function generateDuplicates() {
 }
 
 generateDuplicates().catch((err) => {
-  console.error("❌ Eroare:", err);
+  console.error("Eroare:", err);
 });

@@ -2,8 +2,8 @@ const fs = require("fs");
 const axios = require("axios");
 
 const BASE_URL = "https://sameday-api.demo.zitec.com";
-const USERNAME = "vvshopTEST"; // înlocuiește
-const PASSWORD = "5ukh&M&7"; // înlocuiește
+const USERNAME = "vvshopTEST";
+const PASSWORD = "5ukh&M&7";
 
 async function authenticate() {
   const res = await axios.post(`${BASE_URL}/api/authenticate`, null, {
@@ -39,7 +39,7 @@ async function fetchAllCities(token) {
     allCities.push(...data);
     totalPages = pages;
     currentPage++;
-    console.log(`✅ Fetched page ${currentPage - 1} / ${pages}`);
+    console.log(`Fetched page ${currentPage - 1} / ${pages}`);
   }
 
   return allCities;
@@ -74,11 +74,9 @@ function buildCityMap(cityList) {
     );
 
     console.log(
-      `✅ Am salvat ${
-        Object.keys(cityMap).length
-      } orașe în sameday_city_ids.json`
+      `Am salvat ${Object.keys(cityMap).length} orașe în sameday_city_ids.json`
     );
   } catch (err) {
-    console.error("❌ Eroare la scraping:", err.response?.data || err);
+    console.error("Eroare la scraping:", err.response?.data || err);
   }
 })();

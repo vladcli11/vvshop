@@ -18,6 +18,11 @@ export default function UserOrders() {
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralCode, setReferralCode] = useState(null);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [stats, setStats] = useState({
+    usageCount: 0,
+    totalOrdersValue: 0,
+    commissionEarned: 0,
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -54,7 +59,7 @@ export default function UserOrders() {
 
         setOrders(result);
       } catch (err) {
-        console.error("❌ Eroare la preluarea comenzilor:", err);
+        console.error("Eroare la preluarea comenzilor:", err);
       } finally {
         setLoading(false);
       }
@@ -63,19 +68,32 @@ export default function UserOrders() {
     fetchOrders();
   }, [currentUser]);
 
-  const handleGenerateReferral = async () => {
-    try {
-      const { getFunctions, httpsCallable } = await import(
-        "firebase/functions"
-      );
-      const functions = getFunctions();
-      const generateReferral = httpsCallable(functions, "generateReferralCode");
-      const result = await generateReferral();
-      setReferralCode(result.data.code);
-    } catch (err) {
-      console.error("❌ Eroare referral:", err.message);
-    }
-  };
+  useEffect(() => {
+    if (!showReferralModal || !currentUser?.uid) return;
+
+    const fetchReferralStats = async () => {
+      try {
+        const { getFirestore, doc, getDoc } = await import(
+          "firebase/firestore"
+        );
+        const db = getFirestore();
+        const docRef = doc(db, "referralCodes", currentUser.uid);
+        const snap = await getDoc(docRef);
+        if (!snap.exists()) return;
+        const data = snap.data();
+        setReferralCode(data.referralCode);
+        setStats({
+          usageCount: data.usageCount || 0,
+          totalOrdersValue: data.totalOrdersValue || 0,
+          commissionEarned: data.commissionEarned || 0,
+        });
+      } catch (err) {
+        console.error("Eroare la citirea statisticilor:", err.message);
+      }
+    };
+
+    fetchReferralStats();
+  }, [showReferralModal, currentUser]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralCode).then(() => {
@@ -87,24 +105,22 @@ export default function UserOrders() {
   return (
     <div className="min-h-screen bg-white px-6 pb-10 pt-6">
       <div className="max-w-3xl mx-auto mb-6">
-        <div className="flex items-center justify-center gap-3 mb-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow">
-            <Package className="w-6 h-6 text-white" />
+        <div className="flex flex-col items-center gap-3 mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow">
+              <Package className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
+              Comenzile mele
+            </h1>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
-            Comenzile mele
-          </h1>
-          <div className="text-center -mt-4 mb-8">
-            <button
-              onClick={() => {
-                setShowReferralModal(true);
-                handleGenerateReferral();
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm sm:text-base shadow-sm active:scale-95 transition"
-            >
-              Generează cod referral
-            </button>
-          </div>
+          <button
+            onClick={() => setShowReferralModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm sm:text-base shadow-sm active:scale-95 transition"
+          >
+            Codul meu referral
+          </button>
+
           {showReferralModal && (
             <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
               <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full relative">
@@ -130,21 +146,37 @@ export default function UserOrders() {
                     >
                       {copySuccess ? "Copiat!" : "Copiază codul"}
                     </button>
+
+                    <div className="mt-6 text-sm text-gray-700 space-y-2">
+                      <p>
+                        Folosit de <strong>{stats.usageCount}</strong> ori
+                      </p>
+                      <p>
+                        Valoare generată:{" "}
+                        <strong>{stats.totalOrdersValue.toFixed(2)} lei</strong>
+                      </p>
+                      <p>
+                        Comision:{" "}
+                        <strong>{stats.commissionEarned.toFixed(2)} lei</strong>
+                      </p>
+                    </div>
                   </div>
                 ) : (
                   <p className="text-gray-500 text-center">
-                    Se generează codul...
+                    Se încarcă codul...
                   </p>
                 )}
               </div>
             </div>
           )}
         </div>
+
         <p className="text-center text-sm text-gray-500">
           Ai {orders.length} comandă{orders.length === 1 ? "" : "ri"}{" "}
-          înregistrat{orders.length === 1 ? "" : "e"}
+          înregistrat{orders.length === 1 ? "ă" : "e"}
         </p>
       </div>
+
       {loading ? (
         <p className="text-center text-gray-500">Se încarcă comenzile...</p>
       ) : orders.length === 0 ? (

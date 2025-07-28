@@ -17,4 +17,3 @@ createRoot(document.getElementById("root")).render(
     </BrowserRouter>
   </StrictMode>
 );
-// ✅ Acest cod asigură că aplicația ta are acces la contextul de autentificare și la cel de coș de cumpărături.

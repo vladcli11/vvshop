@@ -1,4 +1,5 @@
-// 📦 Script optimizat pentru importare produse cu extragere precisă modelSlug
+// Main script care imi extrage produsele din CSV-ul distribuitorului si le importa in Firestore.
+// Foloseste multe filtrari pentru a evita importul de produse irelevante e.g Folie iphone 6s
 
 const https = require("https");
 const fs = require("fs");
@@ -18,25 +19,26 @@ const allowedCategories = [
   "Accesorii Telefoane si Tablete | Huse",
   "Accesorii Telefoane si Tablete | Folii Protectie",
 ];
+
 const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
-// 🔧 Funcție slugify care convertește + în -plus
+// Convertesc textul intr-un format pe care pot sa-l gestionez si transform + in PLUS
 function slugify(text) {
   return text
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/\+/g, "-plus") // ✅ Convertește + în -plus
+    .replace(/\+/g, "-plus")
     .replace(/[^a-z0-9\s\-]/g, "")
     .trim()
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
 
-// 🎯 Funcție îmbunătățită pentru extragerea modelSlug-urilor
+// functie pt a extrage modelSlug
 function extractModelSlug(productName) {
-  console.log(`🔍 Analizez: "${productName}"`);
+  console.log(`Analizez: "${productName}"`);
 
   // Curăță numele pentru a găsi modelul
   let cleanName = productName
@@ -63,7 +65,7 @@ function extractModelSlug(productName) {
     // Samsung Galaxy S cu PLUS/+ (în ordinea priorității!)
     {
       regex: /Samsung\s*Galaxy\s*S\s*(\d+)\s*(Plus|\+)/i,
-      transform: (match) => `samsung-galaxy-s${match[1]}-plus`, // ✅ Întotdeauna -plus
+      transform: (match) => `samsung-galaxy-s${match[1]}-plus`,
     },
     {
       regex: /Samsung\s*Galaxy\s*S\s*(\d+)\s*(Ultra|FE)/i,
@@ -111,28 +113,28 @@ function extractModelSlug(productName) {
     },
   ];
 
-  // Încearcă să găsească un pattern care se potrivește
+  // Caut un pattern care sa se potriveasca pe baza regexului
   for (const pattern of patterns) {
     const match = cleanName.match(pattern.regex);
     if (match) {
       const candidate = pattern.transform(match);
       console.log(`🎯 Pattern găsit: "${match[0]}" → "${candidate}"`);
 
-      // Verifică dacă candidatul este în lista permisă
+      // Verific daca modelSlug-ul este regasit in allowedModelSlugs
       if (allowedModelSlugs.has(candidate)) {
         console.log(`✅ ModelSlug valid: "${candidate}"`);
         return candidate;
       }
 
-      console.log(`❌ ModelSlug nu este în lista permisă: "${candidate}"`);
+      console.log(`ModelSlug nu este în lista permisă: "${candidate}"`);
     }
   }
 
-  console.log(`❓ Nu s-a găsit pattern pentru: "${cleanName}"`);
+  console.log(`Nu s-a găsit pattern pentru: "${cleanName}"`);
   return null;
 }
 
-// 🧹 Curăță cheile din CSV
+// Elimin spatiile din csv
 function cleanRowKeys(row) {
   const cleaned = {};
   Object.entries(row).forEach(([key, value]) => {
@@ -141,14 +143,14 @@ function cleanRowKeys(row) {
   return cleaned;
 }
 
-// 📁 Asigură că directorul există
+// Verificam ca directorul unde salvadm datele public/img exista in caz ca nu exista il creeaza
 function ensureDirExists(dirPath) {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
 }
 
-// 🖼️ Download și conversie imagine (cea mai importantă funcție!)
+// Download si conversie imagine, primesc din CSV png iar eu le vreau formatate in webp 300x300 pentru performanta
 async function downloadAndConvertImage(imageUrl, outputFilePath) {
   try {
     console.log(`⬇️  Download imagine: ${imageUrl}`);
@@ -161,16 +163,15 @@ async function downloadAndConvertImage(imageUrl, outputFilePath) {
       .toFormat("webp")
       .toFile(outputFilePath);
 
-    console.log(`🖼️  Salvată imagine: ${outputFilePath}`);
+    console.log(`Salvată imagine: ${outputFilePath}`);
     return true;
   } catch (err) {
-    console.error(`❌ Eroare conversie imagine ${imageUrl}:`, err.message);
+    console.error(`Eroare conversie imagine ${imageUrl}:`, err.message);
     return false;
   }
 }
 
-// 🚀 Script principal
-console.log("🚀 Pornire import produse...");
+console.log("A pornit importul");
 
 https.get(feedUrl, (res) => {
   let processedCount = 0;
@@ -184,13 +185,13 @@ https.get(feedUrl, (res) => {
         const row = cleanRowKeys(rawRow);
         processedCount++;
 
-        // Extrage datele de bază
+        // Extragem datele de baza din csv
         const categorie = row["CATEGORIE"];
         const nume = row["NUME"];
         const codUnic = row["COD_UNIC"];
         const imagineUrl = row["LINK POZA"];
 
-        // Filtrări de bază
+        // Filtrarile
         if (!allowedCategories.includes(categorie)) {
           skipCount++;
           return;
@@ -210,8 +211,7 @@ https.get(feedUrl, (res) => {
           skipCount++;
           return;
         }
-
-        // 🎯 Extrage modelSlug
+        // Extragem modelSlug-ul din nume
         const modelSlug = extractModelSlug(nume);
         if (!modelSlug) {
           console.log(`⏭️ Ignorat (model necunoscut): ${nume}`);
@@ -219,32 +219,30 @@ https.get(feedUrl, (res) => {
           return;
         }
 
-        // Calculează preț
+        // Calculeaz pretul de vanzare cu adaos si taxe
         let pretBaza = parseFloat(
           row["Pret Diamond cu TVA"]?.replace(",", ".") || "0"
         );
         if (isNaN(pretBaza) || pretBaza <= 0) {
-          console.warn(`⚠️ Preț invalid pentru: ${nume}`);
+          console.warn(`Preț invalid pentru: ${nume}`);
           skipCount++;
           return;
         }
         const pretFinal = Math.round((pretBaza + 7.8) * 1.025 * 100) / 100;
 
-        // ✅ Folosește același slug pentru document și imagine
         const slug = slugify(nume);
         const docRef = db.collection("products").doc(slug);
         const snapshot = await docRef.get();
 
-        // ✅ Procesează imaginea cu același slug
+        // Creez calea pentru imagine
         const imageFileName = `${slug}.webp`;
         const imagePath = path.join(publicImgPath, imageFileName);
         const imageFirestoreUrl = `${BASE_IMAGE_URL}/${imageFileName}`;
 
-        console.log(`🔧 Document & File slug: "${slug}"`);
-        console.log(`🔧 ModelSlug: "${modelSlug}"`);
+        console.log(`Document & File slug: "${slug}"`);
+        console.log(`ModelSlug: "${modelSlug}"`);
 
         if (!snapshot.exists) {
-          // Produs nou
           ensureDirExists(publicImgPath);
 
           let hasWebp = false;
@@ -269,12 +267,12 @@ https.get(feedUrl, (res) => {
             activ: true,
             necesitaImagine: !hasWebp,
             imagine: finalImageUrl ? [finalImageUrl] : [],
-            modelSlug, // Va fi samsung-galaxy-s24-plus
+            modelSlug,
             pret: pretFinal,
           };
 
           await docRef.set(newData, { merge: true });
-          console.log(`✅ Creat produs nou: ${slug} (${modelSlug})`);
+          console.log(`Creat produs nou: ${slug} (${modelSlug})`);
           successCount++;
         } else {
           // Actualizare produs existent
@@ -286,29 +284,29 @@ https.get(feedUrl, (res) => {
           };
 
           await docRef.set(updateData, { merge: true });
-          console.log(`🔄 Actualizat produs: ${slug}`);
+          console.log(`Actualizat produs: ${slug}`);
           successCount++;
         }
 
         // Progress report
         if (processedCount % 100 === 0) {
           console.log(
-            `📊 Progres: ${processedCount} procesate, ${successCount} salvate, ${skipCount} ignorate`
+            `Progres: ${processedCount} procesate, ${successCount} salvate, ${skipCount} ignorate`
           );
         }
       } catch (error) {
-        console.error(`❌ Eroare procesare produs:`, error.message);
+        console.error(`Eroare procesare produs:`, error.message);
         skipCount++;
       }
     })
     .on("end", () => {
-      console.log(`🎉 Import finalizat!`);
-      console.log(`📊 Statistici finale:`);
-      console.log(`   • Total procesate: ${processedCount}`);
-      console.log(`   • Salvate cu succes: ${successCount}`);
-      console.log(`   • Ignorate: ${skipCount}`);
+      console.log(`Import finalizat!`);
+      console.log(`Statistici finale:`);
+      console.log(` Total procesate: ${processedCount}`);
+      console.log(` Salvate cu succes: ${successCount}`);
+      console.log(` Ignorate: ${skipCount}`);
     })
     .on("error", (error) => {
-      console.error(`❌ Eroare CSV:`, error);
+      console.error(`Eroare CSV:`, error);
     });
 });

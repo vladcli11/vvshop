@@ -1,7 +1,5 @@
-/**
- * Returnează accesoriile corespunzătoare unui model de telefon (ex: iPhone 14 Pro Max).
- * Se bazează pe câmpul `modelSlug` generat în timpul importului în Firestore.
- */
+// Returneaza accesoriile unui model ca foliile sa apara primele iar apoi husele
+
 export async function fetchAccessoriesByModel(slug) {
   const { getFirestore, collection, getDocs, query, where } = await import(
     "firebase/firestore"

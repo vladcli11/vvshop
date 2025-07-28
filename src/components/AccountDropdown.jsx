@@ -44,7 +44,7 @@ export default function AccountDropdown({ onClose }) {
               await signOut(getAuth());
               onClose();
             } catch (err) {
-              console.error("❌ Eroare la logout:", err);
+              console.error("Eroare la logout:", err);
             }
           }}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition text-base shadow"

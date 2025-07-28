@@ -1,3 +1,5 @@
+// Nefolosit inca
+
 const { Configuration, OpenAIApi } = require("openai");
 const admin = require("firebase-admin");
 const dotenv = require("dotenv");

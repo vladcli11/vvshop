@@ -16,7 +16,6 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Termeni = lazy(() => import("./pages/Termeni"));
 const Confidentialitate = lazy(() => import("./pages/Confidentialitate"));
 const LivrareRetur = lazy(() => import("./pages/LivrareRetur"));
-const Succes = lazy(() => import("./pages/Succes"));
 const Anulare = lazy(() => import("./pages/Anulare"));
 const Delivery = lazy(() => import("./pages/Delivery"));
 const UserOrders = lazy(() => import("./pages/UserOrders"));
@@ -39,8 +38,6 @@ export default function App() {
     window.addEventListener("open-auth-modal", handle);
     return () => window.removeEventListener("open-auth-modal", handle);
   }, []);
-
-  // preîncarcă imaginile
 
   return (
     <>
@@ -76,7 +73,6 @@ export default function App() {
             <Route path="/termeni" element={<Termeni />} />
             <Route path="/confidentialitate" element={<Confidentialitate />} />
             <Route path="/livrare-retur" element={<LivrareRetur />} />
-            <Route path="/succes" element={<Succes />} />
             <Route path="/anulare" element={<Anulare />} />
             <Route path="/produs/:slug" element={<ProductPage />} />
             <Route path="/admin" element={<AdminDashboard />} />

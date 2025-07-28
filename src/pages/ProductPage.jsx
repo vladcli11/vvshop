@@ -43,7 +43,7 @@ export default function ProductPage() {
         const doc = snap.docs[0];
         setProduct({ id: doc.id, ...doc.data() });
       } else {
-        console.warn("❌ Niciun produs găsit cu slug:", slug);
+        console.warn("Niciun produs găsit cu slug:", slug);
       }
     };
 
@@ -156,21 +156,6 @@ export default function ProductPage() {
                     <Shield className="w-4 h-4" />
                     TVA inclus
                   </p>
-                </div>
-
-                {/* Rating (fake pentru demo) */}
-                <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 sm:w-5 sm:h-5 fill-current"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs sm:text-sm text-gray-600">
-                    (4.9) • 127 recenzii
-                  </span>
                 </div>
 
                 {/* Compatibilitate */}

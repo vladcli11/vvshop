@@ -5,7 +5,7 @@ admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 const db = admin.firestore();
 
 async function actualizeazaTipProdus() {
-  console.log("🚀 Încep verificarea produselor...");
+  console.log("Încep verificarea produselor...");
 
   const snapshot = await db.collection("products").get();
   let updated = 0;
@@ -29,18 +29,18 @@ async function actualizeazaTipProdus() {
 
     if (!tipProdusActual || tipProdusActual !== tipProdusNou) {
       await doc.ref.update({ tipProdus: tipProdusNou });
-      console.log(`✅ ${doc.id}: set tipProdus → ${tipProdusNou}`);
+      console.log(`${doc.id}: set tipProdus → ${tipProdusNou}`);
       updated++;
     } else {
       skipped++;
     }
   }
 
-  console.log("🎉 Script finalizat.");
-  console.log(`   • Produse actualizate: ${updated}`);
-  console.log(`   • Produse fără modificare: ${skipped}`);
+  console.log("Script finalizat.");
+  console.log(`• Produse actualizate: ${updated}`);
+  console.log(`• Produse fără modificare: ${skipped}`);
 }
 
 actualizeazaTipProdus().catch((err) =>
-  console.error("❌ Eroare la actualizare:", err)
+  console.error("Eroare la actualizare:", err)
 );

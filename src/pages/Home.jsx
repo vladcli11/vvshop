@@ -49,7 +49,8 @@ export default function Home() {
                   alt={name}
                   width={90}
                   height={90}
-                  loading="lazy"
+                  loading={name === "Samsung" ? "eager" : "lazy"}
+                  fetchPriority={name === "Samsung" ? "high" : "auto"}
                   className="w-[90%] h-[90%] max-h-32 object-contain"
                 />
               </div>

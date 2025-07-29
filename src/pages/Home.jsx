@@ -41,22 +41,17 @@ export default function Home() {
             <Link
               key={name}
               to={to}
-              className="group relative bg-gray-50 backdrop-blur-md border border-gray-200 rounded-sm shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] flex flex-col items-center p-6 w-[360px] sm:w-[400px] md:w-[460px]"
+              className="relative bg-white border border-gray-200 rounded-sm shadow-md flex flex-col items-center p-6 w-[360px] sm:w-[400px] md:w-[460px]"
             >
-              {/* HALO */}
-              <div className="relative flex items-center justify-center">
-                <div className="absolute w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-white/60 to-gray-200/50 blur-xl opacity-60 group-hover:scale-105 transition-transform duration-300" />
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center bg-white/80 shadow-inner ring-1 ring-white/50 overflow-hidden">
-                  <img
-                    src={logo}
-                    alt={name}
-                    width={90}
-                    height={90}
-                    loading={name === "Samsung" ? "eager" : "lazy"}
-                    fetchPriority={name === "Samsung" ? "high" : "auto"}
-                    className="w-[90%] h-[90%] max-h-32 object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center bg-white shadow-sm ring-1 ring-white/50">
+                <img
+                  src={logo}
+                  alt={name}
+                  width={90}
+                  height={90}
+                  loading="lazy"
+                  className="w-[90%] h-[90%] max-h-32 object-contain"
+                />
               </div>
               <span className="mt-2 text-2xl sm:text-2xl font-semibold text-[#1F2937] text-center">
                 {name}

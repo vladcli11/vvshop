@@ -1,4 +1,3 @@
-// pages/AdminDashboard.jsx
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import useUserRole from "../context/useUserRole";
@@ -19,7 +18,7 @@ export default function AdminDashboard() {
         prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
       );
     } catch (err) {
-      console.error("❌ Eroare la actualizarea statusului:", err);
+      console.error("Eroare la actualizarea statusului:", err);
       alert("Eroare la modificarea statusului comenzii.");
     }
   };
@@ -59,7 +58,7 @@ export default function AdminDashboard() {
             : undefined,
       };
 
-      console.log("📦 Payload AWB (Admin):", payload);
+      console.log("Payload AWB (Admin):", payload);
 
       const awbResponse = await genereazaAwb(payload);
       if (awbResponse.data.success) {
@@ -70,7 +69,7 @@ export default function AdminDashboard() {
         await updateDoc(doc(db, "comenzi", order.id), {
           awb: awbResponse.data.awbNumber,
         });
-        alert("✅ AWB generat cu succes!");
+        alert("AWB generat cu succes!");
         setOrders((prev) =>
           prev.map((o) =>
             o.id === order.id ? { ...o, awb: awbResponse.data.awbNumber } : o
@@ -78,12 +77,12 @@ export default function AdminDashboard() {
         );
       } else {
         const eroare = awbResponse.data.error;
-        console.warn("⚠️ Eroare la generare AWB:", eroare.message);
-        console.warn("📦 Detalii câmpuri:", eroare.errors);
-        alert("❌ Eroare la generarea AWB: " + eroare.message);
+        console.warn("Eroare la generare AWB:", eroare.message);
+        console.warn("Detalii campuri:", eroare.errors);
+        alert("Eroare la generarea AWB: " + eroare.message);
       }
     } catch (err) {
-      console.error("❌ Excepție la generarea AWB:", err);
+      console.error("Exceptie la generarea AWB:", err);
       alert("Eroare internă la generarea AWB. Vezi consola.");
     }
   };
@@ -102,8 +101,8 @@ export default function AdminDashboard() {
         alert("Eticheta nu a putut fi generată.");
       }
     } catch (err) {
-      console.error("❌ Eroare la descărcare etichetă:", err);
-      alert("A apărut o eroare la descărcarea AWB-ului.");
+      console.error("Eroare la descarcarea etichetei:", err);
+      alert("Eroare la descarcarea AWB-ului.");
     }
   };
 

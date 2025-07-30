@@ -35,12 +35,21 @@ exports.generateReferralCode = functions.https.onCall(async (data, context) => {
       metadata: { uid, email, referralCode: code },
     });
 
+    // Creează Promotion Code în Stripe
+    const promoCode = await stripe.promotionCodes.create({
+      coupon: coupon.id,
+      code: code, // același cod ca referralCode
+      max_redemptions: 1, // sau cât vrei tu
+      active: true,
+    });
+
     // Salvează în Firestore
     await db.collection("referralCodes").doc(uid).set({
       uid,
       email,
       referralCode: code,
       stripeCouponId: coupon.id,
+      stripePromotionCodeId: promoCode.id,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 

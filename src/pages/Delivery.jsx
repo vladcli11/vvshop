@@ -25,6 +25,7 @@ export default function Delivery() {
   const [discount, setDiscount] = useState(0);
   const [promoStatus, setPromoStatus] = useState("");
   const { currentUser } = useAuth();
+
   // Preiau datele utilizatorului curent daca este autentificat
   useEffect(() => {
     const userEmail = currentUser?.email;
@@ -245,6 +246,7 @@ export default function Delivery() {
             type="button"
             onClick={async () => {
               setPromoStatus("loading");
+              console.log("Verific cod promo:", form.codPromo);
               const res = await fetch(
                 "https://europe-west1-vvshop-srl.cloudfunctions.net/validatePromoCode",
                 {

@@ -79,16 +79,31 @@ export default function UserOrders() {
         const db = getFirestore();
         const docRef = doc(db, "referralCodes", currentUser.uid);
         const snap = await getDoc(docRef);
-        if (!snap.exists()) return;
-        const data = snap.data();
-        setReferralCode(data.referralCode);
+        let data;
+        if (!snap.exists()) {
+          // Apelează funcția cloud pentru generare cod
+          const { getFunctions, httpsCallable } = await import(
+            "firebase/functions"
+          );
+          const functions = getFunctions();
+          const generateReferralCode = httpsCallable(
+            functions,
+            "generateReferralCode"
+          );
+          const result = await generateReferralCode();
+          setReferralCode(result.data.code);
+          data = { usageCount: 0, totalOrdersValue: 0, commissionEarned: 0 };
+        } else {
+          data = snap.data();
+          setReferralCode(data.referralCode);
+        }
         setStats({
           usageCount: data.usageCount || 0,
           totalOrdersValue: data.totalOrdersValue || 0,
           commissionEarned: data.commissionEarned || 0,
         });
       } catch (err) {
-        console.error("Eroare la citirea statisticilor:", err.message);
+        console.error("Eroare la citirea/generarea codului:", err.message);
       }
     };
 
@@ -96,10 +111,29 @@ export default function UserOrders() {
   }, [showReferralModal, currentUser]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(referralCode).then(() => {
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 1500);
-    });
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(referralCode).then(() => {
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 1500);
+      });
+    } else {
+      // fallback pentru browsere vechi sau context nesecurizat
+      const textArea = document.createElement("textarea");
+      textArea.value = referralCode;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 1500);
+      } catch {
+        console.error("Eroare la copiere.");
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   return (
@@ -122,32 +156,72 @@ export default function UserOrders() {
           </button>
 
           {showReferralModal && (
-            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-              <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full relative">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div
+                className="relative w-full max-w-xs sm:max-w-sm mx-2 rounded-2xl shadow-2xl p-6 flex flex-col items-center"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #ff9800 0%, #ff5e62 100%)",
+                  boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                }}
+              >
                 <button
                   onClick={() => setShowReferralModal(false)}
-                  className="absolute top-2 right-3 text-xl text-gray-400 hover:text-red-500"
+                  className="absolute top-3 right-4 text-2xl text-white/70 hover:text-white transition"
+                  aria-label="Închide"
                 >
                   ×
                 </button>
 
-                <h2 className="text-lg font-bold text-gray-800 mb-4 text-center">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-4 text-center drop-shadow">
                   Codul tău referral
                 </h2>
 
                 {referralCode ? (
-                  <div className="flex flex-col items-center">
-                    <div className="bg-gray-100 border text-gray-700 px-4 py-2 rounded-lg font-mono text-sm">
+                  <div className="flex flex-col items-center w-full">
+                    <div className="bg-white/80 border border-white/40 text-gray-800 px-6 py-3 rounded-xl font-mono text-lg sm:text-xl mb-4 shadow-inner text-center select-all">
                       {referralCode}
                     </div>
                     <button
                       onClick={copyToClipboard}
-                      className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-base sm:text-lg font-bold text-white bg-gradient-to-r from-black via-gray-800 to-gray-900 shadow-md hover:from-gray-900 hover:to-black active:scale-95 transition-all duration-150"
+                      disabled={!referralCode}
+                      style={{
+                        opacity: referralCode ? 1 : 0.5,
+                        pointerEvents: referralCode ? "auto" : "none",
+                        marginBottom: "1.5rem",
+                      }}
                     >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2.2}
+                        viewBox="0 0 24 24"
+                      >
+                        <rect
+                          x="9"
+                          y="9"
+                          width="13"
+                          height="13"
+                          rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                        />
+                        <rect
+                          x="3"
+                          y="3"
+                          width="13"
+                          height="13"
+                          rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                        />
+                      </svg>
                       {copySuccess ? "Copiat!" : "Copiază codul"}
                     </button>
 
-                    <div className="mt-6 text-sm text-gray-700 space-y-2">
+                    <div className="w-full mt-2 text-sm sm:text-base text-white/90 space-y-2 text-center">
                       <p>
                         Folosit de <strong>{stats.usageCount}</strong> ori
                       </p>
@@ -162,9 +236,7 @@ export default function UserOrders() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center">
-                    Se încarcă codul...
-                  </p>
+                  <p className="text-white text-center">Se încarcă codul...</p>
                 )}
               </div>
             </div>

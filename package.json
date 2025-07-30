@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@firebase/performance": "^0.7.6",
+    "@sentry/react": "^9.43.0",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.3.1",
     "csv-parser": "^3.2.0",

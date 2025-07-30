@@ -7,10 +7,10 @@ import Home from "./pages/Home";
 import Apple from "./pages/Apple";
 import Samsung from "./pages/Samsung";
 import Huawei from "./pages/Huawei";
-import Model from "./pages/Models";
 import AuthPage from "./pages/AuthPage";
 
 // Lazy imports
+const Model = lazy(() => import("./pages/Models"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Termeni = lazy(() => import("./pages/Termeni"));

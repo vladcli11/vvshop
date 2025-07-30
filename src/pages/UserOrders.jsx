@@ -141,7 +141,7 @@ export default function UserOrders() {
       <div className="max-w-3xl mx-auto mb-6">
         <div className="flex flex-col items-center gap-3 mb-3">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#ff9800] to-[#ff5e62] rounded-xl flex items-center justify-center shadow">
               <Package className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
@@ -150,7 +150,7 @@ export default function UserOrders() {
           </div>
           <button
             onClick={() => setShowReferralModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm sm:text-base shadow-sm active:scale-95 transition"
+            className="bg-gradient-to-r from-[#ff9800] to-[#ff5e62] hover:brightness-110 text-white px-4 py-2 rounded text-sm sm:text-base shadow-sm active:scale-95 transition"
           >
             Codul meu referral
           </button>
@@ -264,7 +264,7 @@ export default function UserOrders() {
             >
               <button
                 onClick={() => setExpanded(expanded === index ? null : index)}
-                className="w-full flex justify-between items-center text-left px-5 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:brightness-110 text-white font-semibold text-sm sm:text-base tracking-wide transition-all"
+                className="w-full flex justify-between items-center text-left px-5 py-4 bg-gradient-to-r from-[#ff9800] to-[#ff5e62] hover:brightness-110 text-white font-semibold text-sm sm:text-base tracking-wide transition-all"
               >
                 <span>Comanda #{order.orderNumber}</span>
                 <div className="flex items-center gap-3">

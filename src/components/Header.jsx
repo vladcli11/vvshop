@@ -123,7 +123,7 @@ export default function Header({ onAuthClick }) {
           </div>
         </div>
       </nav>
-      <div className="w-full h-1 bg-gradient-to-r from-green-500 via-teal-400 to-blue-500" />
+      <div className="w-full h-1 bg-gradient-to-r from-[#ff9800] via-[#ff7e5f] to-[#ff5e62]" />{" "}
       {/* Dropdown cont logat */}
       {isLoggedIn && showDropdown && (
         <Suspense fallback={<div className="..." />}>

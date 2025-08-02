@@ -7,16 +7,16 @@ import Home from "./pages/Home";
 import Apple from "./pages/Apple";
 import Samsung from "./pages/Samsung";
 import Huawei from "./pages/Huawei";
-import Model from "./pages/Models";
 import AuthPage from "./pages/AuthPage";
+import Footer from "./components/Footer";
 
 // Lazy imports
+const Model = lazy(() => import("./pages/Models"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Termeni = lazy(() => import("./pages/Termeni"));
 const Confidentialitate = lazy(() => import("./pages/Confidentialitate"));
 const LivrareRetur = lazy(() => import("./pages/LivrareRetur"));
-const Succes = lazy(() => import("./pages/Succes"));
 const Anulare = lazy(() => import("./pages/Anulare"));
 const Delivery = lazy(() => import("./pages/Delivery"));
 const UserOrders = lazy(() => import("./pages/UserOrders"));
@@ -40,8 +40,6 @@ export default function App() {
     return () => window.removeEventListener("open-auth-modal", handle);
   }, []);
 
-  // preîncarcă imaginile
-
   return (
     <>
       <Header
@@ -51,7 +49,7 @@ export default function App() {
         }}
       />
 
-      <main className="pt-4 min-h-[80vh]">
+      <main className="min-h-[80vh]">
         <Suspense
           fallback={
             <div className="p-4 text-center text-gray-500">
@@ -76,7 +74,6 @@ export default function App() {
             <Route path="/termeni" element={<Termeni />} />
             <Route path="/confidentialitate" element={<Confidentialitate />} />
             <Route path="/livrare-retur" element={<LivrareRetur />} />
-            <Route path="/succes" element={<Succes />} />
             <Route path="/anulare" element={<Anulare />} />
             <Route path="/produs/:slug" element={<ProductPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
@@ -91,6 +88,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
+      <Footer />
 
       {showAuthModal && (
         <Suspense fallback={null}>

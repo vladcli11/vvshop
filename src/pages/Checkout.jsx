@@ -2,7 +2,7 @@ import useCart from "../context/useCart";
 import useAuth from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
-import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
 
 export default function Checkout() {
   const AuthModal = lazy(() => import("../components/AuthModal"));
@@ -32,13 +32,13 @@ export default function Checkout() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 px-4 sm:px-6">
+      <div className="min-h-screen bg-gray-100 px-4 sm:px-6">
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center max-w-md mx-auto">
             {/* Iconiță animată */}
             <div className="mb-8 relative">
               <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-6xl animate-bounce">🛒</span>
+                <span className="text-4xl">🛒</span>
               </div>
             </div>
 
@@ -63,13 +63,9 @@ export default function Checkout() {
             </button>
 
             {/* Decorațiuni */}
-            <div className="mt-12 flex justify-center gap-8 text-gray-300">
-              <div className="text-4xl opacity-50">📱</div>
-            </div>
+            <div className="mt-12 flex justify-center gap-8 text-gray-300"></div>
           </div>
         </div>
-
-        <Footer />
       </div>
     );
   }
@@ -80,19 +76,23 @@ export default function Checkout() {
         <div className="w-full max-w-full sm:max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-sm p-3 sm:p-4">
           <ul className="divide-y divide-gray-100">
             {cartItems.map((item, index) => (
-              <li key={index} className="flex items-center gap-3 sm:gap-6 py-3">
-                <img
-                  src={
-                    Array.isArray(item.imagine) ? item.imagine[0] : item.imagine
-                  }
-                  alt={item.nume}
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-lg bg-gray-50 border"
-                />
+              <li key={index} className="flex items-center gap-2 sm:gap-6 py-3">
+                <Link to={`/produs/${item.slug}`} className="flex-shrink-0">
+                  <img
+                    src={
+                      Array.isArray(item.imagine)
+                        ? item.imagine[0]
+                        : item.imagine
+                    }
+                    alt={item.nume}
+                    className="w-20 h-20 sm:w-28 sm:h-28 object-contain rounded-lg bg-gray-50 border"
+                  />
+                </Link>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-base sm:text-lg text-gray-900 truncate">
+                  <p className="font-semibold text-sm sm:text-lg text-gray-900 truncate">
                     {item.nume}
                   </p>
-                  <p className="text-green-600 font-bold text-sm sm:text-base mt-1">
+                  <p className="text-green-600 font-bold text-base sm:text-base mt-1">
                     {item.pret.toFixed(2)} lei
                   </p>
                   <div className="mt-2 flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function Checkout() {
         </div>
       </div>
       <div className="flex justify-center">
-        <div className="text-xl font-bold mt-8 w-full max-w-full sm:max-w-2xl text-center bg-gray-50 rounded-xl py-4 shadow-sm border border-gray-200">
+        <div className="text-xl font-bold mt-3 w-full max-w-full sm:max-w-2xl text-center bg-gray-50 rounded-xl py-4 shadow-sm border border-gray-200">
           Subtotal:{" "}
           <span className="text-green-600">{total.toFixed(2)} lei</span>
         </div>
@@ -141,7 +141,7 @@ export default function Checkout() {
       <div className="flex justify-center">
         <button
           onClick={handleContinue}
-          className="mt-8 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 transition w-full max-w-full sm:max-w-2xl text-lg font-semibold tracking-wide"
+          className="mt-3 bg-[#16A34A] hover:bg-[#15803D] text-white px-8 py-3 rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 transition w-full max-w-full sm:max-w-2xl text-2xl font-semibold tracking-wide"
         >
           Continuă
         </button>
@@ -156,7 +156,6 @@ export default function Checkout() {
           />
         </Suspense>
       )}
-      <Footer />
     </div>
   );
 }

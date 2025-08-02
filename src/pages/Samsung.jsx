@@ -1,6 +1,4 @@
-import Header from "../components/Header";
 import { Link } from "react-router-dom";
-import Footer from "../components/Footer";
 
 // S series
 import S20 from "../assets/s20.webp";
@@ -227,10 +225,10 @@ const modele = [
 
 export default function Samsung() {
   return (
-    <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
+    <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-b from-bg-gray-50 to bg-gray-100 relative overflow-x-hidden">
       <div className="relative z-10">
         <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
-          {modele.map((model) => (
+          {modele.map((model, idx) => (
             <Link
               key={model.modelSlug}
               to={`/samsung/${model.modelSlug}`}
@@ -243,8 +241,8 @@ export default function Samsung() {
                   src={model.imagine}
                   alt={model.nume}
                   sizes="(max-width: 640px) 90vw, 300px"
-                  loading="eager"
-                  fetchPriority="high"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  fetchPriority={idx === 0 ? "high" : undefined}
                   width="300"
                   height="300"
                   className="absolute inset-0 w-full h-full object-contain"
@@ -252,14 +250,13 @@ export default function Samsung() {
                 />
               </div>
               {/* Titlu */}
-              <h3 className="mt-3 pt-3 border-t border-gray-200 text-sm sm:text-base font-medium text-center text-gray-700 w-full">
+              <h3 className="mt-3 pt-3 border-t border-gray-200 text-sm sm:text-base font-medium text-center text-[#1F2937] w-full">
                 {model.nume}
               </h3>
             </Link>
           ))}
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

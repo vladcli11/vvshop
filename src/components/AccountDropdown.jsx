@@ -10,7 +10,7 @@ export default function AccountDropdown({ onClose }) {
       onClick={onClose}
     >
       <div
-        className="relative bg-white/90 backdrop-blur-xl border border-green-100 rounded-2xl shadow-2xl w-11/12 max-w-sm p-8 flex flex-col items-center gap-4 animate-fade-in-up"
+        className="relative bg-white/90 backdrop-blur-xl border border-orange-100 rounded-2xl shadow-2xl w-11/12 max-w-sm p-8 flex flex-col items-center gap-4 animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -22,10 +22,10 @@ export default function AccountDropdown({ onClose }) {
         </button>
 
         <div className="flex flex-col items-center mb-2">
-          <div className="bg-gradient-to-tr from-green-400 to-blue-400 p-4 rounded-full shadow-lg mb-2">
+          <div className="bg-gradient-to-tr from-[#ff9800] to-[#ff5e62] p-4 rounded-full shadow-lg mb-2">
             <User className="w-10 h-10 text-white" />
           </div>
-          <span className="text-lg font-bold text-green-700 tracking-wide">
+          <span className="text-lg font-bold text-gray-900 tracking-wide">
             Contul meu
           </span>
         </div>
@@ -33,7 +33,7 @@ export default function AccountDropdown({ onClose }) {
         <Link
           to="/contul-meu"
           onClick={onClose}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-green-700 bg-green-50 hover:bg-green-100 transition text-base shadow"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-black via-gray-800 to-gray-900 hover:from-[#ff9800] hover:to-[#ff5e62] transition text-base shadow"
         >
           <User className="w-5 h-5" /> Vezi profilul
         </Link>
@@ -44,10 +44,10 @@ export default function AccountDropdown({ onClose }) {
               await signOut(getAuth());
               onClose();
             } catch (err) {
-              console.error("❌ Eroare la logout:", err);
+              console.error("Eroare la logout:", err);
             }
           }}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition text-base shadow"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#ff5e62] to-[#ff9800] hover:from-black hover:to-gray-900 transition text-base shadow"
         >
           <LogOut className="w-5 h-5" /> Logout
         </button>

@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import useCart from "../context/useCart";
-import { db } from "../firebase/firebase-config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-
 import useAuth from "../context/useAuth";
 import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
 
@@ -29,6 +24,7 @@ export default function Delivery() {
   const [discount, setDiscount] = useState(0);
   const [promoStatus, setPromoStatus] = useState("");
   const { currentUser } = useAuth();
+
   // Preiau datele utilizatorului curent daca este autentificat
   useEffect(() => {
     const userEmail = currentUser?.email;
@@ -88,6 +84,11 @@ export default function Delivery() {
 
     // Total final = produse + transport, apoi se aplică discountul
     const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
+
+    const { getFirestore, collection, addDoc, serverTimestamp } = await import(
+      "firebase/firestore"
+    );
+    const db = getFirestore();
 
     if (form.plata === "card") {
       const { loadStripe } = await import("@stripe/stripe-js");
@@ -244,6 +245,7 @@ export default function Delivery() {
             type="button"
             onClick={async () => {
               setPromoStatus("loading");
+              console.log("Verific cod promo:", form.codPromo);
               const res = await fetch(
                 "https://europe-west1-vvshop-srl.cloudfunctions.net/validatePromoCode",
                 {
@@ -366,9 +368,6 @@ export default function Delivery() {
           Trimite comanda
         </button>
       </form>
-
-      <Footer />
-
       {showThankYou && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="relative w-full max-w-sm p-6 text-center bg-white rounded-lg shadow-lg">

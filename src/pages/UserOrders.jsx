@@ -1,16 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
 import useAuth from "../context/useAuth";
-import Footer from "../components/Footer";
 import StatusBadge from "../components/StatusBadge";
 import {
   Package,
@@ -25,12 +14,25 @@ export default function UserOrders() {
   const [orders, setOrders] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [referralCode, setReferralCode] = useState(null);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [stats, setStats] = useState({
+    usageCount: 0,
+    totalOrdersValue: 0,
+    commissionEarned: 0,
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
       if (!currentUser) return;
 
       try {
+        const { collection, query, where, orderBy, getDocs, updateDoc, doc } =
+          await import("firebase/firestore");
+        const { getFirestore } = await import("firebase/firestore");
+        const db = getFirestore();
+
         const q = query(
           collection(db, "comenzi"),
           where("uid", "==", currentUser.uid),
@@ -56,7 +58,7 @@ export default function UserOrders() {
 
         setOrders(result);
       } catch (err) {
-        console.error("❌ Eroare la preluarea comenzilor:", err);
+        console.error("Eroare la preluarea comenzilor:", err);
       } finally {
         setLoading(false);
       }
@@ -65,22 +67,187 @@ export default function UserOrders() {
     fetchOrders();
   }, [currentUser]);
 
+  useEffect(() => {
+    if (!showReferralModal || !currentUser?.uid) return;
+
+    const fetchReferralStats = async () => {
+      try {
+        const { getFirestore, doc, getDoc } = await import(
+          "firebase/firestore"
+        );
+        const db = getFirestore();
+        const docRef = doc(db, "referralCodes", currentUser.uid);
+        const snap = await getDoc(docRef);
+        let data;
+        if (!snap.exists()) {
+          // Apelează funcția cloud pentru generare cod
+          const { getFunctions, httpsCallable } = await import(
+            "firebase/functions"
+          );
+          const functions = getFunctions();
+          const generateReferralCode = httpsCallable(
+            functions,
+            "generateReferralCode"
+          );
+          const result = await generateReferralCode();
+          setReferralCode(result.data.code);
+          data = { usageCount: 0, totalOrdersValue: 0, commissionEarned: 0 };
+        } else {
+          data = snap.data();
+          setReferralCode(data.referralCode);
+        }
+        setStats({
+          usageCount: data.usageCount || 0,
+          totalOrdersValue: data.totalOrdersValue || 0,
+          commissionEarned: data.commissionEarned || 0,
+        });
+      } catch (err) {
+        console.error("Eroare la citirea/generarea codului:", err.message);
+      }
+    };
+
+    fetchReferralStats();
+  }, [showReferralModal, currentUser]);
+
+  const copyToClipboard = () => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(referralCode).then(() => {
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 1500);
+      });
+    } else {
+      // fallback pentru browsere vechi sau context nesecurizat
+      const textArea = document.createElement("textarea");
+      textArea.value = referralCode;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 1500);
+      } catch {
+        console.error("Eroare la copiere.");
+      }
+      document.body.removeChild(textArea);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white px-6 pb-10 pt-6">
       <div className="max-w-3xl mx-auto mb-6">
-        <div className="flex items-center justify-center gap-3 mb-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow">
-            <Package className="w-6 h-6 text-white" />
+        <div className="flex flex-col items-center gap-3 mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#ff9800] to-[#ff5e62] rounded-xl flex items-center justify-center shadow">
+              <Package className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
+              Comenzile mele
+            </h1>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
-            Comenzile mele
-          </h1>
+          <button
+            onClick={() => setShowReferralModal(true)}
+            className="bg-gradient-to-r from-[#ff9800] to-[#ff5e62] hover:brightness-110 text-white px-4 py-2 rounded text-sm sm:text-base shadow-sm active:scale-95 transition"
+          >
+            Codul meu referral
+          </button>
+
+          {showReferralModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div
+                className="relative w-full max-w-xs sm:max-w-sm mx-2 rounded-2xl shadow-2xl p-6 flex flex-col items-center"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #ff9800 0%, #ff5e62 100%)",
+                  boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                }}
+              >
+                <button
+                  onClick={() => setShowReferralModal(false)}
+                  className="absolute top-3 right-4 text-2xl text-white/70 hover:text-white transition"
+                  aria-label="Închide"
+                >
+                  ×
+                </button>
+
+                <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-4 text-center drop-shadow">
+                  Codul tău referral
+                </h2>
+
+                {referralCode ? (
+                  <div className="flex flex-col items-center w-full">
+                    <div className="bg-white/80 border border-white/40 text-gray-800 px-6 py-3 rounded-xl font-mono text-lg sm:text-xl mb-4 shadow-inner text-center select-all">
+                      {referralCode}
+                    </div>
+                    <button
+                      onClick={copyToClipboard}
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-base sm:text-lg font-bold text-white bg-gradient-to-r from-black via-gray-800 to-gray-900 shadow-md hover:from-gray-900 hover:to-black active:scale-95 transition-all duration-150"
+                      disabled={!referralCode}
+                      style={{
+                        opacity: referralCode ? 1 : 0.5,
+                        pointerEvents: referralCode ? "auto" : "none",
+                        marginBottom: "1.5rem",
+                      }}
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2.2}
+                        viewBox="0 0 24 24"
+                      >
+                        <rect
+                          x="9"
+                          y="9"
+                          width="13"
+                          height="13"
+                          rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                        />
+                        <rect
+                          x="3"
+                          y="3"
+                          width="13"
+                          height="13"
+                          rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                        />
+                      </svg>
+                      {copySuccess ? "Copiat!" : "Copiază codul"}
+                    </button>
+
+                    <div className="w-full mt-2 text-sm sm:text-base text-white/90 space-y-2 text-center">
+                      <p>
+                        Folosit de <strong>{stats.usageCount}</strong> ori
+                      </p>
+                      <p>
+                        Valoare generată:{" "}
+                        <strong>{stats.totalOrdersValue.toFixed(2)} lei</strong>
+                      </p>
+                      <p>
+                        Comision:{" "}
+                        <strong>{stats.commissionEarned.toFixed(2)} lei</strong>
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-white text-center">Se încarcă codul...</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
+
         <p className="text-center text-sm text-gray-500">
           Ai {orders.length} comandă{orders.length === 1 ? "" : "ri"}{" "}
-          înregistrat{orders.length === 1 ? "" : "e"}
+          înregistrat{orders.length === 1 ? "ă" : "e"}
         </p>
       </div>
+
       {loading ? (
         <p className="text-center text-gray-500">Se încarcă comenzile...</p>
       ) : orders.length === 0 ? (
@@ -96,7 +263,7 @@ export default function UserOrders() {
             >
               <button
                 onClick={() => setExpanded(expanded === index ? null : index)}
-                className="w-full flex justify-between items-center text-left px-5 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:brightness-110 text-white font-semibold text-sm sm:text-base tracking-wide transition-all"
+                className="w-full flex justify-between items-center text-left px-5 py-4 bg-gradient-to-r from-[#ff9800] to-[#ff5e62] hover:brightness-110 text-white font-semibold text-sm sm:text-base tracking-wide transition-all"
               >
                 <span>Comanda #{order.orderNumber}</span>
                 <div className="flex items-center gap-3">
@@ -172,8 +339,6 @@ export default function UserOrders() {
           ))}
         </div>
       )}
-
-      <Footer />
     </div>
   );
 }

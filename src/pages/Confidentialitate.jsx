@@ -1,6 +1,3 @@
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-
 export default function Confidentialitate() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
@@ -44,7 +41,6 @@ export default function Confidentialitate() {
           .
         </p>
       </div>
-      <Footer />
     </div>
   );
 }

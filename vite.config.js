@@ -14,6 +14,7 @@ export default defineConfig({
     target: "es2020",
     sourcemap: false,
     rollupOptions: {
+      plugins: [],
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {

@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 
 export default function Anulare() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
       <div className="text-center mt-20">
         <h1 className="text-2xl font-bold text-red-600">
-          ❌ Plata a fost anulată
+          Plata a fost anulată
         </h1>
         <p className="text-gray-700 mt-4">
           Comanda nu a fost finalizată. Poți încerca din nou oricând.
@@ -19,7 +17,6 @@ export default function Anulare() {
           Înapoi la coș
         </Link>
       </div>
-      <Footer />
     </div>
   );
 }

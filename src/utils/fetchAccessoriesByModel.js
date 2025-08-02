@@ -1,18 +1,22 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+// Returneaza accesoriile unui model ca foliile sa apara primele iar apoi husele
 
-/**
- * Returnează accesoriile corespunzătoare unui model de telefon (ex: iPhone 14 Pro Max).
- * Se bazează pe câmpul `modelSlug` generat în timpul importului în Firestore.
- */
 export async function fetchAccessoriesByModel(slug) {
+  const { getFirestore, collection, getDocs, query, where } = await import(
+    "firebase/firestore"
+  );
+  const db = getFirestore();
+
   if (slug === "all") {
     const snapshot = await getDocs(collection(db, "products"));
     const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return sortByTipAndName(items);
   }
 
-  const q = query(collection(db, "products"), where("modelSlug", "==", slug));
+  const q = query(
+    collection(db, "products"),
+    where("modelSlug", "==", slug),
+    where("activ", "==", true)
+  );
 
   const snapshot = await getDocs(q);
   const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));

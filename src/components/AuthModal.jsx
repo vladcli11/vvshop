@@ -23,7 +23,7 @@ function AuthModal({ isOpen, onClose, initialMode = "login", redirectTo }) {
           ×
         </button>
         <div className="mb-4 text-center">
-          <h2 className="text-2xl font-bold text-green-700 tracking-wide">
+          <h2 className="text-2xl font-bold text-gray-900 tracking-wide">
             {authMode === "login" ? "Autentificare" : "Înregistrare"}
           </h2>
         </div>
@@ -40,7 +40,7 @@ function AuthModal({ isOpen, onClose, initialMode = "login", redirectTo }) {
               Nu ai cont?{" "}
               <button
                 onClick={toggleMode}
-                className="text-green-600 font-semibold underline underline-offset-2 hover:text-green-700 transition"
+                className="text-gray-800 font-semibold underline underline-offset-2 hover:text-gray-900 transition"
               >
                 Înregistrează-te
               </button>
@@ -50,7 +50,7 @@ function AuthModal({ isOpen, onClose, initialMode = "login", redirectTo }) {
               Ai deja cont?{" "}
               <button
                 onClick={toggleMode}
-                className="text-green-600 font-semibold underline underline-offset-2 hover:text-green-700 transition"
+                className="text-gray-800 font-semibold underline underline-offset-2 hover:text-gray-900 transition"
               >
                 Autentifică-te
               </button>

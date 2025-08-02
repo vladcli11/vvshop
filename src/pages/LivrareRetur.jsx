@@ -1,6 +1,3 @@
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-
 export default function LivrareRetur() {
   return (
     <div className="min-h-screen bg-white px-6 pb-6">
@@ -36,7 +33,6 @@ export default function LivrareRetur() {
           cu numărul comenzii și motivul returului (opțional).
         </p>
       </div>
-      <Footer />
     </div>
   );
 }

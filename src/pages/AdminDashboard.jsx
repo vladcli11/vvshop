@@ -1,19 +1,5 @@
-// pages/AdminDashboard.jsx
-import {
-  collection,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  updateDoc,
-} from "firebase/firestore";
 import { useEffect, useState } from "react";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
 import useUserRole from "../context/useUserRole";
-import { db } from "../firebase/firebase-config";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "../firebase/firebase-config";
 
 export default function AdminDashboard() {
   const { role, loading } = useUserRole();
@@ -21,19 +7,27 @@ export default function AdminDashboard() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
+      const { doc, updateDoc, getFirestore } = await import(
+        "firebase/firestore"
+      );
+      const db = getFirestore();
       const orderRef = doc(db, "comenzi", orderId);
       await updateDoc(orderRef, { status: newStatus });
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
       );
     } catch (err) {
-      console.error("❌ Eroare la actualizarea statusului:", err);
+      console.error("Eroare la actualizarea statusului:", err);
       alert("Eroare la modificarea statusului comenzii.");
     }
   };
 
   const genereazaAwb = async (order) => {
     try {
+      const { httpsCallable, getFunctions } = await import(
+        "firebase/functions"
+      );
+      const functions = getFunctions();
       const genereazaAwb = httpsCallable(functions, "generateAwb");
       const service = order.metodaLivrare === "easybox" ? 15 : 7;
 
@@ -63,15 +57,18 @@ export default function AdminDashboard() {
             : undefined,
       };
 
-      console.log("📦 Payload AWB (Admin):", payload);
+      console.log("Payload AWB (Admin):", payload);
 
       const awbResponse = await genereazaAwb(payload);
-
       if (awbResponse.data.success) {
+        const { doc, updateDoc, getFirestore } = await import(
+          "firebase/firestore"
+        );
+        const db = getFirestore();
         await updateDoc(doc(db, "comenzi", order.id), {
           awb: awbResponse.data.awbNumber,
         });
-        alert("✅ AWB generat cu succes!");
+        alert("AWB generat cu succes!");
         setOrders((prev) =>
           prev.map((o) =>
             o.id === order.id ? { ...o, awb: awbResponse.data.awbNumber } : o
@@ -79,18 +76,22 @@ export default function AdminDashboard() {
         );
       } else {
         const eroare = awbResponse.data.error;
-        console.warn("⚠️ Eroare la generare AWB:", eroare.message);
-        console.warn("📦 Detalii câmpuri:", eroare.errors);
-        alert("❌ Eroare la generarea AWB: " + eroare.message);
+        console.warn("Eroare la generare AWB:", eroare.message);
+        console.warn("Detalii campuri:", eroare.errors);
+        alert("Eroare la generarea AWB: " + eroare.message);
       }
     } catch (err) {
-      console.error("❌ Excepție la generarea AWB:", err);
+      console.error("Exceptie la generarea AWB:", err);
       alert("Eroare internă la generarea AWB. Vezi consola.");
     }
   };
 
   const descarcaEticheta = async (awb) => {
     try {
+      const { httpsCallable, getFunctions } = await import(
+        "firebase/functions"
+      );
+      const functions = getFunctions();
       const saveAwbLabel = httpsCallable(functions, "saveAwbLabel");
       const result = await saveAwbLabel({ awbNumber: awb });
       if (result.data.success) {
@@ -99,13 +100,16 @@ export default function AdminDashboard() {
         alert("Eticheta nu a putut fi generată.");
       }
     } catch (err) {
-      console.error("❌ Eroare la descărcare etichetă:", err);
-      alert("A apărut o eroare la descărcarea AWB-ului.");
+      console.error("Eroare la descarcarea etichetei:", err);
+      alert("Eroare la descarcarea AWB-ului.");
     }
   };
 
   useEffect(() => {
     const fetchOrders = async () => {
+      const { collection, getDocs, orderBy, query, getFirestore } =
+        await import("firebase/firestore");
+      const db = getFirestore();
       const q = query(collection(db, "comenzi"), orderBy("data", "desc"));
       const snap = await getDocs(q);
       const list = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -210,8 +214,6 @@ export default function AdminDashboard() {
           ))
         )}
       </div>
-
-      <Footer />
     </div>
   );
 }

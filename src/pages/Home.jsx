@@ -5,7 +5,7 @@ import huaweiLogo from "../assets/huawei.webp";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-bg-gray-50 to bg-gray-100 pb-10">
+    <div className="bg-gradient-to-b from-bg-gray-50 to bg-gray-100 pb-10">
       <main className="flex flex-col items-center">
         {/* Grilă branduri */}
         <div className="grid grid-cols-1 gap-2 w-full max-w-md px-4 justify-items-center mt-6">

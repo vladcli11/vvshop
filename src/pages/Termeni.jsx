@@ -1,6 +1,6 @@
 export default function Termeni() {
   return (
-    <div className="min-h-screen bg-white px-6 pb-6">
+    <div className=" bg-white px-6 pb-6">
       <div className="max-w-3xl mx-auto mt-10 text-gray-800 space-y-6 text-sm leading-relaxed">
         <h1 className="text-2xl font-bold mb-4 text-black">
           Termeni și condiții VVShop.ro

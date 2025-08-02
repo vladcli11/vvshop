@@ -41,15 +41,14 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header
         onAuthClick={() => {
           setAuthMode("login");
           setShowAuthModal(true);
         }}
       />
-
-      <main className="min-h-[80vh]">
+      <main className="flex-1">
         <Suspense
           fallback={
             <div className="p-4 text-center text-gray-500">
@@ -89,7 +88,6 @@ export default function App() {
         </Suspense>
       </main>
       <Footer />
-
       {showAuthModal && (
         <Suspense fallback={null}>
           <AuthModal
@@ -100,6 +98,6 @@ export default function App() {
           />
         </Suspense>
       )}
-    </>
+    </div>
   );
 }

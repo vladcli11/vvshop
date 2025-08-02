@@ -60,7 +60,7 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className=" bg-gray-100">
         <div className="flex items-center justify-center h-[300px] sm:h-[400px]">
           <div className="text-center">
             <div className="w-12 h-12 mx-auto mb-4 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
@@ -74,7 +74,7 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 relative overflow-x-hidden">
+    <div className=" bg-gray-100 relative overflow-x-hidden">
       <div className="px-2 sm:px-6 pb-6 relative z-10">
         {/* Buton înapoi */}
         <div className="max-w-3xl mx-auto pt-4 mb-4">

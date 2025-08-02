@@ -59,7 +59,7 @@ export default function Models() {
   }, [accesoriiFiltrate, sortOrder]);
 
   const [page, setPage] = useState(1);
-  const ITEMS_PER_PAGE = 20;
+  const ITEMS_PER_PAGE = window.innerWidth < 640 ? 10 : 20;
   const currentItems = sortedAccesorii.slice(0, page * ITEMS_PER_PAGE);
 
   // 📦 Infinite Scroll Logic
@@ -103,8 +103,6 @@ export default function Models() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
       <div className="relative z-10">
-        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-40 bg-gradient-to-b from-green-200/30 via-white/0 to-transparent blur-2xl opacity-70 z-0" />
-
         <main className="relative z-10 pb-36">
           {accesorii.length > 0 && (
             <div className="w-full max-w-6xl mx-auto px-4 pt-2 sm:pt-4">
@@ -181,7 +179,6 @@ export default function Models() {
                   key={item.id}
                   className="group flex flex-col items-center justify-between w-full h-full p-4 bg-white rounded-sm relative overflow-hidden"
                 >
-                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-300/40 to-blue-200/10 rounded-full blur-2xl opacity-60 z-0" />
                   <div
                     className="relative w-full pt-[100%] overflow-hidden bg-white transition-all duration-300 cursor-pointer z-10"
                     onClick={() =>

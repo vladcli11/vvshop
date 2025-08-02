@@ -84,6 +84,22 @@ function extractModels(nume) {
   );
 }
 
+async function importDuplicatesToFirestore(duplicates) {
+  let importedCount = 0;
+  for (const duplicate of duplicates) {
+    // Importă doar dacă produsul original are activ === true
+    if (duplicate.activ === true) {
+      const docRef = db.collection("products").doc(duplicate.slug);
+      await docRef.set(duplicate, { merge: true });
+      console.log(`Importat duplicat: ${duplicate.slug}`);
+      importedCount++;
+    } else {
+      console.log(`Sărit duplicat inactiv: ${duplicate.slug}`);
+    }
+  }
+  console.log(`\n✅ ${importedCount} duplicate active importate în Firestore!`);
+}
+
 async function generateDuplicates() {
   const snapshot = await db.collection("products").get();
   const duplicates = [];
@@ -110,6 +126,8 @@ async function generateDuplicates() {
   console.log(
     `\n✅ ${duplicates.length} produse duplicate salvate în ${OUTPUT_PATH}`
   );
+
+  await importDuplicatesToFirestore(duplicates);
 }
 
 generateDuplicates().catch((err) => {

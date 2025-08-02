@@ -23,7 +23,6 @@ const allowedCategories = [
 const publicImgPath = "E:/DropshippingV2/vv_shop_clean/public/img";
 const BASE_IMAGE_URL = "https://vv-shop.ro/img";
 
-// Convertesc textul intr-un format pe care pot sa-l gestionez si transform + in PLUS
 function slugify(text) {
   return text
     .toLowerCase()
@@ -219,6 +218,10 @@ https.get(feedUrl, (res) => {
           return;
         }
 
+        // Verifică dacă produsul este "folie de protectie camera spate" sau "camera spate"
+        let isCameraSpate =
+          /folie de protectie camera spate|camera spate/i.test(nume);
+
         // Calculeaz pretul de vanzare cu adaos si taxe
         let pretBaza = parseFloat(
           row["Pret Diamond cu TVA"]?.replace(",", ".") || "0"
@@ -264,7 +267,7 @@ https.get(feedUrl, (res) => {
             garantie: parseInt(row["Garantie in luni"], 10) || 0,
             disponibilitate: row["Disponibilitate"] || "",
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            activ: true,
+            activ: isCameraSpate ? false : true, // ← aici setezi activ false dacă e camera spate
             necesitaImagine: !hasWebp,
             imagine: finalImageUrl ? [finalImageUrl] : [],
             modelSlug,
@@ -279,7 +282,7 @@ https.get(feedUrl, (res) => {
           const updateData = {
             disponibilitate: row["Disponibilitate"] || "",
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            activ: true,
+            activ: isCameraSpate ? false : true, // ← la fel și aici
             pret: pretFinal,
           };
 

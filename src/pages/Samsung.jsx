@@ -232,11 +232,11 @@ export default function Samsung() {
             <Link
               key={model.modelSlug}
               to={`/samsung/${model.modelSlug}`}
-              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-sm shadow-lg hover:shadow-2xl transition-all duration-300"
+              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-sm"
               style={{ perspective: 800 }}
             >
               {/* Imagine */}
-              <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white transition-all duration-300">
+              <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white">
                 <img
                   src={model.imagine}
                   alt={model.nume}

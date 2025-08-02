@@ -60,7 +60,6 @@ export default function Header({ onAuthClick }) {
             fetchPriority="high"
             width={180}
             height={96}
-            style={{ filter: "drop-shadow(0 4px 12px #22c55e22)" }}
           />
         </Link>
 

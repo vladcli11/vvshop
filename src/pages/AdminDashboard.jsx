@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Footer from "../components/Footer";
 import useUserRole from "../context/useUserRole";
 
 export default function AdminDashboard() {
@@ -215,8 +214,6 @@ export default function AdminDashboard() {
           ))
         )}
       </div>
-
-      <Footer />
     </div>
   );
 }

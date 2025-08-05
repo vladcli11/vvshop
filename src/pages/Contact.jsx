@@ -1,6 +1,6 @@
 // src/pages/Contact.jsx
 import { useState } from "react";
-import Footer from "../components/Footer";
+
 import useAuth from "../context/useAuth";
 
 export default function Contact() {
@@ -49,7 +49,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-white px-6 pb-6">
+    <div className=" bg-white px-6 pb-6">
       <h1 className="text-3xl font-bold text-center my-6">
         Descrie problema întâmpinată
       </h1>
@@ -103,8 +103,6 @@ export default function Contact() {
           </p>
         )}
       </form>
-
-      <Footer />
     </div>
   );
 }

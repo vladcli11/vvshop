@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-[#F9FAFB] text-[#1F2937] border-t border-gray-200 mt-10 pb-4 pt-2 px-3 text-center text-sm">
+    <footer className="bg-[#ffffff] text-[#1F2937]  mt-6 pb-4 pt-2 px-3 text-center text-sm">
       <div className="max-w-5xl mx-auto space-y-4">
         {/* Info firmă */}
         <div className="space-y-1 text-center leading-tight">

@@ -33,12 +33,10 @@ export default function Header({ onAuthClick }) {
           <img
             src="/img/logo.webp"
             alt="VVShop"
-            width={120}
-            height={96}
             fetchPriority="high"
-            loading="eager"
-            className="h-full w-auto object-contain"
-            style={{ maxHeight: "100%" }}
+            width={100}
+            height={90}
+            style={{ filter: "drop-shadow(0 4px 12px #22c55e22)" }}
           />
         </Link>
 

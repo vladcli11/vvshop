@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Footer from "../components/Footer";
 import useCart from "../context/useCart";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
@@ -169,7 +168,7 @@ export default function Delivery() {
   const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
 
   return (
-    <div className="min-h-screen px-2 sm:px-6 pb-6 bg-white">
+    <div className="px-2 sm:px-6 pb-6 bg-white">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col max-w-lg gap-4 mx-auto mt-10 bg-white border border-gray-200 rounded-2xl shadow-lg p-4 sm:p-8"
@@ -369,9 +368,6 @@ export default function Delivery() {
           Trimite comanda
         </button>
       </form>
-
-      <Footer />
-
       {showThankYou && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="relative w-full max-w-sm p-6 text-center bg-white rounded-lg shadow-lg">

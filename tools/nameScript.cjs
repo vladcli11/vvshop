@@ -19,7 +19,10 @@ async function curataNumeProduse() {
     if (data.modelSlug && data.modelSlug.toLowerCase().includes("iphone")) {
       const numeNou = data.nume
         .replace(regex, "")
+        .replace(/,\s*,+/g, ",") // elimină ,, sau , ,,
+        .replace(/(^,)|(,$)/g, "") // elimină virgulă la început/sfârșit
         .replace(/\s{2,}/g, " ")
+        .replace(/,\s+/g, ", ") // spațiu corect după virgulă
         .trim();
 
       if (numeNou !== data.nume) {

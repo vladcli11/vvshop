@@ -8,6 +8,7 @@ import Apple from "./pages/Apple";
 import Samsung from "./pages/Samsung";
 import Huawei from "./pages/Huawei";
 import AuthPage from "./pages/AuthPage";
+import Footer from "./components/Footer";
 
 // Lazy imports
 const Model = lazy(() => import("./pages/Models"));
@@ -40,15 +41,14 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header
         onAuthClick={() => {
           setAuthMode("login");
           setShowAuthModal(true);
         }}
       />
-
-      <main className="min-h-[80vh]">
+      <main className="flex-1">
         <Suspense
           fallback={
             <div className="p-4 text-center text-gray-500">
@@ -87,7 +87,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
-
+      <Footer />
       {showAuthModal && (
         <Suspense fallback={null}>
           <AuthModal
@@ -98,6 +98,6 @@ export default function App() {
           />
         </Suspense>
       )}
-    </>
+    </div>
   );
 }

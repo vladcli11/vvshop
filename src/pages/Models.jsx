@@ -10,7 +10,6 @@ import {
 import { useState, useRef, useEffect, useMemo } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useParams } from "react-router-dom";
-import Footer from "../components/Footer";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
 
@@ -19,7 +18,7 @@ export default function Models() {
   const [sortOrder, setSortOrder] = useState("default");
   const [tipProdus, setTipProdus] = useState("");
   const { addToCart } = useCart();
-  const [showNotif, setShowNotif] = useState(false);
+  const [setShowNotif] = useState(false);
   const notifTimeout = useRef(null);
   const sentinelRef = useRef(null); // 🆕 pentru IntersectionObserver
   const { slug } = useParams();
@@ -60,7 +59,7 @@ export default function Models() {
   }, [accesoriiFiltrate, sortOrder]);
 
   const [page, setPage] = useState(1);
-  const ITEMS_PER_PAGE = 20;
+  const ITEMS_PER_PAGE = window.innerWidth < 640 ? 10 : 20;
   const currentItems = sortedAccesorii.slice(0, page * ITEMS_PER_PAGE);
 
   // 📦 Infinite Scroll Logic
@@ -103,40 +102,7 @@ export default function Models() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
-      {showNotif && (
-        <div className="fixed bottom-4 left-4 right-4 sm:bottom-4 sm:right-4 sm:left-auto sm:w-80 z-50 bg-gradient-to-r from-emerald-500 to-blue-600 text-white rounded-xl shadow-2xl animate-slide-up-bounce">
-          <div className="flex items-center gap-3 p-4">
-            <div className="flex-shrink-0 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center animate-bounce">
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-bold text-base sm:text-lg">Succes! 🎉</p>
-              <p className="text-sm text-white/90 truncate">
-                Produsul a fost adăugat în coș
-              </p>
-            </div>
-            <div className="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl overflow-hidden">
-              <div className="h-full bg-white/60 rounded-b-2xl animate-progress-bar w-full"></div>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="relative z-10">
-        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-40 bg-gradient-to-b from-green-200/30 via-white/0 to-transparent blur-2xl opacity-70 z-0" />
-
         <main className="relative z-10 pb-36">
           {accesorii.length > 0 && (
             <div className="w-full max-w-6xl mx-auto px-4 pt-2 sm:pt-4">
@@ -146,16 +112,16 @@ export default function Models() {
                     onClick={() =>
                       setTipProdus(tipProdus === "folie" ? "" : "folie")
                     }
-                    className={`flex flex-col items-center px-2 py-1 rounded-lg font-semibold border text-xs transition-all duration-200 ${
+                    className={`flex flex-col items-center px-2 py-1 rounded-xl font-semibold border text-xs ${
                       tipProdus === "folie"
-                        ? "bg-blue-500 text-white border-blue-600 shadow scale-105"
-                        : "bg-white/80 text-blue-700 border-blue-200 hover:bg-blue-50"
+                        ? "bg-orange-500 text-white border-blue-orange shadow scale-105"
+                        : "bg-white/80 text-black"
                     }`}
                     style={{ minWidth: 56 }}
                   >
                     <Shield
-                      className={`w-5 h-5 mb-0.5 ${
-                        tipProdus === "folie" ? "text-white" : "text-blue-500"
+                      className={`w-6 h-6 mb-0.5 ${
+                        tipProdus === "folie" ? "text-white" : "text-black"
                       }`}
                     />
                     <span className="leading-tight">Folii</span>
@@ -164,16 +130,16 @@ export default function Models() {
                     onClick={() =>
                       setTipProdus(tipProdus === "husa" ? "" : "husa")
                     }
-                    className={`flex flex-col items-center px-2 py-1 rounded-lg font-semibold border text-xs transition-all duration-200 ${
+                    className={`flex flex-col items-center px-2 py-1 rounded-xl font-semibold border text-xs ${
                       tipProdus === "husa"
-                        ? "bg-green-500 text-white border-green-600 shadow scale-105"
-                        : "bg-white/80 text-green-700 border-green-200 hover:bg-green-50"
+                        ? "bg-orange-500 text-white border-orange-600"
+                        : "bg-white/80 text-black"
                     }`}
                     style={{ minWidth: 56 }}
                   >
                     <Smartphone
-                      className={`w-5 h-5 mb-0.5 ${
-                        tipProdus === "husa" ? "text-white" : "text-green-500"
+                      className={`w-6 h-6 mb-0.5 ${
+                        tipProdus === "husa" ? "text-white" : "text-black"
                       }`}
                     />
                     <span className="leading-tight">Huse</span>
@@ -211,9 +177,8 @@ export default function Models() {
               currentItems.map((item, idx) => (
                 <div
                   key={item.id}
-                  className="group flex flex-col items-center justify-between w-full h-full p-4 bg-white rounded-sm shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden animate-fade-in-up"
+                  className="group flex flex-col items-center justify-between w-full h-full p-4 bg-white rounded-sm relative overflow-hidden"
                 >
-                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-300/40 to-blue-200/10 rounded-full blur-2xl opacity-60 z-0" />
                   <div
                     className="relative w-full pt-[100%] overflow-hidden bg-white transition-all duration-300 cursor-pointer z-10"
                     onClick={() =>
@@ -265,7 +230,6 @@ export default function Models() {
           </div>
         </main>
       </div>
-      <Footer />
     </div>
   );
 }

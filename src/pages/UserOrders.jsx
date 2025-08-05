@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import useAuth from "../context/useAuth";
-import Footer from "../components/Footer";
 import StatusBadge from "../components/StatusBadge";
 import {
   Package,
@@ -137,7 +136,7 @@ export default function UserOrders() {
   };
 
   return (
-    <div className="min-h-screen bg-white px-6 pb-10 pt-6">
+    <div className=" bg-white px-6 pb-10 pt-6">
       <div className="max-w-3xl mx-auto mb-6">
         <div className="flex flex-col items-center gap-3 mb-3">
           <div className="flex items-center gap-3">
@@ -340,8 +339,6 @@ export default function UserOrders() {
           ))}
         </div>
       )}
-
-      <Footer />
     </div>
   );
 }

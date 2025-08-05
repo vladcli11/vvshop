@@ -8,7 +8,6 @@ import P40Pro from "../assets/huaweip40pro.webp";
 import P40 from "../assets/huaweip40.webp";
 import P30Pro from "../assets/huaweip30pro.webp";
 import P30 from "../assets/huaweip30.webp";
-import Footer from "../components/Footer";
 
 const modele = [
   //{ nume: "Huawei P70 Ultra", modelSlug: "huawei-p70-ultra", imagine: P70Ultra },
@@ -28,18 +27,18 @@ const modele = [
 
 export default function Huawei() {
   return (
-    <div className="min-h-screen px-2 sm:px-6 pb-8 bg-gradient-to-b from-bg-gray-50 to bg-gray-100 relative overflow-x-hidden">
+    <div className="px-2 sm:px-6 pb-8 bg-gradient-to-b from-bg-gray-50 to bg-gray-100 relative overflow-x-hidden">
       <div className="relative z-10">
         <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model, idx) => (
             <Link
               key={model.modelSlug}
               to={`/huawei/${model.modelSlug}`}
-              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-sm shadow-lg hover:shadow-2xl transition-all duration-300"
+              className="group relative flex flex-col items-center w-full max-w-xs p-4 sm:p-5 bg-white border border-gray-100 rounded-sm"
               style={{ perspective: 800 }}
             >
               {/* Imagine cu efect 3D */}
-              <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white transition-all duration-300">
+              <div className="relative w-full pt-[100%] rounded-2xl overflow-hidden bg-white">
                 <img
                   src={model.imagine}
                   alt={model.nume}
@@ -60,7 +59,6 @@ export default function Huawei() {
           ))}
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

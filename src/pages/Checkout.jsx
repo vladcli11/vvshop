@@ -2,7 +2,6 @@ import useCart from "../context/useCart";
 import useAuth from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
-import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 
 export default function Checkout() {
@@ -33,13 +32,13 @@ export default function Checkout() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-100 px-4 sm:px-6">
+      <div className="bg-gray-100 px-4 sm:px-6">
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center max-w-md mx-auto">
             {/* Iconiță animată */}
             <div className="mb-8 relative">
               <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-4xl animate-bounce">🛒</span>
+                <span className="text-4xl">🛒</span>
               </div>
             </div>
 
@@ -64,19 +63,15 @@ export default function Checkout() {
             </button>
 
             {/* Decorațiuni */}
-            <div className="mt-12 flex justify-center gap-8 text-gray-300">
-              <div className="text-4xl opacity-50">📱</div>
-            </div>
+            <div className="mt-12 flex justify-center gap-8 text-gray-300"></div>
           </div>
         </div>
-
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="mt-5 min-h-screen bg-white px-2 sm:px-6 pb-6">
+    <div className="mt-5 bg-white px-2 sm:px-6 pb-6">
       <div className="flex justify-center">
         <div className="w-full max-w-full sm:max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-sm p-3 sm:p-4">
           <ul className="divide-y divide-gray-100">
@@ -161,7 +156,6 @@ export default function Checkout() {
           />
         </Suspense>
       )}
-      <Footer />
     </div>
   );
 }

@@ -153,14 +153,42 @@ function ensureDirExists(dirPath) {
 async function downloadAndConvertImage(imageUrl, outputFilePath) {
   try {
     console.log(`⬇️  Download imagine: ${imageUrl}`);
-    const res = await fetch(imageUrl);
+    const res = await fetch(imageUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36",
+        Accept: "image/avif,image/webp,image/apng,image/*;q=0.8,*/*;q=0.5",
+        // multe CDN-uri/hosturi cer referer de pe domeniul lor
+        Referer: "https://www.gsmnet.ro/",
+        "Accept-Language": "ro,en;q=0.9",
+      },
+      redirect: "follow",
+    });
+
+    const ct = res.headers.get("content-type") || "";
+    console.log(`Status: ${res.status}, Content-Type: ${ct}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const buffer = await res.buffer();
 
+    // respuns suspect (anti-hotlink): HTML mic în loc de imagine
+    const isLikelyHtml =
+      buffer.length < 4096 &&
+      buffer.slice(0, 64).toString("utf8").trim().startsWith("<");
+    if (isLikelyHtml && !ct.startsWith("image/")) {
+      throw new Error(
+        `Anti-hotlink/HTML în loc de imagine (${buffer.length} B)`
+      );
+    }
+
+    // chiar dacă Content-Type e greșit, încercăm să decodăm cu sharp
     await sharp(buffer)
       .resize(300, 300, { fit: "cover" })
       .toFormat("webp")
       .toFile(outputFilePath);
+
+    const { size } = fs.statSync(outputFilePath);
+    if (size < 512) throw new Error(`Fișier WebP invalid (${size} B)`);
 
     console.log(`Salvată imagine: ${outputFilePath}`);
     return true;
@@ -248,13 +276,20 @@ https.get(feedUrl, (res) => {
         if (!snapshot.exists) {
           ensureDirExists(publicImgPath);
 
-          let hasWebp = false;
-          let finalImageUrl = "";
-
-          if (imagineUrl) {
-            hasWebp = await downloadAndConvertImage(imagineUrl, imagePath);
-            finalImageUrl = hasWebp ? imageFirestoreUrl : imagineUrl;
+          if (!imagineUrl) {
+            console.warn(`⏭️ Lipsă URL imagine, sar produsul: ${nume}`);
+            skipCount++;
+            return;
           }
+
+          const hasWebp = await downloadAndConvertImage(imagineUrl, imagePath);
+          if (!hasWebp) {
+            console.warn(`⏭️ Conversie eșuată, sar produsul: ${nume}`);
+            skipCount++;
+            return;
+          }
+
+          const finalImageUrl = `${BASE_IMAGE_URL}/${imageFileName}`;
 
           const newData = {
             codUnic: String(codUnic),
@@ -267,9 +302,9 @@ https.get(feedUrl, (res) => {
             garantie: parseInt(row["Garantie in luni"], 10) || 0,
             disponibilitate: row["Disponibilitate"] || "",
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            activ: isCameraSpate ? false : true, // ← aici setezi activ false dacă e camera spate
-            necesitaImagine: !hasWebp,
-            imagine: finalImageUrl ? [finalImageUrl] : [],
+            activ: isCameraSpate ? false : true,
+            necesitaImagine: false,
+            imagine: [finalImageUrl],
             modelSlug,
             pret: pretFinal,
           };
@@ -278,11 +313,11 @@ https.get(feedUrl, (res) => {
           console.log(`Creat produs nou: ${slug} (${modelSlug})`);
           successCount++;
         } else {
-          // Actualizare produs existent
+          // Actualizare produs existent (nu folosi URL extern ca fallback)
           const updateData = {
             disponibilitate: row["Disponibilitate"] || "",
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            activ: isCameraSpate ? false : true, // ← la fel și aici
+            activ: isCameraSpate ? false : true,
             pret: pretFinal,
           };
 

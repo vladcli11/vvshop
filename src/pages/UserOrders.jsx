@@ -23,6 +23,11 @@ export default function UserOrders() {
     commissionEarned: 0,
   });
 
+  // adăugat:
+  const [customPart, setCustomPart] = useState("");
+  const [genLoading, setGenLoading] = useState(false);
+  const [genError, setGenError] = useState("");
+
   useEffect(() => {
     const fetchOrders = async () => {
       if (!currentUser) return;
@@ -80,17 +85,8 @@ export default function UserOrders() {
         const snap = await getDoc(docRef);
         let data;
         if (!snap.exists()) {
-          // Apelează funcția cloud pentru generare cod
-          const { getFunctions, httpsCallable } = await import(
-            "firebase/functions"
-          );
-          const functions = getFunctions();
-          const generateReferralCode = httpsCallable(
-            functions,
-            "generateReferralCode"
-          );
-          const result = await generateReferralCode();
-          setReferralCode(result.data.code);
+          // nu mai generăm automat; lăsăm userul să-și aleagă fragmentul
+          setReferralCode(null);
           data = { usageCount: 0, totalOrdersValue: 0, commissionEarned: 0 };
         } else {
           data = snap.data();
@@ -102,12 +98,48 @@ export default function UserOrders() {
           commissionEarned: data.commissionEarned || 0,
         });
       } catch (err) {
-        console.error("Eroare la citirea/generarea codului:", err.message);
+        console.error("Eroare la citirea codului:", err.message);
       }
     };
 
     fetchReferralStats();
   }, [showReferralModal, currentUser]);
+
+  // adăugat:
+  const generateReferral = async () => {
+    const cleaned = customPart.trim().toUpperCase();
+    if (
+      !cleaned ||
+      cleaned.length < 4 ||
+      cleaned.length > 6 ||
+      !/^[A-Z0-9]+$/.test(cleaned)
+    ) {
+      setGenError("Folosește 4–6 caractere, doar A–Z și 0–9.");
+      return;
+    }
+    setGenError("");
+    setGenLoading(true);
+    try {
+      const { getFunctions, httpsCallable } = await import(
+        "firebase/functions"
+      );
+      const functions = getFunctions();
+      const fn = httpsCallable(functions, "generateReferralCode");
+      const res = await fn({ customPart: cleaned });
+      setReferralCode(res.data.code);
+    } catch (e) {
+      const msg = e?.message || "";
+      if (msg.includes("already-exists")) {
+        setGenError("Fragment ocupat. Încearcă altul.");
+      } else if (msg.includes("invalid-argument")) {
+        setGenError("Fragment invalid. Folosește 4–6 caractere A–Z/0–9.");
+      } else {
+        setGenError("Eroare la generare. Încearcă din nou.");
+      }
+    } finally {
+      setGenLoading(false);
+    }
+  };
 
   const copyToClipboard = () => {
     if (navigator.clipboard && window.isSecureContext) {
@@ -235,7 +267,36 @@ export default function UserOrders() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-white text-center">Se încarcă codul...</p>
+                  <div className="w-full">
+                    <p className="text-white/90 text-sm mb-2 text-center">
+                      Alege 4–6 caractere (A–Z, 0–9). Vom adăuga un sufix unic.
+                    </p>
+                    <input
+                      value={customPart}
+                      onChange={(e) =>
+                        setCustomPart(
+                          e.target.value
+                            .replace(/[^a-zA-Z0-9]/g, "")
+                            .toUpperCase()
+                        )
+                      }
+                      maxLength={6}
+                      placeholder="EX: VLAD12"
+                      className="w-full px-4 py-2 rounded-lg text-gray-900 bg-white/90 border border-white/40 outline-none"
+                    />
+                    {genError && (
+                      <p className="mt-2 text-sm text-red-100 text-center">
+                        {genError}
+                      </p>
+                    )}
+                    <button
+                      onClick={generateReferral}
+                      disabled={genLoading}
+                      className="mt-3 w-full py-3 rounded-xl text-white font-bold bg-gradient-to-r from-black via-gray-800 to-gray-900 hover:from-gray-900 hover:to-black active:scale-95 transition-all disabled:opacity-60"
+                    >
+                      {genLoading ? "Se generează..." : "Generează codul"}
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

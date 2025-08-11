@@ -3,71 +3,70 @@ const stripe = require("stripe")(functions.config().stripe.secret);
 const admin = require("firebase-admin");
 
 // 🎯 FUNCȚIE 1 — CHECKOUT
-exports.createCheckoutSession = async (req, res) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type");
+exports.createCheckoutSession = functions
+  .region("europe-west1")
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "https://vv-shop.ro"); // tighten CORS in prod
+    res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") return res.status(204).send("");
 
-  if (req.method === "OPTIONS") return res.status(204).send("");
+    try {
+      const { items, promoCodeText } = req.body;
 
-  try {
-    const { items, promoCodeText } = req.body;
+      let discounts = [];
+      if (promoCodeText) {
+        const promoCodes = await stripe.promotionCodes.list({
+          code: promoCodeText,
+          active: true,
+        });
+        if (promoCodes.data.length > 0) {
+          discounts = [{ promotion_code: promoCodes.data[0].id }];
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Cod promoțional invalid sau expirat." });
+        }
+      }
 
-    let discounts = [];
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ error: "Coșul este gol sau invalid." });
+      }
 
-    if (promoCodeText) {
-      const promoCodes = await stripe.promotionCodes.list({
-        code: promoCodeText,
-        active: true,
+      const line_items = items.map((item, i) => {
+        if (!item.nume || !item.pret) {
+          throw new Error(`Item lipsă sau invalid la index ${i}`);
+        }
+        return {
+          price_data: {
+            currency: "ron",
+            unit_amount: Math.round(item.pret * 100),
+            product_data: { name: item.nume },
+          },
+          quantity: item.quantity || 1,
+        };
       });
 
-      if (promoCodes.data.length > 0) {
-        discounts = [{ promotion_code: promoCodes.data[0].id }];
-      } else {
-        return res
-          .status(400)
-          .json({ error: "Cod promoțional invalid sau expirat." });
-      }
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        payment_method_types: ["card"],
+        line_items,
+        discounts,
+        locale: "auto",
+        // include the placeholder so you can read it after success if needed
+        success_url:
+          "https://vv-shop.ro/succes?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "https://vv-shop.ro/anulare",
+      });
+
+      console.log("🟢 Sesiune Stripe creată:", session.id);
+      // ⬅️ return the hosted URL so client can window.location.assign(...)
+      return res.status(200).json({ url: session.url, id: session.id });
+    } catch (error) {
+      console.error("❌ Stripe error:", error.message);
+      return res.status(500).json({ error: error.message });
     }
-
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: "Coșul este gol sau invalid." });
-    }
-
-    const line_items = items.map((item, i) => {
-      if (!item.nume || !item.pret) {
-        throw new Error(`Item lipsă sau invalid la index ${i}`);
-      }
-
-      return {
-        price_data: {
-          currency: "ron",
-          unit_amount: Math.round(item.pret * 100),
-          product_data: {
-            name: item.nume,
-          },
-        },
-        quantity: item.quantity || 1,
-      };
-    });
-
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      line_items,
-      discounts,
-      locale: "auto",
-      success_url: "https://vv-shop.ro/succes",
-      cancel_url: "https://vv-shop.ro/anulare",
-    });
-
-    console.log("🟢 Sesiune Stripe creată:", session.id);
-    return res.status(200).json({ id: session.id });
-  } catch (error) {
-    console.error("❌ Stripe error:", error.message);
-    return res.status(500).json({ error: error.message });
-  }
-};
+  });
 
 // 🎯 FUNCȚIE 2 — VALIDARE COD
 exports.validatePromoCode = async (req, res) => {

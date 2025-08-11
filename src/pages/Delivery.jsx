@@ -46,6 +46,7 @@ export default function Delivery() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ Validări rapide (rămân la fel)
     if (form.metodaLivrare === "easybox" && !form.locker) {
       alert(
         "Te rugăm să selectezi un locker Easybox înainte de a trimite comanda."
@@ -63,38 +64,33 @@ export default function Delivery() {
       alert("Te rugăm să completezi toate câmpurile.");
       return;
     }
-
     if (!/^[0-9]{10}$/.test(telefon)) {
       alert("Numărul de telefon trebuie să conțină exact 10 cifre.");
       return;
     }
-
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       alert("Email-ul nu este valid.");
       return;
     }
 
+    // ✅ Totalurile (la fel ca înainte)
     const totalProduse = cartItems.reduce(
       (s, i) => s + i.pret * (i.quantity || 1),
       0
     );
-
-    // Transport: gratuit peste 40 lei, altfel 15 lei
     const costTransport = totalProduse >= 40 ? 0 : 15;
-
-    // Total final = produse + transport, apoi se aplică discountul
     const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
 
+    // ✅ Importuri lazy Firestore (la fel ca înainte)
     const { getFirestore, collection, addDoc, serverTimestamp } = await import(
       "firebase/firestore"
     );
     const db = getFirestore();
 
+    // ─────────────────────────────────────────────────────────────────────────────
+    //                PLATA CU CARDUL — FĂRĂ @stripe/stripe-js
+    // ─────────────────────────────────────────────────────────────────────────────
     if (form.plata === "card") {
-      const { loadStripe } = await import("@stripe/stripe-js");
-      const stripe = await loadStripe(
-        "pk_test_51RUNogHJkUS6tZsDVmMisYsq1JYSmbGzoHVXtUwBJhn82ED1qAHQxqAJ2pj40OGzcIfzz5dqtDST7AezHfHmpdRI00eoo4Am7T"
-      );
       const lineItems = cartItems.map((item) => ({
         nume: item.nume,
         pret: item.pret,
@@ -102,6 +98,7 @@ export default function Delivery() {
       }));
 
       try {
+        // 🔁 Creezi sesiunea la Cloud Function care întoarce { url, id }
         const response = await fetch(
           "https://europe-west1-vvshop-srl.cloudfunctions.net/createCheckoutSession",
           {
@@ -115,47 +112,53 @@ export default function Delivery() {
         );
 
         const data = await response.json();
+        if (!data?.url || !data?.id) {
+          throw new Error("Sesiunea Stripe nu a întors URL-ul de Checkout.");
+        }
 
-        if (!data.id) throw new Error("Stripe nu a returnat un sessionId.");
-
-        // 🟢 Salvăm comanda în Firestore cu status de așteptare
+        // 🟢 Salvezi comanda ca „așteptare plată” (ca la tine)
         await addDoc(collection(db, "comenzi"), {
           ...form,
           produse: cartItems,
           discount,
           totalFinal,
           status: "asteptare_plata",
-          stripeSessionId: data.id,
+          stripeSessionId: data.id, // vei folosi sesiunea în webhook
           data: serverTimestamp(),
           uid: currentUser?.uid || null,
           accountEmail: currentUser?.email || null,
         });
 
-        // 🟣 Trimite către Stripe
-        await stripe.redirectToCheckout({ sessionId: data.id });
+        // 🚀 Redirecționare directă către pagina Stripe (fără stripe.js)
+        window.location.assign(data.url);
+        return; // IMPORTANT: ieșim din funcție, ca să nu intre în else-ul de mai jos
       } catch (err) {
         console.error("❌ Eroare Stripe:", err);
         alert("Eroare la inițierea plății. Încearcă din nou.");
+        return;
       }
-    } else {
-      try {
-        await addDoc(collection(db, "comenzi"), {
-          ...form,
-          produse: cartItems,
-          discount,
-          totalFinal,
-          data: serverTimestamp(),
-          uid: currentUser?.uid || null,
-          accountEmail: currentUser?.email || null,
-        });
+    }
 
-        console.log("🟢 Comanda salvată fără AWB automat");
-        setShowThankYou(true);
-        clearCart();
-      } catch (err) {
-        console.error("❌ Eroare la salvarea comenzii:", err);
-        alert("A apărut o eroare la trimiterea comenzii. Încearcă din nou.");
-      }
+    // ─────────────────────────────────────────────────────────────────────────────
+    //                ALTFEL (RAMBURS) — EXACT CA ÎNAINTE
+    // ─────────────────────────────────────────────────────────────────────────────
+    try {
+      await addDoc(collection(db, "comenzi"), {
+        ...form,
+        produse: cartItems,
+        discount,
+        totalFinal,
+        data: serverTimestamp(),
+        uid: currentUser?.uid || null,
+        accountEmail: currentUser?.email || null,
+      });
+
+      console.log("🟢 Comanda salvată fără AWB automat");
+      setShowThankYou(true);
+      clearCart();
+    } catch (err) {
+      console.error("❌ Eroare la salvarea comenzii:", err);
+      alert("A apărut o eroare la trimiterea comenzii. Încearcă din nou.");
     }
   };
 

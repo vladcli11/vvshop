@@ -123,19 +123,17 @@ export default function UserOrders() {
       const { getFunctions, httpsCallable } = await import(
         "firebase/functions"
       );
-      const functions = getFunctions();
+      const functions = getFunctions(undefined, "europe-west1"); // FIX: setează regiunea
       const fn = httpsCallable(functions, "generateReferralCode");
       const res = await fn({ customPart: cleaned });
       setReferralCode(res.data.code);
     } catch (e) {
       const msg = e?.message || "";
-      if (msg.includes("already-exists")) {
+      if (msg.includes("already-exists"))
         setGenError("Fragment ocupat. Încearcă altul.");
-      } else if (msg.includes("invalid-argument")) {
+      else if (msg.includes("invalid-argument"))
         setGenError("Fragment invalid. Folosește 4–6 caractere A–Z/0–9.");
-      } else {
-        setGenError("Eroare la generare. Încearcă din nou.");
-      }
+      else setGenError("Eroare la generare. Încearcă din nou.");
     } finally {
       setGenLoading(false);
     }
@@ -269,7 +267,7 @@ export default function UserOrders() {
                 ) : (
                   <div className="w-full">
                     <p className="text-white/90 text-sm mb-2 text-center">
-                      Alege 4–6 caractere (A–Z, 0–9). Vom adăuga un sufix unic.
+                      Alege 4–6 caractere (A–Z, 0–9).
                     </p>
                     <input
                       value={customPart}

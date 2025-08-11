@@ -40,62 +40,61 @@ exports.generateReferralCode = functions
       );
     }
 
-    const randomChunk = (n = 6) => {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      return Array.from(
-        { length: n },
-        () => chars[Math.floor(Math.random() * chars.length)]
-      ).join("");
-    };
-
-    let tries = 0;
-    while (tries < 3) {
-      const suffix = randomChunk(6);
-      const code = `VV-${rawPart}${suffix}`;
-
-      try {
-        const coupon = await stripe.coupons.create({
-          name: `Referral ${email}`,
-          percent_off: 10,
-          duration: "once",
-          metadata: { uid, email, referralCode: code },
-        });
-
-        const promo = await stripe.promotionCodes.create({
-          coupon: coupon.id,
-          code,
-          max_redemptions: 1,
-          active: true,
-        });
-
-        await db.collection("referralCodes").doc(uid).set({
-          uid,
-          email,
-          referralCode: code,
-          stripeCouponId: coupon.id,
-          stripePromotionCodeId: promo.id,
-          usageCount: 0,
-          totalOrdersValue: 0,
-          commissionEarned: 0,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-
-        return { code };
-      } catch (err) {
-        if (err?.code === "resource_already_exists") {
-          tries++;
-          continue;
-        }
-        console.error("generateReferralCode error:", err);
-        throw new functions.https.HttpsError(
-          "internal",
-          "Eroare la generarea codului."
-        );
-      }
+    // verificare unicitate în Firestore
+    const dupSnap = await db
+      .collection("referralCodes")
+      .where("referralCode", "==", rawPart)
+      .limit(1)
+      .get();
+    if (!dupSnap.empty) {
+      throw new functions.https.HttpsError(
+        "already-exists",
+        "Codul există deja."
+      );
     }
 
-    throw new functions.https.HttpsError(
-      "already-exists",
-      "Fragment ocupat. Încearcă altul."
-    );
+    const code = rawPart;
+
+    try {
+      const coupon = await stripe.coupons.create({
+        name: `Referral ${email}`,
+        percent_off: 10,
+        duration: "once",
+        metadata: { uid, email, referralCode: code },
+      });
+
+      const promo = await stripe.promotionCodes.create({
+        coupon: coupon.id,
+        code, // exact codul ales de user
+        max_redemptions: 1,
+        active: true,
+      });
+
+      await db.collection("referralCodes").doc(uid).set({
+        uid,
+        email,
+        referralCode: code,
+        stripeCouponId: coupon.id,
+        stripePromotionCodeId: promo.id,
+        usageCount: 0,
+        totalOrdersValue: 0,
+        commissionEarned: 0,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      return { code };
+    } catch (err) {
+      // Stripe poate returna resource_already_exists dacă există un promotion code cu același "code"
+      if (err?.code === "resource_already_exists") {
+        throw new functions.https.HttpsError(
+          "already-exists",
+          "Codul există deja."
+        );
+      }
+      console.error("generateReferralCode error:", err);
+      throw new functions.https.HttpsError(
+        "internal",
+        "Eroare la generarea codului."
+      );
+    }
   });

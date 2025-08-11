@@ -49,7 +49,8 @@ exports.generateReferralCode = functions
     if (!dupSnap.empty) {
       throw new functions.https.HttpsError(
         "already-exists",
-        "Codul există deja."
+        "Codul există deja.",
+        { reason: "duplicate" }
       );
     }
 
@@ -65,7 +66,7 @@ exports.generateReferralCode = functions
 
       const promo = await stripe.promotionCodes.create({
         coupon: coupon.id,
-        code, // exact codul ales de user
+        code,
         max_redemptions: 1,
         active: true,
       });
@@ -84,11 +85,16 @@ exports.generateReferralCode = functions
 
       return { code };
     } catch (err) {
-      // Stripe poate returna resource_already_exists dacă există un promotion code cu același "code"
-      if (err?.code === "resource_already_exists") {
+      const msg = err?.message || err?.raw?.message || "";
+      const rawCode = err?.code || err?.raw?.code || "";
+      if (
+        rawCode === "resource_already_exists" ||
+        /promotion\s*code.*(exists|already)/i.test(msg)
+      ) {
         throw new functions.https.HttpsError(
           "already-exists",
-          "Codul există deja."
+          "Codul există deja.",
+          { reason: "duplicate", provider: "stripe" }
         );
       }
       console.error("generateReferralCode error:", err);

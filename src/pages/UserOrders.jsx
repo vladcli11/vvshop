@@ -123,17 +123,28 @@ export default function UserOrders() {
       const { getFunctions, httpsCallable } = await import(
         "firebase/functions"
       );
-      const functions = getFunctions(undefined, "europe-west1"); // FIX: setează regiunea
+      const functions = getFunctions(undefined, "europe-west1");
       const fn = httpsCallable(functions, "generateReferralCode");
       const res = await fn({ customPart: cleaned });
       setReferralCode(res.data.code);
     } catch (e) {
-      const msg = e?.message || "";
-      if (msg.includes("already-exists"))
-        setGenError("Fragment ocupat. Încearcă altul.");
-      else if (msg.includes("invalid-argument"))
+      const code = e?.code || "";
+      const details = e?.details;
+      const is = (name) =>
+        code === name ||
+        code === `functions/${name}` ||
+        code?.endsWith(`/${name}`);
+
+      if (is("already-exists") || details?.reason === "duplicate") {
+        setGenError("Codul există deja. Alege altul.");
+      } else if (is("invalid-argument") || details?.reason === "invalid") {
         setGenError("Fragment invalid. Folosește 4–6 caractere A–Z/0–9.");
-      else setGenError("Eroare la generare. Încearcă din nou.");
+      } else if (is("unauthenticated")) {
+        setGenError("Trebuie să fii autentificat.");
+      } else {
+        console.error(e);
+        setGenError("Eroare la generare. Încearcă din nou.");
+      }
     } finally {
       setGenLoading(false);
     }
@@ -271,14 +282,15 @@ export default function UserOrders() {
                     </p>
                     <input
                       value={customPart}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        setGenError(""); // curăță eroarea la tastare
                         setCustomPart(
                           e.target.value
                             .replace(/[^a-zA-Z0-9]/g, "")
                             .toUpperCase()
-                        )
-                      }
-                      maxLength={6}
+                        );
+                      }}
+                      maxLength={8}
                       placeholder="EX: VLAD12"
                       className="w-full px-4 py-2 rounded-lg text-gray-900 bg-white/90 border border-white/40 outline-none"
                     />

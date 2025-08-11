@@ -11,6 +11,7 @@ import AuthPage from "./pages/AuthPage";
 import Footer from "./components/Footer";
 
 // Lazy imports
+
 const Model = lazy(() => import("./pages/Models"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Contact = lazy(() => import("./pages/Contact"));

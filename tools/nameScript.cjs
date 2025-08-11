@@ -19,9 +19,9 @@ async function curataNumeProduse() {
     if (data.modelSlug && data.modelSlug.toLowerCase().includes("iphone")) {
       const numeNou = data.nume
         .replace(regex, "")
-        .replace(/,\s*,+/g, ",") // elimină ,, sau , ,,
+        .replace(/(\s*,\s*){2,}/g, ", ") // curăță „virgulă în virgulă” indiferent de spații
         .replace(/(^,)|(,$)/g, "") // elimină virgulă la început/sfârșit
-        .replace(/\s{2,}/g, " ")
+        .replace(/\s{2,}/g, " ") // spații multiple → un singur spațiu
         .replace(/,\s+/g, ", ") // spațiu corect după virgulă
         .trim();
 

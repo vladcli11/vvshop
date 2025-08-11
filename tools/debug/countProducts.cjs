@@ -8,7 +8,7 @@ admin.initializeApp({
 const db = admin.firestore();
 
 async function countProducts() {
-  const snapshot = await db.collection("products1").get();
+  const snapshot = await db.collection("products").get();
   console.log(`📦 Total produse în Firestore: ${snapshot.size}`);
 }
 

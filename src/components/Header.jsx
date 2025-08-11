@@ -34,7 +34,7 @@ export default function Header({ onAuthClick }) {
             src="/img/logo.webp"
             alt="VVShop"
             fetchPriority="high"
-            width={100}
+            width={80}
             height={90}
             style={{ filter: "drop-shadow(0 4px 12px #22c55e22)" }}
           />

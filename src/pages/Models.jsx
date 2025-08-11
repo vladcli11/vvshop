@@ -186,7 +186,7 @@ export default function Models() {
                     }
                   >
                     <img
-                      src={`${item.imagine[0]}?v=${item.id}`}
+                      src={`${item.imagine[0]}`}
                       sizes="(max-width: 640px) 90vw, 300px"
                       alt={item.nume}
                       loading={idx === 0 ? "eager" : "lazy"}

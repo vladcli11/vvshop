@@ -26,7 +26,7 @@ export default function Header({ onAuthClick }) {
         {/* Logo */}
         <Link
           to="/"
-          className="h-20 sm:h-24 w-[180px] flex items-center justify-start ml-3 active:scale-95 transition"
+          className="h-20 sm:h-24 w-[180px] flex items-center justify-start ml-3"
           aria-label="Acasă"
           title="Acasă"
         >
@@ -34,9 +34,9 @@ export default function Header({ onAuthClick }) {
             src="/img/logo.webp"
             alt="VVShop"
             fetchPriority="high"
+            loading="eager"
             width={80}
             height={90}
-            style={{ filter: "drop-shadow(0 4px 12px #22c55e22)" }}
           />
         </Link>
 

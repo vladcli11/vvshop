@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import useCart from "../context/useCart";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
-import SelectEasyBoxMap from "../components/SelectEasyBoxMap";
 
 export default function Delivery() {
   const [form, setForm] = useState({
@@ -24,6 +23,7 @@ export default function Delivery() {
   const [discount, setDiscount] = useState(0);
   const [promoStatus, setPromoStatus] = useState("");
   const { currentUser } = useAuth();
+  const SelectEasyBoxMap = lazy(() => import("../components/SelectEasyBoxMap"));
 
   // Preiau datele utilizatorului curent daca este autentificat
   useEffect(() => {
@@ -302,13 +302,21 @@ export default function Delivery() {
         </div>
 
         {form.metodaLivrare === "easybox" && (
-          <SelectEasyBoxMap
-            clientId={import.meta.env.VITE_SAMEDAY_CLIENT_ID}
-            judet={form.judet}
-            localitate={form.localitate}
-            locker={form.locker}
-            setLocker={(locker) => setForm((prev) => ({ ...prev, locker }))}
-          />
+          <Suspense
+            fallback={
+              <div className="mt-2 text-sm text-gray-600">
+                Se încarcă harta Easybox...
+              </div>
+            }
+          >
+            <SelectEasyBoxMap
+              clientId={import.meta.env.VITE_SAMEDAY_CLIENT_ID}
+              judet={form.judet}
+              localitate={form.localitate}
+              locker={form.locker}
+              setLocker={(locker) => setForm((prev) => ({ ...prev, locker }))}
+            />
+          </Suspense>
         )}
         {form.locker && (
           <p className="mt-2 text-sm text-gray-700">

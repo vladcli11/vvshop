@@ -1,21 +1,9 @@
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import appleLogo from "../assets/apple.webp";
 import samsungLogo from "../assets/samsung.webp";
 import huaweiLogo from "../assets/huawei.webp";
 
 export default function Home() {
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "image";
-    link.href = samsungLogo; // același URL ca în <img>
-    link.type = "image/webp";
-    link.fetchPriority = "high"; // în loc de setAttribute
-    document.head.appendChild(link);
-    return () => document.head.removeChild(link);
-  }, []);
-
   return (
     <div className="bg-gradient-to-b from-gray-50 to-gray-100 pb-10">
       <main className="flex flex-col items-center">
@@ -25,7 +13,7 @@ export default function Home() {
             { to: "/apple", name: "Apple", logo: appleLogo },
             { to: "/samsung", name: "Samsung", logo: samsungLogo },
             { to: "/huawei", name: "Huawei", logo: huaweiLogo },
-          ].map(({ to, name, logo }) => (
+          ].map(({ to, name }) => (
             <Link
               key={name}
               to={to}
@@ -33,12 +21,12 @@ export default function Home() {
             >
               <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center bg-white shadow-sm ring-1 ring-white/50">
                 <img
-                  src={logo}
-                  alt={name}
+                  src={samsungLogo}
+                  alt="Samsung"
                   width={90}
                   height={90}
-                  loading={name === "Samsung" ? "eager" : "lazy"}
-                  fetchPriority={name === "Samsung" ? "high" : "auto"}
+                  loading="eager"
+                  fetchPriority="high"
                   className="w-[90%] h-[90%] max-h-32 object-contain"
                 />
               </div>

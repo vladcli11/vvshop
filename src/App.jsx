@@ -3,16 +3,15 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
-import Home from "./pages/Home";
-import Apple from "./pages/Apple";
-import Samsung from "./pages/Samsung";
-import Huawei from "./pages/Huawei";
-import AuthPage from "./pages/AuthPage";
 import Footer from "./components/Footer";
 
 // Lazy imports
-
+const Home = lazy(() => import("./pages/Home"));
+const Apple = lazy(() => import("./pages/Apple"));
+const Samsung = lazy(() => import("./pages/Samsung"));
+const Huawei = lazy(() => import("./pages/Huawei"));
 const Model = lazy(() => import("./pages/Models"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Termeni = lazy(() => import("./pages/Termeni"));

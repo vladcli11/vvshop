@@ -1,11 +1,23 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import appleLogo from "../assets/apple.webp";
 import samsungLogo from "../assets/samsung.webp";
 import huaweiLogo from "../assets/huawei.webp";
 
 export default function Home() {
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = samsungLogo; // același URL ca în <img>
+    link.type = "image/webp";
+    link.fetchPriority = "high"; // în loc de setAttribute
+    document.head.appendChild(link);
+    return () => document.head.removeChild(link);
+  }, []);
+
   return (
-    <div className="bg-gradient-to-b from-bg-gray-50 to bg-gray-100 pb-10">
+    <div className="bg-gradient-to-b from-gray-50 to-gray-100 pb-10">
       <main className="flex flex-col items-center">
         {/* Grilă branduri */}
         <div className="grid grid-cols-1 gap-2 w-full max-w-md px-4 justify-items-center mt-6">

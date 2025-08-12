@@ -29,21 +29,6 @@ export default function Models() {
     });
   }, [slug]);
 
-  useEffect(() => {
-    if (accesorii.length > 0 && accesorii[0].imagine?.[0]) {
-      const preloadUrl = `${accesorii[0].imagine[0]}?v=${accesorii[0].id}`;
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "image";
-      link.href = preloadUrl;
-      link.setAttribute("fetchPriority", "high");
-      document.head.appendChild(link);
-      return () => {
-        document.head.removeChild(link);
-      };
-    }
-  }, [accesorii]);
-
   const accesoriiFiltrate = useMemo(() => {
     return tipProdus
       ? accesorii.filter((item) => item.tipProdus === tipProdus)
@@ -61,6 +46,21 @@ export default function Models() {
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = window.innerWidth < 640 ? 10 : 20;
   const currentItems = sortedAccesorii.slice(0, page * ITEMS_PER_PAGE);
+  const LCP_INDEX = 1; // al doilea card este LCP
+
+  // (opțional) Preload doar pentru candidatul LCP
+  useEffect(() => {
+    const candidate = currentItems[LCP_INDEX];
+    if (!candidate?.imagine?.[0]) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = candidate.imagine[0];
+    document.head.appendChild(link);
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, [currentItems]);
 
   // 📦 Infinite Scroll Logic
   useEffect(() => {
@@ -189,8 +189,8 @@ export default function Models() {
                       src={`${item.imagine[0]}`}
                       sizes="(max-width: 640px) 90vw, 300px"
                       alt={item.nume}
-                      loading={idx === 0 ? "eager" : "lazy"}
-                      fetchPriority={idx === 0 ? "high" : "auto"}
+                      loading={idx === LCP_INDEX ? "eager" : "lazy"}
+                      fetchPriority={idx === LCP_INDEX ? "high" : "auto"}
                       width="300"
                       height="300"
                       className="absolute inset-0 w-full h-full object-contain"

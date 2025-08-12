@@ -374,7 +374,7 @@ export default function Delivery() {
 
         <button
           type="submit"
-          className="py-3 text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl font-semibold text-lg hover:from-green-600 transition"
+          className="py-3 text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl font-semibold text-lg"
         >
           Trimite comanda
         </button>

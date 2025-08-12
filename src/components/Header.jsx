@@ -79,22 +79,23 @@ export default function Header({ onAuthClick }) {
           <div className="border-separate border-gray-100 rounded-full">
             <button
               onClick={handleAccountClick}
-              className="relative bg-white p-3 sm:p-4 rounded-full shadow-2xl border-2 border-white transition-none flex"
+              className={`relative p-3 sm:p-4 rounded-full shadow-2xl border-2 border-white transition-none flex
+    ${isLoggedIn ? "bg-gradient-to-r from-orange-400 to-red-500" : "bg-white"}`}
               aria-label="Autentificare / Cont"
             >
               {isLoggedIn ? (
-                // ✅ SVG: user logat — user-round-check
+                // ✅ SVG: user logat — icon negru
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="black"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-user-round-icon lucide-user-round w-7 h-7 text-teal-500"
+                  className="lucide lucide-user-round-icon lucide-user-round w-7 h-7"
                 >
                   <circle cx="12" cy="8" r="5" />
                   <path d="M20 21a8 8 0 0 0-16 0" />

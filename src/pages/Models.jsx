@@ -7,11 +7,15 @@ import {
   Shield,
   Smartphone,
 } from "lucide-react";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useLayoutEffect } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useParams } from "react-router-dom";
 import useCart from "../context/useCart";
 import { fetchAccessoriesByModel } from "../utils/fetchAccessoriesByModel";
+import ScrollToTop from "../components/ScrollToTop";
+import Breadcrumbs from "../components/BreadCrumbs";
+import { Heart } from "lucide-react";
+import useFavorites from "../context/useFavorites";
 
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
@@ -22,11 +26,20 @@ export default function Models() {
   const notifTimeout = useRef(null);
   const sentinelRef = useRef(null); // 🆕 pentru IntersectionObserver
   const { slug } = useParams();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     fetchAccessoriesByModel(slug).then((items) => {
       setAccesorii(items);
     });
+  }, [slug]);
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [slug]);
+
+  useEffect(() => {
+    setPage(1);
   }, [slug]);
 
   const accesoriiFiltrate = useMemo(() => {
@@ -104,6 +117,7 @@ export default function Models() {
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-x-hidden">
       <div className="relative z-10">
         <main className="relative z-10 pb-36">
+          <Breadcrumbs />
           {accesorii.length > 0 && (
             <div className="w-full max-w-6xl mx-auto px-4 pt-2 sm:pt-4">
               <div className="flex gap-1 items-center justify-between">
@@ -168,7 +182,7 @@ export default function Models() {
             </div>
           )}
 
-          <div className="grid max-w-6xl grid-cols-2 gap-3 mx-auto px-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center pt-2 min-h-[700px]">
+          <div className="grid max-w-6xl grid-cols-2 gap-3 mx-auto px-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center pt-2 min-h-[300px] sm:min-h-[500px]">
             {currentItems.length === 0 ? (
               <p className="col-span-full text-center text-gray-500 mt-10 text-lg font-medium animate-fade-in">
                 Momentan nu există accesorii disponibile.
@@ -179,6 +193,31 @@ export default function Models() {
                   key={item.id}
                   className="group flex flex-col items-center justify-between w-full h-full p-4 bg-white rounded-sm relative overflow-hidden"
                 >
+                  {/* ❤️ Favorite */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation(); // nu declanșa navigarea pe card
+                      toggleFavorite(item); // adaugă/scoate din favorite
+                    }}
+                    aria-label={
+                      isFavorite(item.id)
+                        ? "Scoate din favorite"
+                        : "Adaugă la favorite"
+                    }
+                    title={
+                      isFavorite(item.id)
+                        ? "Scoate din favorite"
+                        : "Adaugă la favorite"
+                    }
+                    className="absolute top-1 right-1 z-20 p-2 rounded-full bg-white/90 border border-gray-200 shadow hover:scale-105 active:scale-95 transition"
+                  >
+                    <Heart
+                      className="w-4 h-4"
+                      color={isFavorite(item.id) ? "#ef4444" : "#9ca3af"} // stroke
+                      fill={isFavorite(item.id) ? "#ef4444" : "none"} // fill
+                    />
+                  </button>
                   <div
                     className="relative w-full pt-[100%] overflow-hidden bg-white transition-all duration-300 cursor-pointer z-10"
                     onClick={() =>
@@ -216,6 +255,7 @@ export default function Models() {
                 </div>
               ))
             )}
+            <ScrollToTop threshold={600} />
             {/* Infinite Scroll Trigger 👇 */}
             {currentItems.length < sortedAccesorii.length && (
               <div

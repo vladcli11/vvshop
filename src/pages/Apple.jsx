@@ -14,6 +14,7 @@ import iphone14 from "../assets/iphone14.webp";
 import iphone12promax from "../assets/iphone12promax.webp";
 import iphone12pro from "../assets/iphone12pro.webp";
 import iphone12 from "../assets/iphone12.webp";
+import Breadcrumbs from "../components/BreadCrumbs";
 
 const modele = [
   {
@@ -57,6 +58,7 @@ export default function Apple() {
   return (
     <div className="px-2 sm:px-6 pb-8 bg-gradient-to-b from-bg-gray-50 to bg-gray-100 relative overflow-x-hidden">
       <div className="relative z-10">
+        <Breadcrumbs />
         <div className="grid w-full max-w-5xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model, idx) => (
             <Link

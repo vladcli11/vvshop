@@ -67,6 +67,8 @@ import A71 from "../assets/A71.webp";
 import A72 from "../assets/A72.webp";
 import A73 from "../assets/A73.webp";
 
+import Breadcrumbs from "../components/BreadCrumbs";
+
 // Adaugă badge-uri pentru generație/serie
 const modele = [
   {
@@ -227,6 +229,7 @@ export default function Samsung() {
   return (
     <div className=" px-2 sm:px-6 pb-8 bg-gradient-to-b from-bg-gray-50 to bg-gray-100 relative overflow-x-hidden">
       <div className="relative z-10">
+        <Breadcrumbs />
         <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model, idx) => (
             <Link

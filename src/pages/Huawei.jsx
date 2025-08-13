@@ -8,6 +8,7 @@ import P40Pro from "../assets/huaweip40pro.webp";
 import P40 from "../assets/huaweip40.webp";
 import P30Pro from "../assets/huaweip30pro.webp";
 import P30 from "../assets/huaweip30.webp";
+import Breadcrumbs from "../components/BreadCrumbs";
 
 const modele = [
   //{ nume: "Huawei P70 Ultra", modelSlug: "huawei-p70-ultra", imagine: P70Ultra },
@@ -29,6 +30,7 @@ export default function Huawei() {
   return (
     <div className="px-2 sm:px-6 pb-8 bg-gradient-to-b from-bg-gray-50 to bg-gray-100 relative overflow-x-hidden">
       <div className="relative z-10">
+        <Breadcrumbs />
         <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
           {modele.map((model, idx) => (
             <Link

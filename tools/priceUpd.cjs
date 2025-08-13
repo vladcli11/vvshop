@@ -47,7 +47,7 @@ function parsePrice(s) {
   return isNaN(n) ? 0 : n;
 }
 function calcPretFinal(pretDiamondCuTVA) {
-  const brut = (pretDiamondCuTVA + 7.8) * 1.025;
+  const brut = (pretDiamondCuTVA + 12.8) * 1.025;
   return Math.round(brut * 100) / 100;
 }
 async function updateDocPriceIfNeeded(docRef, newPrice, disponibilitate) {

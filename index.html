@@ -38,16 +38,7 @@
     <meta property="og:image" content="/og-image.jpg" />
     <meta property="og:url" content="https://vv-shop.ro" />
 
-    <script type="module">
-      import samsungLogo from "/src/assets/samsung.webp";
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "image";
-      link.href = samsungLogo;            // URL-ul cu hash, identic cu <img>
-      link.type = "image/webp";
-      link.fetchPriority = "high";
-      document.head.appendChild(link);
-    </script>
+    <link rel="preload" as="image" href="/assets/samsung.webp" type="image/webp" fetchpriority="high" />
   </head>
   <body>
     <div

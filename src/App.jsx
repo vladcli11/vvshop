@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 import Footer from "./components/Footer";
+import FavoritesProvider from "./context/FavoritesProvider";
 
 // Lazy imports
 const Home = lazy(() => import("./pages/Home"));
@@ -56,35 +57,40 @@ export default function App() {
             </div>
           }
         >
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/register" element={<AuthPage />} />
-            <Route path="/apple" element={<Apple />} />
-            <Route path="/samsung" element={<Samsung />} />
-            <Route path="/huawei" element={<Huawei />} />
-            <Route path="/apple/:slug" element={<Model />} />
-            <Route path="/samsung/:slug" element={<Model />} />
-            <Route path="/huawei/:slug" element={<Model />} />
-            <Route path="/cos" element={<Checkout />} />
-            <Route path="/cos/livrare" element={<Delivery />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/termeni" element={<Termeni />} />
-            <Route path="/confidentialitate" element={<Confidentialitate />} />
-            <Route path="/livrare-retur" element={<LivrareRetur />} />
-            <Route path="/anulare" element={<Anulare />} />
-            <Route path="/produs/:slug" element={<ProductPage />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route
-              path="/contul-meu"
-              element={
-                <PrivateRoute>
-                  <UserOrders />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
+          <FavoritesProvider>
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<Navigate to="/home" />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/register" element={<AuthPage />} />
+              <Route path="/apple" element={<Apple />} />
+              <Route path="/samsung" element={<Samsung />} />
+              <Route path="/huawei" element={<Huawei />} />
+              <Route path="/apple/:slug" element={<Model />} />
+              <Route path="/samsung/:slug" element={<Model />} />
+              <Route path="/huawei/:slug" element={<Model />} />
+              <Route path="/cos" element={<Checkout />} />
+              <Route path="/cos/livrare" element={<Delivery />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/termeni" element={<Termeni />} />
+              <Route
+                path="/confidentialitate"
+                element={<Confidentialitate />}
+              />
+              <Route path="/livrare-retur" element={<LivrareRetur />} />
+              <Route path="/anulare" element={<Anulare />} />
+              <Route path="/produs/:slug" element={<ProductPage />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route
+                path="/contul-meu"
+                element={
+                  <PrivateRoute>
+                    <UserOrders />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </FavoritesProvider>
         </Suspense>
       </main>
       <Footer />

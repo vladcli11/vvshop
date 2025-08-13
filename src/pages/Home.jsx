@@ -13,7 +13,7 @@ export default function Home() {
             { to: "/apple", name: "Apple", logo: appleLogo },
             { to: "/samsung", name: "Samsung", logo: samsungLogo },
             { to: "/huawei", name: "Huawei", logo: huaweiLogo },
-          ].map(({ to, name }) => (
+          ].map(({ to, name, logo }) => (
             <Link
               key={name}
               to={to}
@@ -21,12 +21,12 @@ export default function Home() {
             >
               <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center bg-white shadow-sm ring-1 ring-white/50">
                 <img
-                  src={samsungLogo}
-                  alt="Samsung"
+                  src={logo}
+                  alt={name}
                   width={90}
                   height={90}
-                  loading="eager"
-                  fetchPriority="high"
+                  loading={name === "Samsung" ? "eager" : "lazy"}
+                  fetchPriority={name === "Samsung" ? "high" : "auto"}
                   className="w-[90%] h-[90%] max-h-32 object-contain"
                 />
               </div>

@@ -73,15 +73,15 @@ export default function Delivery() {
       return;
     }
 
-    // ✅ Totalurile (la fel ca înainte)
+    //  Totalurile
     const totalProduse = cartItems.reduce(
       (s, i) => s + i.pret * (i.quantity || 1),
       0
     );
-    const costTransport = totalProduse >= 40 ? 0 : 15;
-    const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
+    const costTransport = totalProduse >= 50 ? 0 : 15;
+    const discountValue = (totalProduse * discount) / 100;
+    const totalFinal = totalProduse - discountValue + costTransport;
 
-    // ✅ Importuri lazy Firestore (la fel ca înainte)
     const { getFirestore, collection, addDoc, serverTimestamp } = await import(
       "firebase/firestore"
     );
@@ -166,9 +166,9 @@ export default function Delivery() {
     (s, i) => s + i.pret * (i.quantity || 1),
     0
   );
-
-  const costTransport = totalProduse >= 40 ? 0 : 15;
-  const totalFinal = (totalProduse + costTransport) * (1 - discount / 100);
+  const costTransport = totalProduse >= 50 ? 0 : 15;
+  const discountValue = (totalProduse * discount) / 100;
+  const totalFinal = totalProduse - discountValue + costTransport;
 
   return (
     <div className="px-2 sm:px-6 pb-6 bg-white">

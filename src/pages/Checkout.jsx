@@ -37,8 +37,24 @@ export default function Checkout() {
           <div className="text-center max-w-md mx-auto">
             {/* Iconiță animată */}
             <div className="mb-8 relative">
-              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-4xl">🛒</span>
+              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-shopping-cart-icon lucide-shopping-cart w-12 h-12 text-gray-900"
+                  aria-hidden="true"
+                >
+                  <circle cx="8" cy="21" r="1" />
+                  <circle cx="19" cy="21" r="1" />
+                  <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+                </svg>
               </div>
             </div>
 
@@ -57,7 +73,7 @@ export default function Checkout() {
             {/* Buton de navigare */}
             <button
               onClick={() => navigate("/")}
-              className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 transition-all duration-200 font-semibold text-lg"
+              className="bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-2xl shadow-lg font-semibold text-lg"
             >
               Începe cumpărăturile
             </button>

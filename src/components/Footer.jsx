@@ -1,3 +1,5 @@
+import anpcLogo from "../assets/anpc.webp";
+
 export default function Footer() {
   return (
     <footer className="bg-[#ffffff] text-[#1F2937]  mt-6 pb-4 pt-2 px-3 text-center text-sm">
@@ -56,6 +58,21 @@ export default function Footer() {
             className="underline underline-offset-4 hover:text-green-700"
           >
             Livrare & Retur
+          </a>
+        </div>
+        {/* Logo ANPC */}
+        <div className="flex justify-center pt-2">
+          <a
+            href="https://anpc.ro"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Autoritatea Națională pentru Protecția Consumatorilor"
+          >
+            <img
+              src={anpcLogo}
+              alt="ANPC"
+              className="h-12 w-auto hover:opacity-80 transition"
+            />
           </a>
         </div>
       </div>

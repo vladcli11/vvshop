@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState, useRef, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import useCart from "../context/useCart";
 import {
@@ -25,10 +25,8 @@ import { useNavigate } from "react-router-dom";
 export default function ProductPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
-  const [setShowNotif] = useState(false);
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const notifTimeout = useRef(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -51,11 +49,6 @@ export default function ProductPage() {
 
   const handleAddToCart = (product) => {
     addToCart(product);
-    setShowNotif(true);
-    if (notifTimeout.current) clearTimeout(notifTimeout.current);
-    notifTimeout.current = setTimeout(() => {
-      setShowNotif(false);
-    }, 2200);
   };
 
   if (!product) {
@@ -179,9 +172,9 @@ export default function ProductPage() {
                 <div className="mb-6 sm:mb-8">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-green-50 rounded-xl border border-green-100">
-                      <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                      <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-green-700" />
                       <span className="text-xs sm:text-sm text-green-700 font-medium">
-                        Livrare gratuită
+                        Livrare gratuită la comenzile de peste 50 de lei
                       </span>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-blue-50 rounded-xl border border-blue-100">
@@ -211,10 +204,13 @@ export default function ProductPage() {
                 {/* Buton adaugă în coș */}
                 <div className="mt-auto">
                   <button
-                    onClick={() => handleAddToCart(product)}
-                    className="w-full flex items-center justify-center gap-2 sm:gap-3 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl sm:rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 transition-all duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(product);
+                    }}
+                    className="flex items-center justify-center w-full gap-2 px-3 py-2 mt-1 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-orange-400 to-orange-500 rounded-md shadow-md hover:from-orange-500 hover:to-orange-600 transition-all"
                   >
-                    <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <ShoppingCart className="w-5 h-7" />
                     Adaugă în coș
                   </button>
                 </div>

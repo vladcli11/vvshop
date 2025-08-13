@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useState, lazy, Suspense, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import useCart from "../context/useCart";
+import useFavorites from "../context/useFavorites";
+const FavoritesDropdown = lazy(() => import("./FavoritesDropdown"));
 
 // Lazy load AccountDropdown
 const AccountDropdown = lazy(() => import("./AccountDropdown"));
@@ -11,6 +13,8 @@ export default function Header({ onAuthClick }) {
   const { currentUser } = useContext(AuthContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const isLoggedIn = !!currentUser;
+  const [showFav, setShowFav] = useState(false);
+  const { favorites } = useFavorites();
 
   const handleAccountClick = async () => {
     if (isLoggedIn) {
@@ -75,6 +79,40 @@ export default function Header({ onAuthClick }) {
               )}
             </Link>
           </div>
+          {/* Favorite */}
+          <div className="border-separate border-gray-100 rounded-full">
+            <button
+              onClick={() => setShowFav((v) => !v)}
+              className="relative bg-white text-gray-900 p-3 sm:p-4 rounded-full shadow-lg border-1 border-gray-200 transition-none flex"
+              aria-label="Favorite"
+              title="Favorite"
+            >
+              {/* SVG heart inline pentru zero overhead (ca la coș) */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill={favorites.length ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`lucide lucide-heart w-7 h-7 ${
+                  favorites.length ? "text-red-500" : "text-gray-900"
+                }`}
+              >
+                <path d="M19 14c-1.5 2-4.09 4-7 7-2.91-3-5.5-5-7-7a5 5 0 0 1 7-7 5 5 0 0 1 7 7" />
+              </svg>
+
+              {favorites.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-sm w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow">
+                  {favorites.length}
+                </span>
+              )}
+            </button>
+          </div>
+
           {/* Cont */}
           <div className="border-separate border-gray-100 rounded-full">
             <button
@@ -127,6 +165,12 @@ export default function Header({ onAuthClick }) {
       {isLoggedIn && showDropdown && (
         <Suspense fallback={<div className="..." />}>
           <AccountDropdown onClose={() => setShowDropdown(false)} />
+        </Suspense>
+      )}
+
+      {showFav && (
+        <Suspense fallback={<div className="..." />}>
+          <FavoritesDropdown onClose={() => setShowFav(false)} />
         </Suspense>
       )}
     </header>

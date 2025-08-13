@@ -16,14 +16,14 @@ import ScrollToTop from "../components/ScrollToTop";
 import Breadcrumbs from "../components/BreadCrumbs";
 import { Heart } from "lucide-react";
 import useFavorites from "../context/useFavorites";
+import Toast from "../components/Toast";
 
 export default function Models() {
   const [accesorii, setAccesorii] = useState([]);
   const [sortOrder, setSortOrder] = useState("default");
   const [tipProdus, setTipProdus] = useState("");
   const { addToCart } = useCart();
-  const [setShowNotif] = useState(false);
-  const notifTimeout = useRef(null);
+  const [toast, setToast] = useState({ open: false, msg: "" });
   const sentinelRef = useRef(null); // 🆕 pentru IntersectionObserver
   const { slug } = useParams();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -106,11 +106,11 @@ export default function Models() {
 
   const handleAddToCart = (item) => {
     addToCart(item);
-    setShowNotif(true);
-    if (notifTimeout.current) clearTimeout(notifTimeout.current);
-    notifTimeout.current = setTimeout(() => {
-      setShowNotif(false);
-    }, 2200);
+    const name = item?.nume || "Produs";
+    setToast({
+      open: true,
+      msg: name.length > 48 ? name.slice(0, 48) + "…" : name,
+    });
   };
 
   return (
@@ -270,6 +270,13 @@ export default function Models() {
           </div>
         </main>
       </div>
+      <Toast
+        show={toast.open}
+        onClose={() => setToast({ open: false, msg: "" })}
+        title="Adăugat în coș"
+        message={toast.msg}
+        duration={2000}
+      />
     </div>
   );
 }

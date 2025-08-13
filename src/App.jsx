@@ -43,21 +43,21 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header
-        onAuthClick={() => {
-          setAuthMode("login");
-          setShowAuthModal(true);
-        }}
-      />
-      <main className="flex-1">
-        <Suspense
-          fallback={
-            <div className="p-4 text-center text-gray-500">
-              Se încarcă pagina...
-            </div>
-          }
-        >
-          <FavoritesProvider>
+      <FavoritesProvider>
+        <Header
+          onAuthClick={() => {
+            setAuthMode("login");
+            setShowAuthModal(true);
+          }}
+        />
+        <main className="flex-1">
+          <Suspense
+            fallback={
+              <div className="p-4 text-center text-gray-500">
+                Se încarcă pagina...
+              </div>
+            }
+          >
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<Home />} />
@@ -90,9 +90,10 @@ export default function App() {
                 }
               />
             </Routes>
-          </FavoritesProvider>
-        </Suspense>
-      </main>
+          </Suspense>
+        </main>
+      </FavoritesProvider>
+
       <Footer />
       {showAuthModal && (
         <Suspense fallback={null}>

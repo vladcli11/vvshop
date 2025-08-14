@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { signOut, getAuth } from "firebase/auth";
 import { createPortal } from "react-dom";
 import { User, LogOut } from "lucide-react";
 
@@ -25,15 +24,12 @@ export default function AccountDropdown({ onClose }) {
           <div className="bg-gradient-to-tr from-[#ff9800] to-[#ff5e62] p-4 rounded-full shadow-lg mb-2">
             <User className="w-10 h-10 text-white" />
           </div>
-          <span className="text-lg font-bold text-gray-900 tracking-wide">
-            Contul meu
-          </span>
         </div>
 
         <Link
           to="/contul-meu"
           onClick={onClose}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-black via-gray-800 to-gray-900 hover:from-[#ff9800] hover:to-[#ff5e62] transition text-base shadow"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-black via-gray-800 to-gray-900"
         >
           <User className="w-5 h-5" /> Vezi profilul
         </Link>
@@ -41,13 +37,17 @@ export default function AccountDropdown({ onClose }) {
         <button
           onClick={async () => {
             try {
+              const { signOut, getAuth } = await import("firebase/auth");
               await signOut(getAuth());
-              onClose();
             } catch (err) {
               console.error("Eroare la logout:", err);
+            } finally {
+              onClose?.();
+              // hard redirect: curăță orice state care ține modalul deschis
+              window.location.replace("/");
             }
           }}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#ff5e62] to-[#ff9800] hover:from-black hover:to-gray-900 transition text-base shadow"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#ff5e62] to-[#ff9800]"
         >
           <LogOut className="w-5 h-5" /> Logout
         </button>

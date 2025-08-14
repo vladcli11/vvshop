@@ -2,14 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState, lazy, Suspense } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import useCart from "../context/useCart";
-import {
-  ShoppingCart,
-  Star,
-  Shield,
-  Truck,
-  ArrowLeft,
-  Hash,
-} from "lucide-react";
+import { ShoppingCart, Shield, Truck, ArrowLeft, Hash } from "lucide-react";
 const Swiper = lazy(() =>
   import("swiper/react").then((m) => ({ default: m.Swiper }))
 );
@@ -73,17 +66,17 @@ export default function ProductPage() {
         <div className="max-w-3xl mx-auto pt-4 mb-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors duration-200 font-medium text-sm sm:text-base"
+            className="flex items-center gap-2 text-gray-700 font-medium text-sm sm:text-base"
           >
             <ArrowLeft className="w-5 h-5" />
             Înapoi
           </button>
         </div>
 
-        <div className="flex flex-col max-w-3xl gap-6 mx-auto lg:flex-row lg:max-w-6xl">
+        <div className="flex flex-col max-w-3xl gap-4 mx-auto lg:flex-row lg:max-w-6xl">
           {/* Galerie Swiper */}
           <div className="w-full lg:w-1/2">
-            <div className="bg-white rounded-2xl shadow-md p-3 sm:p-6 border border-green-100">
+            <div className="bg-white rounded-sm shadow-sm p-3 sm:p-6">
               <Suspense
                 fallback={
                   <div className="h-[220px] sm:h-[400px] flex items-center justify-center text-gray-500">
@@ -131,10 +124,10 @@ export default function ProductPage() {
 
           {/* Detalii produs */}
           <div className="w-full lg:w-1/2">
-            <div className="bg-white rounded-2xl shadow-md p-4 sm:p-8 border border-green-100 h-full">
+            <div className="bg-white rounded-sm shadow-md p-4 sm:p-8 h-full">
               <div className="flex flex-col h-full">
                 {/* Titlu produs */}
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-4 leading-tight">
+                <h1 className="text-lg sm:text-xl md:text-xl font-bold text-gray-800 mb-2 sm:mb-4 leading-tight">
                   {product.nume}
                 </h1>
 
@@ -221,9 +214,9 @@ export default function ProductPage() {
 
         {/* Descriere lungă */}
         <div className="max-w-3xl mx-auto mt-6 sm:mt-10">
-          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-md p-4 sm:p-8 border border-green-100">
+          <div className="bg-white rounded-sm shadow-md p-4 sm:p-8">
             <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-xs sm:text-sm">
                   i
                 </span>

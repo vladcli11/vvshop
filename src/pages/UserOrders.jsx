@@ -314,8 +314,9 @@ export default function UserOrders() {
         </div>
 
         <p className="text-center text-sm text-gray-500">
-          Ai {orders.length} comandă{orders.length === 1 ? "" : "ri"}{" "}
-          înregistrat{orders.length === 1 ? "ă" : "e"}
+          {orders.length === 1
+            ? "Ai o comandă înregistrată"
+            : `Ai ${orders.length} comenzi înregistrate`}
         </p>
       </div>
 

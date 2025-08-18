@@ -38,25 +38,19 @@
     <meta property="og:image" content="/og-image.jpg" />
     <meta property="og:url" content="https://vv-shop.ro" />
 
-    <link rel="preload" as="image" href="/assets/samsung.webp" type="image/webp" fetchpriority="high" />
+    <script type="module">
+      import samsungLogo from '/src/assets/samsung.webp';
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = samsungLogo;
+      link.type = 'image/webp';
+      link.fetchPriority = 'high';
+      document.head.appendChild(link);
+    </script>
   </head>
   <body>
-    <div
-      id="preload-logo"
-      aria-hidden="true"
-      style="visibility: hidden; height: 0"
-    >
-      <img
-        src="/img/logo.webp"
-        alt="VVShop"
-        width="180"
-        height="96"
-        style="height: 80px; width: auto; object-fit: contain"
-        fetchpriority="high"
-      />
-    </div>
     <div id="root"></div>
-    <script src="https://cdn.sameday.ro/locker-plugin/lockerpluginsdk.js"></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

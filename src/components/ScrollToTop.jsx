@@ -1,32 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUp } from "lucide-react";
 
-function ScrollToTop({ threshold = 600 }) {
+export default function ScrollToTop({ threshold = 600 }) {
   const [visible, setVisible] = useState(false);
+  const [hint, setHint] = useState(false);
+  const timerRef = useRef(null);
+  const prevVisible = useRef(false);
 
   useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const y = window.scrollY || document.documentElement.scrollTop || 0;
-          setVisible(y > threshold);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
+    const onScroll = () => setVisible(window.scrollY > threshold);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, [threshold]);
 
-  const scrollTop = () => {
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
-  };
+  // One-time subtle ping when it becomes visible
+  useEffect(() => {
+    if (visible && !prevVisible.current) {
+      setHint(true);
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setHint(false), 1000);
+    }
+    prevVisible.current = visible;
+    return () => clearTimeout(timerRef.current);
+  }, [visible]);
+
+  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <button
@@ -34,33 +33,34 @@ function ScrollToTop({ threshold = 600 }) {
       onClick={scrollTop}
       aria-label="Mergi sus"
       title="Mergi sus"
-      className={`fixed bottom-4 right-4 z-[9999] h-12 w-12 rounded-full 
+      className={`fixed z-[9999] h-12 w-12 rounded-full
+                  bottom-5 right-5
                   flex items-center justify-center
-                  bg-gray-500/10 border border-black/10 backdrop-blur-sm
-                  text-gray-700 shadow-lg hover:bg-gray-500/20 hover:shadow-xl
-                  focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400
-                  transition-opacity duration-200 active:scale-95
+                  bg-white/95 border-2 border-orange-500 shadow-xl
+                  backdrop-blur-md
+                  transition-all duration-200 ease-out
+                  hover:bg-orange-500 hover:border-orange-600
+                  group
                   ${
                     visible
-                      ? "opacity-100 pointer-events-auto"
-                      : "opacity-0 pointer-events-none"
+                      ? "opacity-100 translate-y-0 pointer-events-auto"
+                      : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
+      style={{
+        bottom: `max(20px, env(safe-area-inset-bottom))`,
+        boxShadow: "0 8px 28px rgba(255, 122, 0, 0.18)",
+      }}
     >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M5 15l7-7 7 7" />
-      </svg>
+      {hint && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 rounded-full bg-orange-400/25 animate-ping"
+        />
+      )}
+      <ArrowUp
+        className="w-6 h-7 text-orange-500 transition-colors duration-200 group-hover:text-white"
+        strokeWidth={2.5}
+      />
     </button>
   );
 }
-
-export default ScrollToTop;

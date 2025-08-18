@@ -28,9 +28,6 @@ export default function FavoritesDropdown({ onClose }) {
 
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-900">Favorite</h3>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200">
-            {favorites.length}
-          </span>
         </div>
 
         {favorites.length === 0 ? (

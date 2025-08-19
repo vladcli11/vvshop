@@ -1,37 +1,85 @@
 // src/components/FavoritesDropdown.jsx
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import useFavorites from "../context/useFavorites";
 import useCart from "../context/useCart";
 import { ShoppingCart, Trash2, X, HeartOff } from "lucide-react";
 
+// Hook-uri sigure (fallback dacă providerul lipsește)
+function useFavoritesSafe() {
+  try {
+    return useFavorites();
+  } catch {
+    return {
+      favorites: [],
+      toggleFavorite: () => {},
+      clearFavorites: () => {},
+    };
+  }
+}
+function useCartSafe() {
+  try {
+    return useCart();
+  } catch {
+    return { addToCart: () => {} };
+  }
+}
+
 export default function FavoritesDropdown({ onClose }) {
-  const { favorites, toggleFavorite, clearFavorites } = useFavorites();
-  const { addToCart } = useCart();
+  const favCtx = useFavoritesSafe();
+  const favorites = Array.isArray(favCtx.favorites) ? favCtx.favorites : [];
+  const toggleFavorite = favCtx.toggleFavorite ?? (() => {});
+  const clearFavorites = favCtx.clearFavorites ?? (() => {});
+  const { addToCart } = useCartSafe();
+
+  const [processingId, setProcessingId] = useState(null);
+  const dialogRef = useRef(null);
+  const prevActiveRef = useRef(null);
+
+  // Body scroll lock + focus management + Escape
+  useEffect(() => {
+    prevActiveRef.current = document.activeElement;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // focus pe dialog
+    dialogRef.current?.focus?.();
+
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+      // restaurează focusul anterior
+      if (prevActiveRef.current && prevActiveRef.current.focus) {
+        prevActiveRef.current.focus();
+      }
+    };
+  }, [onClose]);
 
   const handleAddToCart = async (prod) => {
-    // adaugă în coș
-    addToCart(prod);
-    // elimină din favorite (cu fallback dacă nu e async)
     try {
-      await toggleFavorite({ id: prod.id });
-    } catch {
-      toggleFavorite({ id: prod.id });
+      setProcessingId(prod.id);
+      addToCart(prod);
+      await Promise.resolve(toggleFavorite({ id: prod.id }));
+    } finally {
+      setProcessingId(null);
     }
   };
 
   // curăță denumiri generice din titlu
   const prettifyName = (name = "") => {
     let n = name
-      // elimină prefixe comune
       .replace(
         /^(\s*)(Hus[ăa]|Carcas[ăa]|Folie(?: de)? protec(?:ție|tie)|Geam(?: de)? protec(?:ție|tie))\s*[-:]?\s*/i,
         ""
       )
-      // spații multiple
       .replace(/\s{2,}/g, " ")
       .trim();
-    // dacă devine prea scurt, revino la original
     return n.length >= 8 ? n : name;
   };
 
@@ -41,7 +89,12 @@ export default function FavoritesDropdown({ onClose }) {
       onClick={onClose}
     >
       <div
-        className="relative bg-white/90 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl w-11/12 max-w-sm lg:max-w-lg p-5 sm:p-6 animate-fade-in-up"
+        ref={dialogRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Favorite"
+        className="relative bg-white/90 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl w-11/12 max-w-sm lg:max-w-lg p-5 sm:p-6 animate-fade-in-up outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -75,6 +128,9 @@ export default function FavoritesDropdown({ onClose }) {
                     <img
                       src={p.imagine}
                       alt={p.nume}
+                      width={128}
+                      height={128}
+                      decoding="async"
                       className="w-full h-full object-contain p-1"
                     />
                   </Link>
@@ -105,17 +161,26 @@ export default function FavoritesDropdown({ onClose }) {
                 <div className="mt-2 flex items-center justify-between gap-2">
                   <button
                     onClick={() => handleAddToCart(p)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-green-600 text-white text-[13px] sm:text-sm font-semibold shadow-sm hover:bg-green-700 active:scale-95 transition"
+                    disabled={processingId === p.id}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-white text-[13px] sm:text-sm font-semibold shadow-sm active:scale-95 transition
+                      ${
+                        processingId === p.id
+                          ? "bg-green-600/60 cursor-not-allowed"
+                          : "bg-green-600 hover:bg-green-700"
+                      }`}
+                    aria-disabled={processingId === p.id}
+                    aria-label={`Adaugă ${p.nume} în coș`}
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Adaugă în coș
                   </button>
                   <button
                     onClick={() => toggleFavorite({ id: p.id })}
-                    className="inline-flex items-center gap-1 text-lg sm:text-sm text-red-600 hover:text-red-700 transition"
+                    className="inline-flex items-center gap-1 text-xs sm:text-sm text-red-600 hover:text-red-700 transition"
                     title="Șterge din favorite"
+                    aria-label={`Elimină ${p.nume} din favorite`}
                   >
-                    <Trash2 className="w-5 h-5" />
+                    <Trash2 className="w-4 h-4" />
                     Elimină
                   </button>
                 </div>

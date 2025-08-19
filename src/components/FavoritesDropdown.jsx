@@ -9,13 +9,39 @@ export default function FavoritesDropdown({ onClose }) {
   const { favorites, toggleFavorite, clearFavorites } = useFavorites();
   const { addToCart } = useCart();
 
+  const handleAddToCart = async (prod) => {
+    // adaugă în coș
+    addToCart(prod);
+    // elimină din favorite (cu fallback dacă nu e async)
+    try {
+      await toggleFavorite({ id: prod.id });
+    } catch {
+      toggleFavorite({ id: prod.id });
+    }
+  };
+
+  // curăță denumiri generice din titlu
+  const prettifyName = (name = "") => {
+    let n = name
+      // elimină prefixe comune
+      .replace(
+        /^(\s*)(Hus[ăa]|Carcas[ăa]|Folie(?: de)? protec(?:ție|tie)|Geam(?: de)? protec(?:ție|tie))\s*[-:]?\s*/i,
+        ""
+      )
+      // spații multiple
+      .replace(/\s{2,}/g, " ")
+      .trim();
+    // dacă devine prea scurt, revino la original
+    return n.length >= 8 ? n : name;
+  };
+
   return createPortal(
     <div
       className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="relative bg-white/90 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl w-11/12 max-w-sm p-5 sm:p-6 animate-fade-in-up"
+        className="relative bg-white/90 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl w-11/12 max-w-sm lg:max-w-lg p-5 sm:p-6 animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -38,47 +64,58 @@ export default function FavoritesDropdown({ onClose }) {
         ) : (
           <ul className="divide-y divide-gray-200 max-h-[50vh] overflow-y-auto pr-1">
             {favorites.map((p) => (
-              <li key={p.id} className="py-3 flex items-center gap-3">
-                <Link
-                  to={`/produs/${p.slug}`}
-                  className="w-16 h-16 flex-shrink-0 border rounded-lg bg-gray-50 overflow-hidden"
-                  onClick={onClose}
-                >
-                  <img
-                    src={p.imagine}
-                    alt={p.nume}
-                    className="w-full h-full object-contain p-1"
-                  />
-                </Link>
-
-                <div className="min-w-0 flex-1">
+              <li key={p.id} className="py-3">
+                {/* Rând 1: imagine + titlu + preț */}
+                <div className="flex items-center gap-4">
                   <Link
                     to={`/produs/${p.slug}`}
+                    className="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 border rounded-sm bg-white overflow-hidden"
                     onClick={onClose}
-                    className="block font-semibold text-gray-900 hover:underline truncate"
-                    title={p.nume}
                   >
-                    {p.nume}
+                    <img
+                      src={p.imagine}
+                      alt={p.nume}
+                      className="w-full h-full object-contain p-1"
+                    />
                   </Link>
-                  <div className="text-green-700 font-bold text-sm">
-                    {p.pret.toFixed(2)} lei
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      to={`/produs/${p.slug}`}
+                      onClick={onClose}
+                      className="block font-semibold text-gray-900 hover:underline"
+                      title={p.nume}
+                    >
+                      <span
+                        style={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {prettifyName(p.nume)}
+                      </span>
+                    </Link>
+                    <div className="text-green-700 font-bold text-sm">
+                      {p.pret.toFixed(2)} lei
+                    </div>
                   </div>
                 </div>
-
-                <div className="flex flex-col gap-1 items-end">
+                {/* Rând 2: butoane sub titlu/poză */}
+                <div className="mt-2 flex items-center justify-between gap-2">
                   <button
-                    onClick={() => addToCart(p)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-600 text-white text-[13px] sm:text-sm font-semibold shadow-sm hover:bg-green-700 active:scale-95 transition"
+                    onClick={() => handleAddToCart(p)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-green-600 text-white text-[13px] sm:text-sm font-semibold shadow-sm hover:bg-green-700 active:scale-95 transition"
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Adaugă în coș
                   </button>
                   <button
                     onClick={() => toggleFavorite({ id: p.id })}
-                    className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 transition"
+                    className="inline-flex items-center gap-1 text-lg sm:text-sm text-red-600 hover:text-red-700 transition"
                     title="Șterge din favorite"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-5 h-5" />
                     Elimină
                   </button>
                 </div>

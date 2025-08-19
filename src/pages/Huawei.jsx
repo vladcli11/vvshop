@@ -1,29 +1,55 @@
 import { Link } from "react-router-dom";
-//import P70Ultra from "../assets/P70-ultra.webp";
-//import P70Pro from "../assets/P70-pro.webp";
-//import P70 from "../assets/P70.webp";
-import P60Pro from "../assets/huaweip60pro.webp";
-import P50ProPocket from "../assets/huaweip50pocketedition.webp";
-import P40Pro from "../assets/huaweip40pro.webp";
-import P40 from "../assets/huaweip40.webp";
-import P30Pro from "../assets/huaweip30pro.webp";
-import P30 from "../assets/huaweip30.webp";
+import Pura70Ultra from "../assets/huawei-pura-70-ultra.webp";
+import Pura70Pro from "../assets/huawei-pura-70-pro.webp";
+import Pura70 from "../assets/huawei-pura-70.webp";
+import MateX6 from "../assets/huawei-mate-x6.webp";
+import Mate50Pro from "../assets/huawei-mate-50-pro.webp";
+import P60Pro from "../assets/huawei-p60-pro.webp";
+import P50Pocket from "../assets/huawei-p50-pocket.webp";
+import P40Pro from "../assets/huawei-p40-pro.webp";
+import P40 from "../assets/huawei-p40.webp";
+import P30Pro from "../assets/huawei-p30-pro.webp";
+import P30 from "../assets/huawei-p30.webp";
+import P30Lite from "../assets/huawei-p30-lite.webp";
 import Breadcrumbs from "../components/BreadCrumbs";
 
 const modele = [
-  //{ nume: "Huawei P70 Ultra", modelSlug: "huawei-p70-ultra", imagine: P70Ultra },
-  //{ nume: "Huawei P70 Pro", modelSlug: "huawei-p70-pro", imagine: P70Pro },
-  //{ nume: "Huawei P70", modelSlug: "huawei-p70", imagine: P70 },
+  {
+    nume: "Huawei Pura 70 Ultra",
+    modelSlug: "huawei-pura-70-ultra",
+    imagine: Pura70Ultra,
+  },
+  {
+    nume: "Huawei Pura 70 Pro",
+    modelSlug: "huawei-pura-70-pro",
+    imagine: Pura70Pro,
+  },
+  {
+    nume: "Huawei Pura 70",
+    modelSlug: "huawei-pura-70",
+    imagine: Pura70,
+  },
+  {
+    nume: "Huawei Mate X6",
+    modelSlug: "huawei-mate-x6",
+    imagine: MateX6,
+  },
+  {
+    nume: "Huawei Mate 50 Pro",
+    modelSlug: "huawei-mate-50-pro",
+    imagine: Mate50Pro,
+  },
   { nume: "Huawei P60 Pro", modelSlug: "huawei-p60-pro", imagine: P60Pro },
   {
-    nume: "Huawei P50 Pro Pocket",
-    modelSlug: "huawei-p50-pro-pocket",
-    imagine: P50ProPocket,
+    nume: "Huawei P50 Pocket",
+    modelSlug: "huawei-p50-pocket",
+    imagine: P50Pocket,
   },
   { nume: "Huawei P40 Pro", modelSlug: "huawei-p40-pro", imagine: P40Pro },
   { nume: "Huawei P40", modelSlug: "huawei-p40", imagine: P40 },
   { nume: "Huawei P30 Pro", modelSlug: "huawei-p30-pro", imagine: P30Pro },
   { nume: "Huawei P30", modelSlug: "huawei-p30", imagine: P30 },
+  { nume: "Huawei P30 Lite", modelSlug: "huawei-p30-lite", imagine: P30Lite },
 ];
 
 export default function Huawei() {
@@ -31,7 +57,7 @@ export default function Huawei() {
     <div className="px-2 sm:px-6 pb-8 bg-gradient-to-b from-bg-gray-50 to bg-gray-100 relative overflow-x-hidden">
       <div className="relative z-10">
         <Breadcrumbs />
-        <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center mt-4">
+        <div className="grid w-full max-w-6xl grid-cols-2 gap-3 mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
           {modele.map((model, idx) => (
             <Link
               key={model.modelSlug}

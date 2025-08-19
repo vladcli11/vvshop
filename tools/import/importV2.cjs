@@ -183,7 +183,7 @@ async function downloadAndConvertImage(imageUrl, outputFilePath) {
 
     // chiar dacă Content-Type e greșit, încercăm să decodăm cu sharp
     await sharp(buffer)
-      .resize(300, 300, { fit: "cover" })
+      .resize(500, 500, { fit: "cover" })
       .toFormat("webp")
       .toFile(outputFilePath);
 

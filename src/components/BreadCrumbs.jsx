@@ -34,7 +34,7 @@ export default function Breadcrumbs({ className = "" }) {
   return (
     <nav
       aria-label="breadcrumb"
-      className={`w-full border-b border-gray-100/60 bg-white/30 backdrop-blur-sm ${className}`}
+      className={`w-full border-b border-gray-100/60 bg-gray-100 backdrop-blur-sm ${className}`}
     >
       <ol
         className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-1 text-[13px] sm:text-sm text-gray-500

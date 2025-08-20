@@ -117,8 +117,18 @@ export default function SelectEasyBoxMap({
               .toLowerCase()
               .replace(/\b\w/g, (l) => l.toUpperCase())
           : "";
-      const city = normalize(localitate) || "Sector 1";
-      const county = normalize(judet) || "Bucuresti";
+
+      const isSector = (v) => /^sector\s*\d+$/i.test((v || "").trim());
+      let city = normalize(localitate);
+      let county = normalize(judet);
+      // fallback-uri sigure
+      if (!county) county = "Bucuresti";
+      if (!city || isSector(city)) {
+        // pentru Bucuresti, centrează pe County dacă localitatea e Sector X
+        city = county === "Bucuresti" ? "Bucuresti" : county;
+      }
+      const initialCenter =
+        !localitate || isSector(localitate) ? "County" : "City";
 
       LockerPlugin.init({
         clientId,
@@ -129,7 +139,7 @@ export default function SelectEasyBoxMap({
         county,
         theme: "light",
         filters: [{ showLockers: true }],
-        initialMapCenter: "City",
+        initialMapCenter: initialCenter,
       });
 
       const plugin = LockerPlugin.getInstance?.() || LockerPlugin;

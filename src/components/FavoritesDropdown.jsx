@@ -85,7 +85,7 @@ export default function FavoritesDropdown({ onClose }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 animate-fade-in"
+      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/40 animate-fade-in"
       onClick={onClose}
     >
       <div
@@ -94,7 +94,7 @@ export default function FavoritesDropdown({ onClose }) {
         role="dialog"
         aria-modal="true"
         aria-label="Favorite"
-        className="relative bg-white/90 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl w-11/12 max-w-sm lg:max-w-lg p-5 sm:p-6 animate-fade-in-up outline-none"
+        className="relative bg-white border border-gray-200 rounded-3xl shadow-2xl w-11/12 max-w-sm lg:max-w-lg p-5 sm:p-6 animate-fade-in-up outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -105,8 +105,8 @@ export default function FavoritesDropdown({ onClose }) {
           <X className="w-4 h-4" />
         </button>
 
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-900">Favorite</h3>
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="text-lg font-semibold text-gray-900">Favorite</h2>
         </div>
 
         {favorites.length === 0 ? (
@@ -122,7 +122,7 @@ export default function FavoritesDropdown({ onClose }) {
                 <div className="flex items-center gap-4">
                   <Link
                     to={`/produs/${p.slug}`}
-                    className="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 border rounded-sm bg-white overflow-hidden"
+                    className="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 rounded-sm bg-white overflow-hidden"
                     onClick={onClose}
                   >
                     <img
@@ -144,7 +144,7 @@ export default function FavoritesDropdown({ onClose }) {
                       <span
                         style={{
                           display: "-webkit-box",
-                          WebkitLineClamp: 2,
+                          WebkitLineClamp: 3,
                           WebkitBoxOrient: "vertical",
                           overflow: "hidden",
                         }}
@@ -152,7 +152,7 @@ export default function FavoritesDropdown({ onClose }) {
                         {prettifyName(p.nume)}
                       </span>
                     </Link>
-                    <div className="text-green-700 font-bold text-sm">
+                    <div className="text-emerald-600 font-bold text-base">
                       {p.pret.toFixed(2)} lei
                     </div>
                   </div>
@@ -165,8 +165,8 @@ export default function FavoritesDropdown({ onClose }) {
                     className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-white text-[13px] sm:text-sm font-semibold shadow-sm active:scale-95 transition
                       ${
                         processingId === p.id
-                          ? "bg-green-600/60 cursor-not-allowed"
-                          : "bg-green-600 hover:bg-green-700"
+                          ? "bg-gradient-to-r from-orange-400/70 to-orange-500/70 cursor-not-allowed"
+                          : "bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600"
                       }`}
                     aria-disabled={processingId === p.id}
                     aria-label={`Adaugă ${p.nume} în coș`}
@@ -176,12 +176,11 @@ export default function FavoritesDropdown({ onClose }) {
                   </button>
                   <button
                     onClick={() => toggleFavorite({ id: p.id })}
-                    className="inline-flex items-center gap-1 text-xs sm:text-sm text-red-600 hover:text-red-700 transition"
+                    className="inline-flex items-center gap-1 text-sm sm:text-sm text-gray-700 "
                     title="Șterge din favorite"
                     aria-label={`Elimină ${p.nume} din favorite`}
                   >
-                    <Trash2 className="w-4 h-4" />
-                    Elimină
+                    <Trash2 className="w-7 h-7" />
                   </button>
                 </div>
               </li>
@@ -200,7 +199,7 @@ export default function FavoritesDropdown({ onClose }) {
             <Link
               to="/cos"
               onClick={onClose}
-              className="px-3.5 py-2.5 rounded-lg bg-gradient-to-r from-orange-400 to-orange-500 text-white font-semibold text-sm shadow-sm hover:from-orange-500 hover:to-orange-600 active:scale-95 transition"
+              className="px-3.5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold text-sm shadow-sm"
             >
               Mergi la coș
             </Link>

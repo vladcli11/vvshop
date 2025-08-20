@@ -1,6 +1,19 @@
 const admin = require("firebase-admin");
 const csv = require("csv-parser");
-const fetch = require("node-fetch"); // v2.x pe CommonJS
+
+// Fetch compat: folosește global fetch (Node 18+) sau node-fetch (v2/v3)
+const fetch = global.fetch
+  ? global.fetch.bind(global)
+  : (() => {
+      try {
+        const mod = require("node-fetch");
+        return mod.default || mod; // suport v2/v3
+      } catch {
+        // fallback ESM dinamic
+        return (...args) =>
+          import("node-fetch").then(({ default: f }) => f(...args));
+      }
+    })();
 const fs = require("fs");
 const path = require("path");
 const { Readable } = require("stream");
@@ -90,13 +103,17 @@ async function fetchCSVWithRetry(url, tries = 3, timeoutMs = 15000) {
           "Accept-Language": "ro,en;q=0.9",
           Referer: "https://www.gsmnet.ro/",
         },
+        redirect: "follow",
       });
       clearTimeout(to);
       console.log(
         `HTTP ${res.status} | ${res.headers.get("content-type") || "-"}`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const buf = await res.buffer();
+      const buf =
+        typeof res.buffer === "function"
+          ? await res.buffer()
+          : Buffer.from(await res.arrayBuffer());
       // protecție: unele CDN trimit HTML mic când resping accesul
       if (buf.length < 1024 && String(buf).trim().startsWith("<")) {
         throw new Error("Primim HTML în loc de CSV (probabil anti-hotlink)");

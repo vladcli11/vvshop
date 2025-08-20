@@ -183,7 +183,7 @@ export default function Delivery() {
             placeholder="Nume"
             value={form.nume}
             onChange={handleChange}
-            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-gray-400 outline-none"
           />
           <input
             type="text"
@@ -191,7 +191,7 @@ export default function Delivery() {
             placeholder="Prenume"
             value={form.prenume}
             onChange={handleChange}
-            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-gray-400 outline-none"
           />
           <input
             type="text"
@@ -199,7 +199,7 @@ export default function Delivery() {
             placeholder="Adresă"
             value={form.adresa}
             onChange={handleChange}
-            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none col-span-1 sm:col-span-2"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-gray-400 outline-none col-span-1 sm:col-span-2"
           />
           <input
             type="text"
@@ -207,7 +207,7 @@ export default function Delivery() {
             placeholder="Județ"
             value={form.judet}
             onChange={handleChange}
-            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-gray-400 outline-none"
           />
           <input
             type="text"
@@ -215,7 +215,7 @@ export default function Delivery() {
             placeholder="Localitate"
             value={form.localitate}
             onChange={handleChange}
-            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-gray-400 outline-none"
           />
           <input
             type="tel"
@@ -223,7 +223,7 @@ export default function Delivery() {
             placeholder="Telefon"
             value={form.telefon}
             onChange={handleChange}
-            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-gray-400 outline-none"
           />
           <input
             type="email"
@@ -231,7 +231,7 @@ export default function Delivery() {
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 outline-none"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-gray-400 outline-none"
           />
         </div>
 
@@ -242,7 +242,7 @@ export default function Delivery() {
             placeholder="Cod promoțional"
             value={form.codPromo}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-400 outline-none"
           />
           <button
             type="button"
@@ -312,13 +312,23 @@ export default function Delivery() {
               </div>
             }
           >
-            <SelectEasyBoxMap
-              clientId={import.meta.env.VITE_SAMEDAY_CLIENT_ID}
-              judet={form.judet}
-              localitate={form.localitate}
-              locker={form.locker}
-              setLocker={(locker) => setForm((prev) => ({ ...prev, locker }))}
-            />
+            <div
+              className="easybox-scope mt-2"
+              onClick={(e) => {
+                const btn = e.target.closest("button");
+                if (!btn) return;
+                const t = (btn.getAttribute("type") || "").toLowerCase();
+                if (!t || t === "submit") e.preventDefault(); // oprește submit-ul formularului
+              }}
+            >
+              <SelectEasyBoxMap
+                clientId={import.meta.env.VITE_SAMEDAY_CLIENT_ID}
+                judet={form.judet}
+                localitate={form.localitate}
+                locker={form.locker}
+                setLocker={(locker) => setForm((prev) => ({ ...prev, locker }))}
+              />
+            </div>
           </Suspense>
         )}
         {form.locker && (
@@ -374,7 +384,7 @@ export default function Delivery() {
 
         <button
           type="submit"
-          className="py-3 text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl font-semibold text-lg"
+          className="py-3 text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-sm font-bold text-lg"
         >
           Trimite comanda
         </button>

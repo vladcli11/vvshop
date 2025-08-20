@@ -89,7 +89,7 @@ export default function Checkout() {
   return (
     <div className="mt-5 bg-white px-2 sm:px-6 pb-6">
       <div className="flex justify-center">
-        <div className="w-full max-w-full sm:max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-sm p-3 sm:p-4">
+        <div className="w-full max-w-full sm:max-w-2xl bg-white border border-gray-200 rounded-sm p-3 sm:p-4">
           <ul className="divide-y divide-gray-100">
             {cartItems.map((item, index) => (
               <li key={index} className="flex items-center gap-2 sm:gap-6 py-3">
@@ -101,18 +101,27 @@ export default function Checkout() {
                         : item.imagine
                     }
                     alt={item.nume}
-                    className="w-20 h-20 sm:w-28 sm:h-28 object-contain rounded-lg bg-gray-50 border"
+                    className="w-28 h-28 sm:w-32 sm:h-32 object-contain bg-white"
                   />
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm sm:text-lg text-gray-900 truncate">
-                    {item.nume}
+                  <p className="font-semibold text-sm sm:text-lg text-gray-900">
+                    <span
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {item.nume}
+                    </span>
                   </p>
-                  <p className="text-green-600 font-bold text-base sm:text-base mt-1">
+                  <p className="text-emerald-600 font-bold text-lg sm:text-xl mt-1">
                     {item.pret.toFixed(2)} lei
                   </p>
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="text-xs sm:text-sm text-gray-500">
+                    <span className="text-sm sm:text-base text-gray-500">
                       Cantitate:
                     </span>
                     <div className="flex items-center gap-1 sm:gap-2">
@@ -149,15 +158,15 @@ export default function Checkout() {
         </div>
       </div>
       <div className="flex justify-center">
-        <div className="text-xl font-bold mt-3 w-full max-w-full sm:max-w-2xl text-center bg-gray-50 rounded-xl py-4 shadow-sm border border-gray-200">
+        <div className="text-xl font-bold mt-3 w-full max-w-full sm:max-w-2xl text-center bg-white rounded-sm py-2 shadow-sm border border-gray-200">
           Subtotal:{" "}
-          <span className="text-green-600">{total.toFixed(2)} lei</span>
+          <span className="text-emerald-600">{total.toFixed(2)} lei</span>
         </div>
       </div>
       <div className="flex justify-center">
         <button
           onClick={handleContinue}
-          className="mt-3 bg-[#16A34A] hover:bg-[#15803D] text-white px-8 py-3 rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 transition w-full max-w-full sm:max-w-2xl text-2xl font-semibold tracking-wide"
+          className="mt-3 bg-emerald-600 text-white px-8 py-3 rounded-sm w-full max-w-full sm:max-w-2xl text-2xl font-semibold tracking-wide"
         >
           Continuă
         </button>

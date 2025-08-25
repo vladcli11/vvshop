@@ -4,12 +4,12 @@ import Pura70Pro from "../assets/huawei-pura-70-pro.webp";
 import Pura70 from "../assets/huawei-pura-70.webp";
 import MateX6 from "../assets/huawei-mate-x6.webp";
 import Mate50Pro from "../assets/huawei-mate-50-pro.webp";
-import P60Pro from "../assets/huawei-p60-pro.webp";
-import P50Pocket from "../assets/huawei-p50-pocket.webp";
-import P40Pro from "../assets/huawei-p40-pro.webp";
-import P40 from "../assets/huawei-p40.webp";
-import P30Pro from "../assets/huawei-p30-pro.webp";
-import P30 from "../assets/huawei-p30.webp";
+import P60Pro from "../assets/Huawei-P60-Pro.webp";
+import P50Pocket from "../assets/Huawei-P50-Pocket.webp";
+import P40Pro from "../assets/Huawei-P40-Pro.webp";
+import P40 from "../assets/Huawei-P40.webp";
+import P30Pro from "../assets/Huawei-P30-Pro.webp";
+import P30 from "../assets/Huawei-P30.webp";
 import P30Lite from "../assets/huawei-p30-lite.webp";
 import Breadcrumbs from "../components/BreadCrumbs";
 

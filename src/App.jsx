@@ -58,7 +58,7 @@ export default function App() {
               </div>
             }
           >
-            <Routes location={location} key={location.pathname}>
+            <Routes location={location}>
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<Home />} />
               <Route path="/login" element={<AuthPage />} />

@@ -2,15 +2,19 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import viteCompression from "vite-plugin-compression";
 
+const isProd = process.env.NODE_ENV === "production";
+
 export default defineConfig({
   plugins: [
     react(),
-    viteCompression({ algorithm: "brotliCompress" }), // sau gzip
-  ],
+    // rulează compresia DOAR în producție
+    isProd && viteCompression({ algorithm: "brotliCompress" }),
+  ].filter(Boolean),
+
   publicDir: "public",
   build: {
     outDir: "dist",
-    minify: "terser",
+    minify: true,
     target: "es2020",
     sourcemap: false,
     rollupOptions: {

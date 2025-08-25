@@ -13,7 +13,7 @@ import iphone13 from "../assets/iphone13.webp";
 import iphone14 from "../assets/iphone14.webp";
 import iphone12promax from "../assets/iphone12promax.webp";
 import iphone12pro from "../assets/iphone12pro.webp";
-import iphone12 from "../assets/iphone12.webp";
+import iphone12 from "../assets/Iphone12.webp";
 import Breadcrumbs from "../components/BreadCrumbs";
 
 const modele = [

@@ -1,39 +1,39 @@
 import { Link } from "react-router-dom";
 
 // S series
-import S20 from "../assets/s20.webp";
+import S20 from "../assets/S20.webp";
 import S20FE from "../assets/s20fe.webp";
 import S20PLUS from "../assets/s20-plus.webp";
 import S20ULTRA from "../assets/s20ultra.webp";
-import S21 from "../assets/s21.webp";
+import S21 from "../assets/S21.webp";
 import S21FE from "../assets/s21fe.webp";
 import S21PLUS from "../assets/s21-plus.webp";
 import S21ULTRA from "../assets/s21ultra.webp";
-import S22 from "../assets/s22.webp";
+import S22 from "../assets/S22.webp";
 import S22PLUS from "../assets/s22-plus.webp";
 import S22ULTRA from "../assets/s22ultra.webp";
-import S23 from "../assets/s23.webp";
+import S23 from "../assets/S23.webp";
 import S23PLUS from "../assets/s23-plus.webp";
 import S23ULTRA from "../assets/s23ultra.webp";
-import S24 from "../assets/s24.webp";
+import S24 from "../assets/S24.webp";
 import S24PLUS from "../assets/s24-plus.webp";
 import S24ULTRA from "../assets/s24ultra.webp";
-import S25 from "../assets/s25.webp";
+import S25 from "../assets/S25.webp";
 import S25ULTRA from "../assets/s25ultra.webp";
 
 // Flip series
-import ZFLIP from "../assets/zflip.webp";
-import ZFLIP3 from "../assets/zflip3.webp";
-import ZFLIP4 from "../assets/zflip4.webp";
-import ZFLIP5 from "../assets/zflip5.webp";
-import ZFLIP6 from "../assets/zflip6.webp";
+import ZFLIP from "../assets/ZFLIP.webp";
+import ZFLIP3 from "../assets/ZFLIP3.webp";
+import ZFLIP4 from "../assets/ZFLIP4.webp";
+import ZFLIP5 from "../assets/ZFLIP5.webp";
+import ZFLIP6 from "../assets/ZFLIP6.webp";
 
 // Fold series
-import ZFOLD2 from "../assets/zfold2.webp";
-import ZFOLD3 from "../assets/zfold3.webp";
-import ZFOLD4 from "../assets/zfold4.webp";
-import ZFOLD5 from "../assets/zfold5.webp";
-import ZFOLD6 from "../assets/zfold6.webp";
+import ZFOLD2 from "../assets/ZFOLD2.webp";
+import ZFOLD3 from "../assets/ZFOLD3.webp";
+import ZFOLD4 from "../assets/ZFOLD4.webp";
+import ZFOLD5 from "../assets/ZFOLD5.webp";
+import ZFOLD6 from "../assets/ZFOLD6.webp";
 
 // A series
 import A01 from "../assets/A01.webp";

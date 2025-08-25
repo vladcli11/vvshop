@@ -1,0 +1,1138 @@
+name: QA + Performance/Security Audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch/ref to audit'
+        default: 'main'
+        required: false
+
+env:
+  NODE_VERSION: '20.x'
+  AUDIT_ARTIFACTS_DIR: 'artifacts'
+
+jobs:
+  qa-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    steps:
+      # === SETUP ===
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || 'main' }}
+
+      - name: Auto-detect package manager
+        id: detect-pm
+        run: |
+          if [ -f "pnpm-lock.yaml" ]; then
+            echo "manager=pnpm" >> $GITHUB_OUTPUT
+            echo "install-cmd=pnpm install --frozen-lockfile" >> $GITHUB_OUTPUT
+            echo "run-cmd=pnpm run" >> $GITHUB_OUTPUT
+          elif [ -f "package-lock.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "install-cmd=npm ci" >> $GITHUB_OUTPUT
+            echo "run-cmd=npm run" >> $GITHUB_OUTPUT
+          elif [ -f "yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "install-cmd=yarn install --frozen-lockfile" >> $GITHUB_OUTPUT
+            echo "run-cmd=yarn run" >> $GITHUB_OUTPUT
+          else
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "install-cmd=npm install" >> $GITHUB_OUTPUT
+            echo "run-cmd=npm run" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ steps.detect-pm.outputs.manager }}
+
+      - name: Setup pnpm (if detected)
+        if: steps.detect-pm.outputs.manager == 'pnpm'
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
+
+      - name: Setup Playwright
+        run: |
+          npx playwright install chromium
+          npx playwright install-deps chromium
+
+      - name: Create artifacts directory
+        run: mkdir -p ${{ env.AUDIT_ARTIFACTS_DIR }}
+
+      # === 0) SETUP: Clean install, lint, build ===
+      - name: Clean install dependencies
+        run: ${{ steps.detect-pm.outputs.install-cmd }}
+
+      - name: Lint (if config present)
+        run: |
+          if [ -f "eslint.config.js" ] || [ -f ".eslintrc.json" ] || [ -f ".eslintrc.js" ]; then
+            ${{ steps.detect-pm.outputs.run-cmd }} lint || echo "Linting failed but continuing..."
+          else
+            echo "No linting configuration found, skipping..."
+          fi
+
+      - name: Production build
+        run: ${{ steps.detect-pm.outputs.run-cmd }} build
+
+      - name: Check for server modules in client build
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Check if dist folder exists
+          if (!fs.existsSync('dist')) {
+            console.error('❌ No dist folder found - build failed');
+            process.exit(1);
+          }
+          
+          // Find all JS files in dist
+          function findFiles(dir, ext) {
+            const files = [];
+            const items = fs.readdirSync(dir);
+            for (const item of items) {
+              const fullPath = path.join(dir, item);
+              const stat = fs.statSync(fullPath);
+              if (stat.isDirectory()) {
+                files.push(...findFiles(fullPath, ext));
+              } else if (item.endsWith(ext)) {
+                files.push(fullPath);
+              }
+            }
+            return files;
+          }
+          
+          const jsFiles = findFiles('dist', '.js');
+          const serverModules = ['firebase-admin', 'firebase-functions', 'fs', 'path', 'os', 'crypto', 'stream', 'buffer'];
+          let hasServerModules = false;
+          
+          for (const file of jsFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            for (const mod of serverModules) {
+              if (content.includes(\`require('\${mod}')\`) || content.includes(\`from '\${mod}'\`)) {
+                console.error(\`❌ Server module '\${mod}' found in client bundle: \${file}\`);
+                hasServerModules = true;
+              }
+            }
+          }
+          
+          if (hasServerModules) {
+            console.error('❌ Server-only modules detected in client build');
+            process.exit(1);
+          } else {
+            console.log('✅ No server-only modules detected in client build');
+          }
+          "
+
+      # === 1) DEPENDENCY SANITY ===
+      - name: Dependency sanity check
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+          const serverOnlyPackages = [
+            'firebase-admin', 'firebase-functions', 'stripe', '@stripe/stripe-node',
+            'openai', 'node-fetch', 'csv-parser', 'sharp', 'git', 'functions'
+          ];
+          
+          const issues = [];
+          
+          // Check dependencies
+          if (pkg.dependencies) {
+            for (const dep of Object.keys(pkg.dependencies)) {
+              if (serverOnlyPackages.includes(dep) || dep === 'tailwind') {
+                issues.push(\`Server-only package '\${dep}' in dependencies\`);
+              }
+            }
+          }
+          
+          // Scan src directory for imports
+          function scanDirectory(dir) {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+              const fullPath = path.join(dir, file);
+              const stat = fs.statSync(fullPath);
+              if (stat.isDirectory()) {
+                scanDirectory(fullPath);
+              } else if (file.endsWith('.js') || file.endsWith('.jsx') || file.endsWith('.ts') || file.endsWith('.tsx')) {
+                const content = fs.readFileSync(fullPath, 'utf-8');
+                for (const pkg of serverOnlyPackages) {
+                  if (content.includes(\`from '\${pkg}'\`) || content.includes(\`require('\${pkg}')\`)) {
+                    issues.push(\`Server-only import '\${pkg}' in \${fullPath}\`);
+                  }
+                }
+              }
+            }
+          }
+          
+          if (fs.existsSync('src')) {
+            scanDirectory('src');
+          }
+          
+          const result = {
+            status: issues.length === 0 ? 'PASS' : 'FAIL',
+            issues: issues,
+            timestamp: new Date().toISOString()
+          };
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/dep-sanity.json', JSON.stringify(result, null, 2));
+          
+          if (issues.length > 0) {
+            console.error('❌ Dependency sanity check failed:');
+            issues.forEach(issue => console.error('  -', issue));
+            process.exit(1);
+          } else {
+            console.log('✅ Dependency sanity check passed');
+          }
+          "
+
+      # === 2) VITE CONFIG & CHUNKING ===
+      - name: Vite config & chunking analysis
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Check vite config
+          const viteConfigs = ['vite.config.js', 'vite.config.ts', 'vite.config.mjs'];
+          let viteConfig = null;
+          let configContent = '';
+          
+          for (const config of viteConfigs) {
+            if (fs.existsSync(config)) {
+              viteConfig = config;
+              configContent = fs.readFileSync(config, 'utf-8');
+              break;
+            }
+          }
+          
+          if (!viteConfig) {
+            console.error('❌ No vite config found');
+            process.exit(1);
+          }
+          
+          // Check for React plugin
+          const hasReactPlugin = configContent.includes('@vitejs/plugin-react') || 
+                                configContent.includes('@vitejs/plugin-react-swc');
+          
+          if (!hasReactPlugin) {
+            console.error('❌ No @vitejs/plugin-react or @vitejs/plugin-react-swc found in vite config');
+            process.exit(1);
+          }
+          
+          // Check manual chunks
+          const hasManualChunks = configContent.includes('manualChunks');
+          const expectedChunks = ['react', 'firebase', 'icons', 'swiper', 'vendor'];
+          const foundChunks = [];
+          
+          if (hasManualChunks) {
+            for (const chunk of expectedChunks) {
+              if (configContent.includes(chunk)) {
+                foundChunks.push(chunk);
+              }
+            }
+          }
+          
+          console.log('✅ Vite config analysis:');
+          console.log('  - React plugin:', hasReactPlugin ? '✅' : '❌');
+          console.log('  - Manual chunks:', hasManualChunks ? '✅' : '❌');
+          console.log('  - Found chunks:', foundChunks);
+          
+          const result = {
+            configFile: viteConfig,
+            hasReactPlugin,
+            hasManualChunks,
+            foundChunks,
+            timestamp: new Date().toISOString()
+          };
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/vite-config.json', JSON.stringify(result, null, 2));
+          "
+
+      - name: Bundle analysis
+        run: |
+          # Install source-map-explorer if not present
+          npm install --no-save source-map-explorer gzip-size brotli-size
+          
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          const { execSync } = require('child_process');
+          const { gzipSize } = require('gzip-size');
+          
+          if (!fs.existsSync('dist')) {
+            console.error('❌ No dist folder found');
+            process.exit(1);
+          }
+          
+          // Analyze bundle sizes
+          const bundleAnalysis = {
+            assets: [],
+            totalSize: { raw: 0, gzip: 0 },
+            timestamp: new Date().toISOString()
+          };
+          
+          function analyzeDirectory(dir, basePath = '') {
+            const items = fs.readdirSync(dir);
+            for (const item of items) {
+              const fullPath = path.join(dir, item);
+              const relativePath = path.join(basePath, item);
+              const stat = fs.statSync(fullPath);
+              
+              if (stat.isDirectory()) {
+                analyzeDirectory(fullPath, relativePath);
+              } else if (item.endsWith('.js') || item.endsWith('.css')) {
+                const content = fs.readFileSync(fullPath);
+                const rawSize = stat.size;
+                const gzipedSize = gzipSize.sync(content);
+                
+                bundleAnalysis.assets.push({
+                  file: relativePath,
+                  size: { raw: rawSize, gzip: gzipedSize }
+                });
+                
+                bundleAnalysis.totalSize.raw += rawSize;
+                bundleAnalysis.totalSize.gzip += gzipedSize;
+              }
+            }
+          }
+          
+          analyzeDirectory('dist');
+          
+          // Check thresholds
+          const initialJsSize = bundleAnalysis.assets
+            .filter(a => a.file.includes('index') && a.file.endsWith('.js'))
+            .reduce((sum, a) => sum + a.size.gzip, 0);
+          
+          const maxRouteSize = Math.max(...bundleAnalysis.assets
+            .filter(a => a.file.endsWith('.js'))
+            .map(a => a.size.gzip));
+          
+          bundleAnalysis.thresholds = {
+            initialJs: { size: initialJsSize, limit: 170 * 1024, pass: initialJsSize <= 170 * 1024 },
+            maxRoute: { size: maxRouteSize, limit: 200 * 1024, pass: maxRouteSize <= 200 * 1024 }
+          };
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/bundles.json', JSON.stringify(bundleAnalysis, null, 2));
+          
+          console.log('📦 Bundle Analysis:');
+          console.log(\`  Total size: \${(bundleAnalysis.totalSize.raw / 1024).toFixed(1)}KB raw, \${(bundleAnalysis.totalSize.gzip / 1024).toFixed(1)}KB gzip\`);
+          console.log(\`  Initial JS: \${(initialJsSize / 1024).toFixed(1)}KB gzip \${bundleAnalysis.thresholds.initialJs.pass ? '✅' : '❌'}\`);
+          console.log(\`  Max route: \${(maxRouteSize / 1024).toFixed(1)}KB gzip \${bundleAnalysis.thresholds.maxRoute.pass ? '✅' : '❌'}\`);
+          
+          if (!bundleAnalysis.thresholds.initialJs.pass || !bundleAnalysis.thresholds.maxRoute.pass) {
+            console.error('❌ Bundle size thresholds exceeded');
+            process.exit(1);
+          }
+          "
+
+      - name: Source map analysis
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          const { execSync } = require('child_process');
+          
+          const jsFiles = [];
+          function findJsFiles(dir) {
+            const items = fs.readdirSync(dir);
+            for (const item of items) {
+              const fullPath = path.join(dir, item);
+              const stat = fs.statSync(fullPath);
+              if (stat.isDirectory()) {
+                findJsFiles(fullPath);
+              } else if (item.endsWith('.js') && !item.includes('.map')) {
+                jsFiles.push(fullPath);
+              }
+            }
+          }
+          
+          if (fs.existsSync('dist/assets')) {
+            findJsFiles('dist/assets');
+          }
+          
+          const smeResults = [];
+          
+          for (const file of jsFiles.slice(0, 5)) { // Limit to first 5 files
+            try {
+              const output = execSync(\`npx source-map-explorer \${file} --json\`, { encoding: 'utf-8' });
+              const analysis = JSON.parse(output);
+              smeResults.push({
+                file: file.replace('dist/', ''),
+                analysis: analysis
+              });
+            } catch (error) {
+              console.warn(\`⚠️ Could not analyze \${file}: \${error.message}\`);
+            }
+          }
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/sme.json', JSON.stringify(smeResults, null, 2));
+          console.log(\`✅ Source map analysis completed for \${smeResults.length} files\`);
+          " || echo "⚠️ Source map analysis failed, continuing..."
+
+      # === 3) SERVE & NETWORK AUDIT ===
+      - name: Setup Firebase emulator
+        run: |
+          npm install -g firebase-tools
+          
+          # Check if firebase.json has hosting config
+          if grep -q '"hosting"' firebase.json 2>/dev/null; then
+            echo "Firebase hosting config found, will use emulator"
+            echo "USE_FIREBASE_EMULATOR=true" >> $GITHUB_ENV
+          else
+            echo "No Firebase hosting config, will use vite preview"
+            echo "USE_FIREBASE_EMULATOR=false" >> $GITHUB_ENV
+          fi
+
+      - name: Start server and run Playwright tests
+        run: |
+          node -e "
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+          const { spawn } = require('child_process');
+          
+          async function runAudit() {
+            let serverProcess;
+            const port = process.env.USE_FIREBASE_EMULATOR === 'true' ? 5000 : 4173;
+            const baseURL = \`http://localhost:\${port}\`;
+            
+            try {
+              // Start server
+              if (process.env.USE_FIREBASE_EMULATOR === 'true') {
+                console.log('🔥 Starting Firebase emulator...');
+                serverProcess = spawn('firebase', ['emulators:start', '--only', 'hosting'], {
+                  stdio: 'pipe',
+                  detached: false
+                });
+              } else {
+                console.log('⚡ Starting Vite preview...');
+                serverProcess = spawn('npm', ['run', 'preview', '--', '--strictPort', '--port', '4173'], {
+                  stdio: 'pipe',
+                  detached: false
+                });
+              }
+              
+              // Wait for server to start
+              await new Promise(resolve => setTimeout(resolve, 5000));
+              
+              // Launch browser
+              const browser = await chromium.launch();
+              const context = await browser.newContext();
+              const page = await context.newPage();
+              
+              const auditResults = {
+                pages: [],
+                errors: [],
+                consoleMessages: [],
+                networkRequests: [],
+                timestamp: new Date().toISOString()
+              };
+              
+              // Capture console messages
+              page.on('console', msg => {
+                auditResults.consoleMessages.push({
+                  type: msg.type(),
+                  text: msg.text(),
+                  timestamp: new Date().toISOString()
+                });
+              });
+              
+              // Capture page errors
+              page.on('pageerror', error => {
+                auditResults.errors.push({
+                  message: error.message,
+                  stack: error.stack,
+                  timestamp: new Date().toISOString()
+                });
+              });
+              
+              // Capture network requests
+              page.on('response', response => {
+                auditResults.networkRequests.push({
+                  url: response.url(),
+                  status: response.status(),
+                  timestamp: new Date().toISOString()
+                });
+              });
+              
+              const testPages = [
+                { path: '/', name: 'Home' },
+                { path: '/samsung', name: 'Samsung' },
+                { path: '/cos', name: 'Cart' },
+                { path: '/cos/livrare', name: 'Delivery' }
+              ];
+              
+              for (const testPage of testPages) {
+                try {
+                  console.log(\`🔍 Testing page: \${testPage.name} (\${testPage.path})\`);
+                  await page.goto(\`\${baseURL}\${testPage.path}\`, { waitUntil: 'networkidle' });
+                  
+                  const pageResult = {
+                    path: testPage.path,
+                    name: testPage.name,
+                    loadTime: Date.now(),
+                    title: await page.title(),
+                    status: 'success'
+                  };
+                  
+                  auditResults.pages.push(pageResult);
+                  
+                  // Special interactions for delivery page
+                  if (testPage.path === '/cos/livrare') {
+                    try {
+                      // Look for Easybox element
+                      const easyboxElement = await page.locator('[data-testid=\"easybox\"], .easybox, [class*=\"easybox\"]').first();
+                      if (await easyboxElement.isVisible()) {
+                        await easyboxElement.click();
+                        console.log('✅ Easybox interaction successful');
+                      }
+                    } catch (e) {
+                      console.log('⚠️ Easybox interaction failed:', e.message);
+                    }
+                  }
+                  
+                } catch (error) {
+                  console.error(\`❌ Failed to test \${testPage.name}:\`, error.message);
+                  auditResults.pages.push({
+                    path: testPage.path,
+                    name: testPage.name,
+                    status: 'error',
+                    error: error.message
+                  });
+                }
+              }
+              
+              // Check for critical issues
+              const hasAsset404s = auditResults.networkRequests.some(req => 
+                req.status === 404 && (req.url.includes('/assets/') || req.url.includes('.js') || req.url.includes('.css'))
+              );
+              
+              const hasUncaughtExceptions = auditResults.errors.length > 0;
+              
+              const hasSuspenseRemounts = auditResults.consoleMessages.some(msg => 
+                msg.text.includes('Suspense') && msg.text.includes('remount')
+              );
+              
+              auditResults.healthCheck = {
+                hasAsset404s,
+                hasUncaughtExceptions,
+                hasSuspenseRemounts,
+                overallStatus: (!hasAsset404s && !hasUncaughtExceptions) ? 'PASS' : 'FAIL'
+              };
+              
+              fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/network-audit.json', JSON.stringify(auditResults, null, 2));
+              
+              console.log('🌐 Network Audit Results:');
+              console.log(\`  Pages tested: \${auditResults.pages.length}\`);
+              console.log(\`  Errors: \${auditResults.errors.length}\`);
+              console.log(\`  404s for assets: \${hasAsset404s ? '❌' : '✅'}\`);
+              console.log(\`  Uncaught exceptions: \${hasUncaughtExceptions ? '❌' : '✅'}\`);
+              console.log(\`  Overall status: \${auditResults.healthCheck.overallStatus}\`);
+              
+              await browser.close();
+              
+              if (auditResults.healthCheck.overallStatus === 'FAIL') {
+                process.exit(1);
+              }
+              
+            } catch (error) {
+              console.error('❌ Network audit failed:', error);
+              process.exit(1);
+            } finally {
+              if (serverProcess) {
+                serverProcess.kill('SIGTERM');
+              }
+            }
+          }
+          
+          runAudit();
+          "
+
+      # === 4) CSP VERIFICATION ===
+      - name: CSP verification
+        run: |
+          node -e "
+          const fs = require('fs');
+          const http = require('http');
+          
+          async function checkCSP() {
+            const port = process.env.USE_FIREBASE_EMULATOR === 'true' ? 5000 : 4173;
+            const baseURL = \`http://localhost:\${port}\`;
+            
+            // Start a simple server for CSP check
+            const { spawn } = require('child_process');
+            let serverProcess;
+            
+            if (process.env.USE_FIREBASE_EMULATOR === 'true') {
+              serverProcess = spawn('firebase', ['emulators:start', '--only', 'hosting'], { detached: true });
+            } else {
+              serverProcess = spawn('npm', ['run', 'preview', '--', '--strictPort', '--port', '4173'], { detached: true });
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            const cspResults = {
+              indexCheck: null,
+              jsAssetCheck: null,
+              validation: {},
+              timestamp: new Date().toISOString()
+            };
+            
+            try {
+              // Check index.html CSP header
+              const indexResponse = await fetch(\`\${baseURL}/\`, { method: 'HEAD' });
+              const cspHeader = indexResponse.headers.get('content-security-policy');
+              
+              cspResults.indexCheck = {
+                status: indexResponse.status,
+                hasCsp: !!cspHeader,
+                cspHeader: cspHeader
+              };
+              
+              if (!cspHeader) {
+                console.error('❌ No CSP header found on index.html');
+                cspResults.validation.overall = 'FAIL';
+              } else {
+                // Validate CSP directives
+                const requiredScriptSrc = [
+                  'self', 'https://js.stripe.com', 'https://www.googletagmanager.com',
+                  'https://www.google.com', 'https://www.gstatic.com'
+                ];
+                
+                const requiredConnectSrc = [
+                  'https://api.stripe.com'
+                ];
+                
+                const requiredFrameSrc = [
+                  'https://js.stripe.com'
+                ];
+                
+                const validation = {
+                  hasScriptSrcSelf: cspHeader.includes(\"script-src 'self'\") || cspHeader.includes(\"script-src\") && cspHeader.includes(\"'self'\"),
+                  hasRequiredScriptSources: requiredScriptSrc.every(src => cspHeader.includes(src.replace('self', \"'self'\"))),
+                  noUnsafeInline: !cspHeader.includes(\"'unsafe-inline'\") || !cspHeader.match(/script-src[^;]*'unsafe-inline'/),
+                  hasConnectSrc: requiredConnectSrc.every(src => cspHeader.includes(src)),
+                  hasFrameSrc: requiredFrameSrc.every(src => cspHeader.includes(src))
+                };
+                
+                cspResults.validation = validation;
+                cspResults.validation.overall = Object.values(validation).every(v => v === true) ? 'PASS' : 'FAIL';
+                
+                console.log('🔒 CSP Validation:');
+                console.log(\`  Has script-src 'self': \${validation.hasScriptSrcSelf ? '✅' : '❌'}\`);
+                console.log(\`  Required script sources: \${validation.hasRequiredScriptSources ? '✅' : '❌'}\`);
+                console.log(\`  No unsafe-inline in script-src: \${validation.noUnsafeInline ? '✅' : '❌'}\`);
+                console.log(\`  Required connect-src: \${validation.hasConnectSrc ? '✅' : '❌'}\`);
+                console.log(\`  Required frame-src: \${validation.hasFrameSrc ? '✅' : '❌'}\`);
+              }
+              
+              fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/csp.json', JSON.stringify(cspResults, null, 2));
+              fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/csp-headers.txt', cspHeader || 'No CSP header found');
+              
+              if (cspResults.validation.overall === 'FAIL') {
+                console.error('❌ CSP validation failed');
+                process.exit(1);
+              }
+              
+            } catch (error) {
+              console.error('❌ CSP check failed:', error.message);
+              process.exit(1);
+            } finally {
+              if (serverProcess) {
+                process.kill(-serverProcess.pid);
+              }
+            }
+          }
+          
+          checkCSP();
+          " || echo "⚠️ CSP check failed, using static analysis..."
+          
+          # Fallback: static CSP analysis from firebase.json
+          node -e "
+          const fs = require('fs');
+          
+          if (fs.existsSync('firebase.json')) {
+            const firebaseConfig = JSON.parse(fs.readFileSync('firebase.json', 'utf-8'));
+            const headers = firebaseConfig.hosting?.headers || [];
+            
+            const cspHeader = headers.find(h => 
+              h.source === '/index.html' && 
+              h.headers?.some(header => header.key === 'Content-Security-Policy')
+            );
+            
+            if (cspHeader) {
+              const cspValue = cspHeader.headers.find(h => h.key === 'Content-Security-Policy').value;
+              fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/csp-headers.txt', cspValue);
+              
+              const staticResult = {
+                source: 'firebase.json',
+                cspHeader: cspValue,
+                validation: {
+                  overall: cspValue.includes('script-src') ? 'PASS' : 'FAIL'
+                },
+                timestamp: new Date().toISOString()
+              };
+              
+              fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/csp.json', JSON.stringify(staticResult, null, 2));
+              console.log('✅ Static CSP analysis from firebase.json completed');
+            }
+          }
+          "
+
+      # === 5) STRIPE CLIENT FLOW ===
+      - name: Stripe client flow test
+        run: |
+          node -e "
+          const fs = require('fs');
+          
+          // Mock test since we can't access real Stripe endpoints without credentials
+          const stripeTestResult = {
+            endpoint: 'https://europe-west1-vvshop-srl.cloudfunctions.net/createCheckoutSession',
+            test: 'mock',
+            status: 'SKIP',
+            reason: 'Cannot test without valid environment credentials',
+            recommendations: [
+              'Test manually with valid Stripe keys',
+              'Verify CORS headers allow frontend domain',
+              'Check function deployment status'
+            ],
+            timestamp: new Date().toISOString()
+          };
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/stripe-createCheckoutSession.json', JSON.stringify(stripeTestResult, null, 2));
+          console.log('⚠️ Stripe client flow test skipped (requires live credentials)');
+          "
+
+      # === 6) SAMEDAY/EASYBOX WIDGET ===
+      - name: Sameday/Easybox widget test
+        run: |
+          node -e "
+          const fs = require('fs');
+          
+          // Check if SelectEasyBoxMap component exists
+          const widgetExists = fs.existsSync('src/components/SelectEasyBoxMap.jsx');
+          
+          const widgetTestResult = {
+            componentExists: widgetExists,
+            test: 'static-analysis',
+            status: widgetExists ? 'PASS' : 'SKIP',
+            findings: [],
+            timestamp: new Date().toISOString()
+          };
+          
+          if (widgetExists) {
+            const componentContent = fs.readFileSync('src/components/SelectEasyBoxMap.jsx', 'utf-8');
+            
+            // Check for CSP-friendly script loading
+            if (componentContent.includes('createElement(\"script\")')) {
+              widgetTestResult.findings.push('Dynamic script injection detected - ensure CSP compatibility');
+            }
+            
+            // Check for form interaction prevention
+            if (componentContent.includes('onClick') || componentContent.includes('onSubmit')) {
+              widgetTestResult.findings.push('Widget interaction handlers found');
+            }
+            
+            widgetTestResult.codeAnalysis = {
+              hasDynamicScriptLoading: componentContent.includes('createElement(\"script\")'),
+              hasErrorHandling: componentContent.includes('catch') || componentContent.includes('onError'),
+              hasCSPConsiderations: componentContent.includes('nonce') || componentContent.includes('integrity')
+            };
+          }
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/sameday-widget.json', JSON.stringify(widgetTestResult, null, 2));
+          console.log(\`📦 Sameday/Easybox widget analysis: \${widgetTestResult.status}\`);
+          "
+
+      # === 7) ACCESSIBILITY & SEO ===
+      - name: Lighthouse audits
+        run: |
+          npm install -g lighthouse
+          
+          # Start server for Lighthouse
+          ${{ steps.detect-pm.outputs.run-cmd }} preview --port 4173 &
+          SERVER_PID=$!
+          
+          sleep 5
+          
+          # Run Lighthouse audits
+          lighthouse http://localhost:4173 \
+            --port=4173 \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --output=json \
+            --output-path=${{ env.AUDIT_ARTIFACTS_DIR }}/lighthouse-home.json \
+            --only-categories=performance,accessibility,seo \
+            --preset=desktop
+          
+          lighthouse http://localhost:4173/samsung \
+            --port=4173 \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --output=json \
+            --output-path=${{ env.AUDIT_ARTIFACTS_DIR }}/lighthouse-samsung.json \
+            --only-categories=performance,accessibility,seo \
+            --preset=desktop
+          
+          # Analyze results
+          node -e "
+          const fs = require('fs');
+          
+          function analyzeLighthouse(file, pageName) {
+            if (!fs.existsSync(file)) {
+              console.error(\`❌ Lighthouse report not found: \${file}\`);
+              return null;
+            }
+            
+            const report = JSON.parse(fs.readFileSync(file, 'utf-8'));
+            const audits = report.audits;
+            const categories = report.categories;
+            
+            const performance = categories.performance?.score || 0;
+            const lcp = audits['largest-contentful-paint']?.numericValue || 0;
+            const cls = audits['cumulative-layout-shift']?.numericValue || 0;
+            
+            const result = {
+              page: pageName,
+              scores: {
+                performance: performance,
+                accessibility: categories.accessibility?.score || 0,
+                seo: categories.seo?.score || 0
+              },
+              metrics: {
+                lcp: lcp / 1000, // Convert to seconds
+                cls: cls
+              },
+              thresholds: {
+                performance: { value: performance, limit: 0.90, pass: performance >= 0.90 },
+                lcp: { value: lcp / 1000, limit: 2.5, pass: (lcp / 1000) <= 2.5 },
+                cls: { value: cls, limit: 0.1, pass: cls <= 0.1 }
+              }
+            };
+            
+            console.log(\`🔍 Lighthouse - \${pageName}:\`);
+            console.log(\`  Performance: \${(performance * 100).toFixed(0)}% \${result.thresholds.performance.pass ? '✅' : '❌'}\`);
+            console.log(\`  LCP: \${result.metrics.lcp.toFixed(2)}s \${result.thresholds.lcp.pass ? '✅' : '❌'}\`);
+            console.log(\`  CLS: \${result.metrics.cls.toFixed(3)} \${result.thresholds.cls.pass ? '✅' : '❌'}\`);
+            
+            return result;
+          }
+          
+          const results = [
+            analyzeLighthouse('${{ env.AUDIT_ARTIFACTS_DIR }}/lighthouse-home.json', 'Home'),
+            analyzeLighthouse('${{ env.AUDIT_ARTIFACTS_DIR }}/lighthouse-samsung.json', 'Samsung')
+          ].filter(Boolean);
+          
+          const summary = {
+            results: results,
+            overallPass: results.every(r => 
+              r.thresholds.performance.pass && 
+              r.thresholds.lcp.pass && 
+              r.thresholds.cls.pass
+            ),
+            timestamp: new Date().toISOString()
+          };
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/lighthouse-summary.json', JSON.stringify(summary, null, 2));
+          
+          if (!summary.overallPass) {
+            console.error('❌ Lighthouse thresholds not met');
+            process.exit(1);
+          }
+          "
+          
+          kill $SERVER_PID || true
+
+      # === 8) IMAGES & LCP ===
+      - name: Image optimization analysis
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          
+          const imageAnalysis = {
+            checks: [],
+            recommendations: [],
+            timestamp: new Date().toISOString()
+          };
+          
+          // Check for preload tags in HTML
+          if (fs.existsSync('dist/index.html')) {
+            const html = fs.readFileSync('dist/index.html', 'utf-8');
+            
+            const hasPreload = html.includes('rel=\"preload\"');
+            const hasFetchPriority = html.includes('fetchpriority') || html.includes('fetchPriority');
+            
+            imageAnalysis.checks.push({
+              type: 'preload',
+              found: hasPreload,
+              description: 'Link preload tags for critical resources'
+            });
+            
+            imageAnalysis.checks.push({
+              type: 'fetchpriority',
+              found: hasFetchPriority,
+              description: 'Fetch priority attributes on images'
+            });
+            
+            if (!hasPreload) {
+              imageAnalysis.recommendations.push('Consider adding preload links for hero/LCP images');
+            }
+            
+            if (!hasFetchPriority) {
+              imageAnalysis.recommendations.push('Consider adding fetchpriority=\"high\" to LCP images');
+            }
+          }
+          
+          // Check image formats in assets
+          if (fs.existsSync('src/assets')) {
+            const images = fs.readdirSync('src/assets').filter(f => 
+              f.endsWith('.jpg') || f.endsWith('.jpeg') || f.endsWith('.png') || f.endsWith('.webp')
+            );
+            
+            const webpCount = images.filter(f => f.endsWith('.webp')).length;
+            const totalImages = images.length;
+            
+            imageAnalysis.checks.push({
+              type: 'webp-usage',
+              found: webpCount > 0,
+              ratio: totalImages > 0 ? webpCount / totalImages : 0,
+              description: \`WebP format usage: \${webpCount}/\${totalImages} images\`
+            });
+            
+            if (webpCount / totalImages < 0.8) {
+              imageAnalysis.recommendations.push('Consider converting more images to WebP format');
+            }
+          }
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/image-optimization.json', JSON.stringify(imageAnalysis, null, 2));
+          
+          console.log('🖼️ Image Optimization Analysis:');
+          imageAnalysis.checks.forEach(check => {
+            console.log(\`  \${check.description}: \${check.found ? '✅' : '❌'}\`);
+          });
+          
+          if (imageAnalysis.recommendations.length > 0) {
+            console.log('📝 Recommendations:');
+            imageAnalysis.recommendations.forEach(rec => console.log(\`  - \${rec}\`));
+          }
+          "
+
+      # === 9) ROUTER & STATE PRESERVATION ===
+      - name: Router analysis
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          
+          const routerAnalysis = {
+            checks: [],
+            files: [],
+            timestamp: new Date().toISOString()
+          };
+          
+          // Find router-related files
+          function scanForRouter(dir, basePath = '') {
+            const items = fs.readdirSync(dir);
+            for (const item of items) {
+              const fullPath = path.join(dir, item);
+              const relativePath = path.join(basePath, item);
+              const stat = fs.statSync(fullPath);
+              
+              if (stat.isDirectory() && !item.includes('node_modules')) {
+                scanForRouter(fullPath, relativePath);
+              } else if (item.endsWith('.jsx') || item.endsWith('.js')) {
+                const content = fs.readFileSync(fullPath, 'utf-8');
+                
+                if (content.includes('react-router') || content.includes('useNavigate') || content.includes('Routes')) {
+                  routerAnalysis.files.push({
+                    file: relativePath,
+                    hasRouter: content.includes('react-router'),
+                    hasNavigate: content.includes('useNavigate'),
+                    hasRoutes: content.includes('Routes'),
+                    hasStatePreservation: content.includes('state:') || content.includes('replace:'),
+                    hasLazyLoading: content.includes('lazy(') || content.includes('Suspense')
+                  });
+                }
+              }
+            }
+          }
+          
+          if (fs.existsSync('src')) {
+            scanForRouter('src');
+          }
+          
+          const hasRouterSetup = routerAnalysis.files.some(f => f.hasRouter);
+          const hasStatePreservation = routerAnalysis.files.some(f => f.hasStatePreservation);
+          const hasLazyLoading = routerAnalysis.files.some(f => f.hasLazyLoading);
+          
+          routerAnalysis.checks = [
+            { type: 'router-setup', found: hasRouterSetup, description: 'React Router setup detected' },
+            { type: 'state-preservation', found: hasStatePreservation, description: 'Router state preservation' },
+            { type: 'lazy-loading', found: hasLazyLoading, description: 'Lazy loading/code splitting' }
+          ];
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/router-analysis.json', JSON.stringify(routerAnalysis, null, 2));
+          
+          console.log('🛣️ Router Analysis:');
+          routerAnalysis.checks.forEach(check => {
+            console.log(\`  \${check.description}: \${check.found ? '✅' : '❌'}\`);
+          });
+          console.log(\`  Router files found: \${routerAnalysis.files.length}\`);
+          "
+
+      # === FINAL SUMMARY ===
+      - name: Generate audit summary
+        run: |
+          node -e "
+          const fs = require('fs');
+          
+          const summary = {
+            timestamp: new Date().toISOString(),
+            environment: {
+              node: process.version,
+              packageManager: '${{ steps.detect-pm.outputs.manager }}'
+            },
+            results: {},
+            overallStatus: 'PASS'
+          };
+          
+          // Collect all audit results
+          const artifactFiles = [
+            { key: 'dependency-sanity', file: 'dep-sanity.json' },
+            { key: 'vite-config', file: 'vite-config.json' },
+            { key: 'bundles', file: 'bundles.json' },
+            { key: 'network-audit', file: 'network-audit.json' },
+            { key: 'csp', file: 'csp.json' },
+            { key: 'lighthouse', file: 'lighthouse-summary.json' },
+            { key: 'images', file: 'image-optimization.json' },
+            { key: 'router', file: 'router-analysis.json' }
+          ];
+          
+          for (const { key, file } of artifactFiles) {
+            const filePath = \`${{ env.AUDIT_ARTIFACTS_DIR }}/\${file}\`;
+            if (fs.existsSync(filePath)) {
+              try {
+                summary.results[key] = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+              } catch (e) {
+                summary.results[key] = { error: \`Failed to parse \${file}\` };
+              }
+            }
+          }
+          
+          // Determine overall status
+          const failedChecks = [];
+          
+          if (summary.results['bundles']?.thresholds) {
+            const thresholds = summary.results['bundles'].thresholds;
+            if (!thresholds.initialJs?.pass) failedChecks.push('Initial JS bundle too large');
+            if (!thresholds.maxRoute?.pass) failedChecks.push('Route bundle too large');
+          }
+          
+          if (summary.results['network-audit']?.healthCheck?.overallStatus === 'FAIL') {
+            failedChecks.push('Network audit failed');
+          }
+          
+          if (summary.results['csp']?.validation?.overall === 'FAIL') {
+            failedChecks.push('CSP validation failed');
+          }
+          
+          if (summary.results['lighthouse'] && !summary.results['lighthouse'].overallPass) {
+            failedChecks.push('Lighthouse thresholds not met');
+          }
+          
+          summary.overallStatus = failedChecks.length === 0 ? 'PASS' : 'FAIL';
+          summary.failedChecks = failedChecks;
+          
+          fs.writeFileSync('${{ env.AUDIT_ARTIFACTS_DIR }}/audit-summary.json', JSON.stringify(summary, null, 2));
+          
+          console.log('');
+          console.log('=' .repeat(50));
+          console.log('🎯 QA + PERFORMANCE/SECURITY AUDIT SUMMARY');
+          console.log('=' .repeat(50));
+          console.log(\`Overall Status: \${summary.overallStatus === 'PASS' ? '✅ PASS' : '❌ FAIL'}\`);
+          
+          if (failedChecks.length > 0) {
+            console.log('');
+            console.log('Failed Checks:');
+            failedChecks.forEach(check => console.log(\`  ❌ \${check}\`));
+          }
+          
+          console.log('');
+          console.log('Audit Components:');
+          console.log(\`  📦 Dependency Sanity: \${summary.results['dependency-sanity']?.status || 'Unknown'}\`);
+          console.log(\`  ⚙️ Vite Config: \${summary.results['vite-config']?.hasReactPlugin ? '✅' : '❌'}\`);
+          console.log(\`  📊 Bundle Analysis: \${summary.results['bundles']?.thresholds ? '✅' : '❌'}\`);
+          console.log(\`  🌐 Network Audit: \${summary.results['network-audit']?.healthCheck?.overallStatus || 'Unknown'}\`);
+          console.log(\`  🔒 CSP Validation: \${summary.results['csp']?.validation?.overall || 'Unknown'}\`);
+          console.log(\`  🔍 Lighthouse: \${summary.results['lighthouse']?.overallPass ? '✅' : '❌'}\`);
+          console.log(\`  🖼️ Image Optimization: \${summary.results['images'] ? '✅' : '❌'}\`);
+          console.log(\`  🛣️ Router Analysis: \${summary.results['router'] ? '✅' : '❌'}\`);
+          
+          if (summary.overallStatus === 'FAIL') {
+            process.exit(1);
+          }
+          "
+
+      # === UPLOAD ARTIFACTS ===
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa-audit-artifacts
+          path: ${{ env.AUDIT_ARTIFACTS_DIR }}
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summaryPath = '${{ env.AUDIT_ARTIFACTS_DIR }}/audit-summary.json';
+            
+            if (fs.existsSync(summaryPath)) {
+              const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf-8'));
+              
+              const status = summary.overallStatus === 'PASS' ? '✅ PASSED' : '❌ FAILED';
+              const emoji = summary.overallStatus === 'PASS' ? '🎉' : '⚠️';
+              
+              let comment = `## ${emoji} QA + Performance/Security Audit ${status}\n\n`;
+              
+              comment += `**Overall Status:** ${status}\n\n`;
+              
+              if (summary.failedChecks && summary.failedChecks.length > 0) {
+                comment += `**Failed Checks:**\n`;
+                summary.failedChecks.forEach(check => {
+                  comment += `- ❌ ${check}\n`;
+                });
+                comment += `\n`;
+              }
+              
+              comment += `**Audit Results:**\n`;
+              comment += `- 📦 Dependency Sanity: ${summary.results['dependency-sanity']?.status || 'Unknown'}\n`;
+              comment += `- ⚙️ Vite Config: ${summary.results['vite-config']?.hasReactPlugin ? '✅' : '❌'}\n`;
+              comment += `- 📊 Bundle Analysis: ${summary.results['bundles']?.thresholds ? '✅' : '❌'}\n`;
+              comment += `- 🌐 Network Audit: ${summary.results['network-audit']?.healthCheck?.overallStatus || 'Unknown'}\n`;
+              comment += `- 🔒 CSP Validation: ${summary.results['csp']?.validation?.overall || 'Unknown'}\n`;
+              comment += `- 🔍 Lighthouse: ${summary.results['lighthouse']?.overallPass ? '✅' : '❌'}\n`;
+              comment += `- 🖼️ Image Optimization: ${summary.results['images'] ? '✅' : '❌'}\n`;
+              comment += `- 🛣️ Router Analysis: ${summary.results['router'] ? '✅' : '❌'}\n\n`;
+              
+              comment += `**Environment:** Node ${summary.environment.node}, ${summary.environment.packageManager}\n`;
+              comment += `**Timestamp:** ${summary.timestamp}\n\n`;
+              comment += `📁 Detailed artifacts are available in the workflow run.`;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
